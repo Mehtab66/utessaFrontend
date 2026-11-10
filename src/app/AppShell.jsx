@@ -76,16 +76,21 @@ export default function AppShell() {
                   <NavLink
                     key={`${section.title}-${item.id}`}
                     to={item.to}
-                    end={item.end}
+                    end={item.end ?? true}
                     className={({ isActive }) =>
-                      `flex min-h-10 items-center rounded-lg px-2.5 text-[13.5px] font-semibold transition ${
+                      `flex min-h-10 items-center justify-between gap-2 rounded-lg px-2.5 text-[13.5px] font-semibold transition ${
                         isActive
                           ? 'bg-[#DDEFEF] text-[#075E66]'
                           : 'text-[#1B1F4B] hover:bg-[#EBECF4]'
                       }`
                     }
                   >
-                    {item.label}
+                    <span className="min-w-0 truncate">{item.label}</span>
+                    {item.badge ? (
+                      <span className="shrink-0 rounded-full bg-[#FFD23F] px-2 py-0.5 text-[11px] font-bold text-[#151940]">
+                        {item.badge}
+                      </span>
+                    ) : null}
                   </NavLink>
                 ))}
               </div>
