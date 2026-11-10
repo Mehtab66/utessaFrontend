@@ -416,7 +416,6 @@ export function toStaffPayload(values, { forceProvider = false } = {}) {
   }
   if (!Array.isArray(body.credentials)) body.credentials = []
 
-  // Strip UI-only heading keys
   for (const key of Object.keys(body)) {
     if (key.startsWith('_h_')) delete body[key]
   }
