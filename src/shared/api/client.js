@@ -1,22 +1,15 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
-export function getToken() {
-  return localStorage.getItem('utessa_token')
-}
-
-export function setToken(token) {
-  if (token) localStorage.setItem('utessa_token', token)
-  else localStorage.removeItem('utessa_token')
-}
-
-export async function api(path, { method = 'GET', body, token } = {}) {
-  const headers = { 'Content-Type': 'application/json' }
-  const auth = token ?? getToken()
-  if (auth) headers.Authorization = `Bearer ${auth}`
+export async function api(path, { method = 'GET', body } = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'Utessa',
+  }
 
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
+    credentials: 'include',
     body: body ? JSON.stringify(body) : undefined,
   })
 

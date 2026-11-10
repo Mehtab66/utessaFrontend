@@ -7,7 +7,7 @@ import { Logo, Wordmark } from '../../shared/ui/Logo'
 export default function VerifyPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { loginWithToken } = useAuth()
+  const { setSessionUser } = useAuth()
   const email = location.state?.email || ''
   const [digits, setDigits] = useState(['', '', '', '', '', ''])
   const [error, setError] = useState('')
@@ -41,8 +41,10 @@ export default function VerifyPage() {
     setError('')
     try {
       const res = await api('/api/v1/auth/verify-email', { method: 'POST', body: { email, code } })
-      loginWithToken(res.token, res.user)
-      navigate(res.user.onboardingDone ? '/app' : '/welcome')
+      setSessionUser(res.user)
+      navigate(res.user.onboardingDone ? '/app' : '/welcome', {
+        state: res.user.onboardingDone ? { bootDashboard: true } : undefined,
+      })
     } catch (err) {
       setError(err.message)
     } finally {

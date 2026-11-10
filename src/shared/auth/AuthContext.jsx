@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { api, getToken, setToken } from '../api/client'
+import { api } from '../api/client'
 
 const AuthContext = createContext(null)
 
@@ -8,18 +8,11 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
-    const token = getToken()
-    if (!token) {
-      setUser(null)
-      setLoading(false)
-      return null
-    }
     try {
       const me = await api('/api/v1/auth/me')
       setUser(me)
       return me
     } catch {
-      setToken(null)
       setUser(null)
       return null
     } finally {
@@ -28,22 +21,40 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
+    // Clear legacy localStorage tokens — session is cookie-based now.
+    try {
+      localStorage.removeItem('utessa_token')
+    } catch {
+      /* ignore */
+    }
     refresh()
   }, [refresh])
 
-  const loginWithToken = useCallback((token, me) => {
-    setToken(token)
+  const setSessionUser = useCallback((me) => {
     setUser(me)
   }, [])
 
-  const logout = useCallback(() => {
-    setToken(null)
+  const logout = useCallback(async () => {
+    try {
+      await api('/api/v1/auth/logout', { method: 'POST' })
+    } catch {
+      /* still clear local session */
+    }
     setUser(null)
   }, [])
 
   const value = useMemo(
-    () => ({ user, loading, refresh, loginWithToken, logout, isAuthenticated: !!user }),
-    [user, loading, refresh, loginWithToken, logout],
+    () => ({
+      user,
+      loading,
+      refresh,
+      setSessionUser,
+      // backwards-compatible alias used by older pages
+      loginWithToken: (_token, me) => setSessionUser(me),
+      logout,
+      isAuthenticated: !!user,
+    }),
+    [user, loading, refresh, setSessionUser, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
