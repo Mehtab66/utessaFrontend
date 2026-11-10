@@ -20,18 +20,36 @@ export const ROLE_META = {
 
 /** Permission keys → which nav modules they unlock */
 const PERMS = {
-  OWNER: ['dash', 'inbox', 'leads', 'outreach', 'marketing', 'agents', 'creds', 'vendors', 'staff', 'docvault', 'resources', 'training', 'timeclock', 'inventory', 'patients', 'noshows', 'voip', 'setup', 'settings'],
-  ADMIN: ['dash', 'inbox', 'leads', 'outreach', 'marketing', 'agents', 'creds', 'vendors', 'staff', 'docvault', 'resources', 'training', 'timeclock', 'inventory', 'patients', 'noshows', 'voip', 'setup', 'settings'],
-  MANAGER: ['dash', 'inbox', 'leads', 'outreach', 'marketing', 'agents', 'creds', 'vendors', 'staff', 'docvault', 'resources', 'training', 'timeclock', 'inventory', 'patients', 'noshows', 'voip'],
-  FRONT: ['dash', 'inbox', 'leads', 'patients', 'noshows', 'voip', 'resources', 'training', 'timeclock'],
-  CLINICAL: ['dash', 'inbox', 'leads', 'patients', 'resources', 'training', 'timeclock'],
-  PROVIDER: ['dash', 'inbox', 'leads', 'patients', 'resources', 'training', 'timeclock'],
+  OWNER: [
+    'dash', 'inbox',
+    'creds', 'staff', 'vendors', 'docvault', 'resources', 'training', 'timeclock', 'inventory',
+    'patients', 'noshows',
+    'leads', 'cms', 'email', 'social', 'agents',
+    'setup', 'voip', 'mail', 'mobile', 'brand', 'access',
+  ],
+  ADMIN: [
+    'dash', 'inbox',
+    'creds', 'staff', 'vendors', 'docvault', 'resources', 'training', 'timeclock', 'inventory',
+    'patients', 'noshows',
+    'leads', 'cms', 'email', 'social', 'agents',
+    'setup', 'voip', 'mail', 'mobile', 'brand', 'access',
+  ],
+  MANAGER: [
+    'dash', 'inbox',
+    'creds', 'staff', 'vendors', 'docvault', 'resources', 'training', 'timeclock', 'inventory',
+    'patients', 'noshows',
+    'leads', 'cms', 'email', 'social', 'agents',
+  ],
+  FRONT: ['dash', 'inbox', 'patients', 'noshows', 'resources', 'training', 'timeclock'],
+  CLINICAL: ['dash', 'inbox', 'patients', 'resources', 'training', 'timeclock'],
+  PROVIDER: ['dash', 'inbox', 'patients', 'resources', 'training', 'timeclock'],
   BILLING: ['dash', 'inbox', 'resources', 'training', 'timeclock'],
-  OUTREACH: ['dash', 'inbox', 'outreach', 'marketing', 'agents', 'resources', 'training', 'timeclock'],
+  OUTREACH: ['dash', 'inbox', 'leads', 'cms', 'email', 'social', 'agents', 'resources', 'training', 'timeclock'],
   HR: ['dash', 'inbox', 'creds', 'staff', 'docvault', 'resources', 'training', 'timeclock'],
   MEMBER: ['dash', 'inbox', 'resources', 'training', 'timeclock'],
 }
 
+/** Full practice sidebar — aligned with Practice-CRM wireframe */
 export const NAV_SECTIONS = [
   {
     title: 'Overview',
@@ -46,33 +64,39 @@ export const NAV_SECTIONS = [
       { id: 'creds', label: 'Providers', to: '/app/providers', perm: 'creds' },
       { id: 'staff', label: 'Staff', to: '/app/staff', perm: 'staff' },
       { id: 'vendors', label: 'Vendors', to: '/app/vendors', perm: 'vendors' },
-      { id: 'docvault', label: 'Document vault', to: '/app/operations', perm: 'docvault' },
-      { id: 'resources', label: 'Resources', to: '/app/operations', perm: 'resources' },
-      { id: 'training', label: 'Training', to: '/app/operations', perm: 'training' },
-      { id: 'timeclock', label: 'Time Clock', to: '/app/timeclock', perm: 'timeclock' },
-      { id: 'inventory', label: 'Inventory', to: '/app/operations', perm: 'inventory' },
+      { id: 'docvault', label: 'Document vault', to: '/app/document-vault', perm: 'docvault' },
+      { id: 'resources', label: 'Resources', to: '/app/resources', perm: 'resources' },
+      { id: 'training', label: 'Training', to: '/app/training', perm: 'training' },
+      { id: 'timeclock', label: 'Time clock', to: '/app/timeclock', perm: 'timeclock' },
+      { id: 'inventory', label: 'Inventory', to: '/app/inventory', perm: 'inventory' },
     ],
   },
   {
-    title: 'Patients & front desk',
+    title: 'Patients',
     items: [
       { id: 'patients', label: 'Patient leads & calls', to: '/app/crm', perm: 'patients' },
-      { id: 'noshows', label: 'No-shows', to: '/app/operations', perm: 'noshows' },
-      { id: 'voip', label: 'Phone & text', to: '/app/operations', perm: 'voip' },
+      { id: 'noshows', label: 'No-shows & cancellations', to: '/app/no-shows', perm: 'noshows' },
     ],
   },
   {
     title: 'Marketing & outreach',
     items: [
-      { id: 'outreach', label: 'Provider leads', to: '/app/marketing', perm: 'outreach' },
-      { id: 'marketing', label: 'Email & social', to: '/app/marketing', perm: 'marketing' },
-      { id: 'agents', label: 'AI agents', to: '/app/marketing', perm: 'agents' },
+      { id: 'leads', label: 'Provider leads', to: '/app/provider-leads', perm: 'leads' },
+      { id: 'cms', label: 'CMS provider search', to: '/app/cms-search', perm: 'cms' },
+      { id: 'email', label: 'Email campaigns', to: '/app/email-campaigns', perm: 'email' },
+      { id: 'social', label: 'Social posts', to: '/app/social', perm: 'social' },
+      { id: 'agents', label: 'AI agents', to: '/app/agents', perm: 'agents' },
     ],
   },
   {
     title: 'Settings',
     items: [
-      { id: 'setup', label: 'Practice setup', to: '/app', perm: 'setup' },
+      { id: 'setup', label: 'Practice setup', to: '/app/setup', perm: 'setup', badge: '11 left' },
+      { id: 'voip', label: 'Phone & text (VoIP)', to: '/app/voip', perm: 'voip' },
+      { id: 'mail', label: 'Email & domains', to: '/app/email-domains', perm: 'mail' },
+      { id: 'mobile', label: 'Mobile app', to: '/app/mobile', perm: 'mobile' },
+      { id: 'brand', label: 'Company & brand', to: '/app/brand', perm: 'brand' },
+      { id: 'access', label: 'Plans & access', to: '/app/plans-access', perm: 'access' },
     ],
   },
 ]
