@@ -14,10 +14,10 @@ const SIZE_OPTIONS = [
 ]
 
 const INCLUDES = [
-  { color: 'bg-cyan', title: 'CRM', text: 'Leads, call tracking, referrals' },
-  { color: 'bg-lavender', title: 'Operations', text: 'Documents, vendor BAAs, audit log' },
-  { color: 'bg-yellow', title: 'Marketing', text: 'Reviews, email, and texts' },
-  { color: 'bg-teal', title: 'Time Clock', text: 'Timesheets and payroll export' },
+  { color: 'bg-[#53e4d4]', title: 'CRM', text: 'Leads, tracking, referrals, and outreach' },
+  { color: 'bg-[#ffca5c]', title: 'Ops', text: 'Documents, BAAs, and audit controls' },
+  { color: 'bg-[#9b96ff]', title: 'Marketing', text: 'Reviews, email, and text automation' },
+  { color: 'bg-[#2ec4b6]', title: 'Time clock', text: 'Scheduling, timesheets, and payroll' },
 ]
 
 const STRENGTH_LABELS = ['', 'Too short', 'Weak', 'Okay', 'Strong']
@@ -48,7 +48,7 @@ export default function SignupPage() {
     return score
   }, [form.password])
 
-  const meterColor = ['#E4E7F2', '#B42318', '#D97706', '#3BC4CA', '#137A4B'][form.password ? Math.max(strength, 1) : 0]
+  const meterColor = ['#E4E7F2', '#D95050', '#E6A02F', '#3CC9C1', '#1E8C68'][form.password ? Math.max(strength, 1) : 0]
 
   function update(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -83,269 +83,263 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen lg:grid lg:h-screen lg:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.1fr)] lg:overflow-hidden">
-      <aside className="relative overflow-hidden bg-navy text-white lg:h-full">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(ellipse 90% 70% at 80% 10%, rgba(92,225,230,0.3), transparent 55%), radial-gradient(ellipse 55% 45% at 5% 85%, rgba(255,210,63,0.16), transparent 50%), linear-gradient(165deg, #12153a 0%, #1b1f4b 48%, #1a3a4a 100%)',
-          }}
-        />
-        <div className="animate-mosaic pointer-events-none absolute -right-8 top-24 h-48 w-48 rounded-full bg-cyan/10 blur-3xl" />
-        <div className="animate-mosaic pointer-events-none absolute bottom-16 left-6 h-40 w-40 rounded-full bg-yellow/10 blur-3xl" />
+    <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(83,228,212,0.18),_transparent_22%),radial-gradient(circle_at_bottom_right,_rgba(247,199,90,0.14),_transparent_18%),linear-gradient(135deg,#f5f8ff_0%,#eef2fb_40%,#ecfaf8_100%)] text-navy">
+      <div className="flex min-h-screen flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
+        <aside className="relative flex min-h-[260px] w-full overflow-hidden bg-[#0b1020] text-white lg:min-h-screen lg:w-[46%] lg:flex-none">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(circle at 78% 12%, rgba(83,228,212,0.3), transparent 18%), radial-gradient(circle at 12% 86%, rgba(247,199,90,0.14), transparent 20%), linear-gradient(140deg, #0b1020 0%, #121a33 38%, #0d2335 100%)',
+            }}
+          />
+          <div className="animate-pulse-soft pointer-events-none absolute -right-10 top-20 h-52 w-52 rounded-full bg-[#53e4d4]/10 blur-3xl" />
+          <div className="animate-pulse-soft pointer-events-none absolute bottom-4 left-6 h-48 w-48 rounded-full bg-[#f7c75a]/10 blur-3xl" />
 
-        <div className="relative z-10 flex h-full flex-col px-6 py-7 sm:px-10 lg:px-12 lg:py-10">
-          <Link to="/" className="animate-rise inline-flex w-fit items-center gap-3">
-            <Logo className="h-9 w-9" />
-            <Wordmark light />
-          </Link>
-
-          <div className="animate-rise-delay mt-8 max-w-md lg:mt-14">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-lcyan">
-              14-day free trial
-            </p>
-            <h1 className="mt-3 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-[2.75rem]">
-              Start with <span className="text-cyan">Utessa</span>
-            </h1>
-            <p className="mt-4 text-[15px] font-medium leading-relaxed text-lavender/90">
-              One workspace for CRM, operations, outreach, and time — ready for practices that need clear tenant boundaries.
-            </p>
-          </div>
-
-          <ul className="animate-rise-delay mt-8 hidden max-w-md space-y-3 lg:block">
-            {INCLUDES.map((item) => (
-              <li key={item.title} className="flex items-start gap-3">
-                <span className={`mt-1.5 h-3 w-3 shrink-0 rounded ${item.color}`} />
-                <span>
-                  <span className="font-semibold text-white">{item.title}</span>
-                  <span className="text-lavender/75"> — {item.text}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="animate-rise-delay mt-7 flex flex-wrap gap-2 lg:mt-auto lg:pt-10">
-            <span className="rounded-lg bg-yellow px-3 py-1.5 text-[12.5px] font-bold text-navy">
-              No credit card
-            </span>
-            <span className="rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-[12.5px] font-semibold text-lcyan">
-              HIPAA-ready · BAA included
-            </span>
-          </div>
-        </div>
-      </aside>
-
-      <main className="relative flex flex-col bg-bg px-4 py-7 sm:px-8 lg:h-full lg:overflow-y-auto lg:px-12 lg:py-8">
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <p className="text-sm text-muted">About a minute to set up</p>
-          <p className="text-sm font-semibold text-navy">
-            Have an account?{' '}
-            <Link to="/login" className="text-teal underline-offset-2 hover:underline">
-              Sign in
+          <div className="relative z-10 flex w-full flex-col justify-between px-6 py-7 sm:px-8 lg:px-10 xl:px-12">
+            <Link to="/" className="animate-rise inline-flex w-fit items-center gap-3">
+              <Logo className="h-9 w-9" />
+              <Wordmark light />
             </Link>
-          </p>
-        </div>
 
-        <form
-          className="animate-rise mx-auto w-full max-w-[560px] pb-4"
-          onSubmit={onSubmit}
-          noValidate
-        >
-          <header className="mb-6">
-            <h2 className="text-[26px] font-extrabold tracking-tight text-navy sm:text-[30px]">
-              Create your practice account
-            </h2>
-            <p className="mt-1.5 text-[15px] leading-relaxed text-muted">
-              All four services included. You choose what to keep when the trial ends.
-            </p>
-          </header>
-
-          <section className="space-y-3.5">
-            <SectionLabel>About you</SectionLabel>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              <Field label="Full name" htmlFor="fullName">
-                <input
-                  id="fullName"
-                  className="field"
-                  value={form.fullName}
-                  onChange={(e) => update('fullName', e.target.value)}
-                  autoComplete="name"
-                  autoFocus
-                />
-              </Field>
-              <Field label="Work email" htmlFor="email">
-                <input
-                  id="email"
-                  className="field"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => update('email', e.target.value)}
-                  autoComplete="email"
-                  placeholder="you@yourpractice.com"
-                />
-              </Field>
-            </div>
-
-            <Field label="Password" htmlFor="password">
-              <div className="relative">
-                <input
-                  id="password"
-                  className="field pr-16"
-                  type={showPassword ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={(e) => update('password', e.target.value)}
-                  autoComplete="new-password"
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-muted transition hover:text-navy"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-              <div className="mt-2 flex items-center gap-3">
-                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-soft">
-                  <i
-                    className="block h-full rounded-full transition-all duration-300"
-                    style={{
-                      width: form.password ? `${Math.max(strength, 1) * 25}%` : 0,
-                      background: meterColor,
-                    }}
-                  />
-                </div>
-                <span className="min-w-[4.5rem] text-right text-[12px] font-semibold text-muted">
-                  {form.password ? STRENGTH_LABELS[Math.max(strength, 1)] : '12+ chars'}
-                </span>
-              </div>
-            </Field>
-          </section>
-
-          <section className="mt-6 space-y-3.5">
-            <SectionLabel>Your practice</SectionLabel>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              <Field label="Practice name" htmlFor="organizationName">
-                <input
-                  id="organizationName"
-                  className="field"
-                  value={form.organizationName}
-                  onChange={(e) => update('organizationName', e.target.value)}
-                  autoComplete="organization"
-                  placeholder="e.g. Riverside Family Clinic"
-                />
-              </Field>
-              <Field label="Phone" hint="Optional" htmlFor="phone">
-                <input
-                  id="phone"
-                  className="field"
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => update('phone', e.target.value)}
-                  autoComplete="tel"
-                  placeholder="For setup help"
-                />
-              </Field>
-            </div>
-
-            <div>
-              <p className="mb-2 text-[13.5px] font-semibold text-navy">
-                Team size <span className="font-normal text-muted">(people who will log in)</span>
+            <div className="animate-rise-delay max-w-lg py-4 lg:py-5">
+              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#9ceee8]">14-day free trial</p>
+              <h1 className="mt-3 text-4xl font-black leading-[0.98] tracking-[-0.06em] text-white sm:text-[3.1rem]">
+                Start with <span className="text-[#53e4d4]">Utessa</span>
+              </h1>
+              <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[#dbe3ff]/85">
+                One workspace for CRM, operations, outreach, and time — built for teams that want clarity, speed, and control.
               </p>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" role="group" aria-label="Team size">
-                {SIZE_OPTIONS.map((o) => {
-                  const selected = String(form.teamSizeBand) === String(o.value)
-                  return (
-                    <button
-                      key={o.value}
-                      type="button"
-                      onClick={() => update('teamSizeBand', o.value)}
-                      className={`rounded-xl border-[1.5px] px-2 py-2.5 text-[13.5px] font-semibold transition ${
-                        selected
-                          ? 'border-teal bg-[#E9FBFB] text-navy shadow-[0_0_0_3px_rgba(59,196,202,.28)]'
-                          : 'border-line bg-white text-navy hover:border-teal/60'
-                      }`}
-                      aria-pressed={selected}
-                    >
-                      {o.label}
-                    </button>
-                  )
-                })}
-              </div>
             </div>
-          </section>
 
-          <section className="mt-5 space-y-2.5 text-sm leading-snug text-navy">
-            <label className="flex cursor-pointer gap-3 rounded-xl p-1">
-              <input
-                type="checkbox"
-                className="mt-0.5 h-[17px] w-[17px] shrink-0 accent-navy"
-                checked={form.termsAccepted}
-                onChange={(e) => update('termsAccepted', e.target.checked)}
-              />
-              <span>
-                I agree to the Terms of Service and Privacy Policy, and I&apos;m authorized to accept the Business Associate Agreement (BAA) on behalf of this practice.
-              </span>
-            </label>
-            <label className="flex cursor-pointer gap-3 rounded-xl p-1">
-              <input
-                type="checkbox"
-                className="mt-0.5 h-[17px] w-[17px] shrink-0 accent-navy"
-                checked={form.newsOptIn}
-                onChange={(e) => update('newsOptIn', e.target.checked)}
-              />
-              <span>
-                Send me product tips and updates by email.{' '}
-                <span className="text-muted">(Optional)</span>
-              </span>
-            </label>
-          </section>
+            <div className="animate-rise-delay space-y-2.5">
+              {INCLUDES.map((item) => (
+                <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 backdrop-blur-[2px]">
+                  <span className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${item.color}`} />
+                  <div>
+                    <div className="font-semibold text-white">{item.title}</div>
+                    <div className="text-sm text-[#dce3ff]/75">{item.text}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
 
-          {error && (
-            <p
-              className="mt-4 rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-[13.5px] font-semibold text-warn"
-              role="alert"
+        <main className="flex w-full flex-1 items-center justify-center overflow-y-auto bg-[#f6f8fc] px-4 py-6 sm:px-6 lg:px-8 xl:px-12">
+          <div className="w-full max-w-[650px] py-1">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <span className="inline-flex items-center rounded-full border border-[#dfe6f6] bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#58637e]">
+                About a minute to set up
+              </span>
+              <p className="text-sm font-semibold text-navy">
+                Have an account?{' '}
+                <Link to="/login" className="text-[#1c8f8e] underline-offset-2 hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            </div>
+
+            <form
+              className="animate-rise rounded-[30px] border border-[#edf1fa] bg-white p-4 shadow-[0_28px_70px_rgba(14,23,49,0.1)] sm:p-5"
+              onSubmit={onSubmit}
+              noValidate
             >
-              {error}
-            </p>
-          )}
+              <header className="mb-5">
+                <h2 className="text-[26px] font-black tracking-[-0.05em] text-[#171d39] sm:text-[30px]">
+                  Create your practice account
+                </h2>
+                <p className="mt-2 text-[14px] leading-relaxed text-[#5a6582]">
+                  All four services included. You choose what to keep when the trial ends.
+                </p>
+              </header>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-5 w-full rounded-xl bg-yellow py-3.5 text-[15px] font-bold text-navy transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {submitting ? 'Creating account…' : 'Create account'}
-          </button>
-          <p className="mt-3 text-center text-[13px] text-muted">
-            No credit card required. Your organization stays private from day one.
-          </p>
-        </form>
-      </main>
+              <section className="space-y-3.5">
+                <SectionLabel>About you</SectionLabel>
+                <div className="grid gap-3.5 sm:grid-cols-2">
+                  <Field label="Full name" htmlFor="fullName">
+                    <input
+                      id="fullName"
+                      className="field"
+                      value={form.fullName}
+                      onChange={(e) => update('fullName', e.target.value)}
+                      autoComplete="name"
+                      autoFocus
+                    />
+                  </Field>
+                  <Field label="Work email" htmlFor="email">
+                    <input
+                      id="email"
+                      className="field"
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => update('email', e.target.value)}
+                      autoComplete="email"
+                      placeholder="you@yourpractice.com"
+                    />
+                  </Field>
+                </div>
+
+                <Field label="Password" htmlFor="password">
+                  <div className="relative">
+                    <input
+                      id="password"
+                      className="field pr-16"
+                      type={showPassword ? 'text' : 'password'}
+                      value={form.password}
+                      onChange={(e) => update('password', e.target.value)}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-[#5a6582] transition hover:text-[#171d39]"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
+                  <div className="mt-2 flex items-center gap-3">
+                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#edf2ff]">
+                      <i
+                        className="block h-full rounded-full transition-all duration-300"
+                        style={{
+                          width: form.password ? `${Math.max(strength, 1) * 25}%` : 0,
+                          background: meterColor,
+                        }}
+                      />
+                    </div>
+                    <span className="min-w-[4.5rem] text-right text-[12px] font-semibold text-[#5a6582]">
+                      {form.password ? STRENGTH_LABELS[Math.max(strength, 1)] : '12+ chars'}
+                    </span>
+                  </div>
+                </Field>
+              </section>
+
+              <section className="mt-5 space-y-3.5">
+                <SectionLabel>Your practice</SectionLabel>
+                <div className="grid gap-3.5 sm:grid-cols-2">
+                  <Field label="Practice name" htmlFor="organizationName">
+                    <input
+                      id="organizationName"
+                      className="field"
+                      value={form.organizationName}
+                      onChange={(e) => update('organizationName', e.target.value)}
+                      autoComplete="organization"
+                      placeholder="e.g. Riverside Family Clinic"
+                    />
+                  </Field>
+                  <Field label="Phone" hint="Optional" htmlFor="phone">
+                    <input
+                      id="phone"
+                      className="field"
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => update('phone', e.target.value)}
+                      autoComplete="tel"
+                      placeholder="For setup help"
+                    />
+                  </Field>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-[13.5px] font-semibold text-[#1d2448]">
+                    Team size <span className="font-normal text-[#5a6582]">(people who will log in)</span>
+                  </p>
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" role="group" aria-label="Team size">
+                    {SIZE_OPTIONS.map((o) => {
+                      const selected = String(form.teamSizeBand) === String(o.value)
+                      return (
+                        <button
+                          key={o.value}
+                          type="button"
+                          onClick={() => update('teamSizeBand', o.value)}
+                          className={`rounded-xl border-[1.5px] px-2 py-2.5 text-[13.5px] font-semibold transition ${
+                            selected
+                              ? 'border-[#2ec4b6] bg-[#eafaf9] text-[#171d39] shadow-[0_0_0_3px_rgba(46,196,182,.22)]'
+                              : 'border-[#dfe6f7] bg-white text-[#171d39] hover:border-[#9ecfd8]'
+                          }`}
+                          aria-pressed={selected}
+                        >
+                          {o.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </section>
+
+              <section className="mt-4 space-y-2 text-sm leading-snug text-[#171d39]">
+                <label className="flex cursor-pointer gap-3 rounded-xl p-1">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-[17px] w-[17px] shrink-0 accent-[#1d2448]"
+                    checked={form.termsAccepted}
+                    onChange={(e) => update('termsAccepted', e.target.checked)}
+                  />
+                  <span>
+                    I agree to the Terms of Service and Privacy Policy, and I&apos;m authorized to accept the Business Associate Agreement (BAA) on behalf of this practice.
+                  </span>
+                </label>
+                <label className="flex cursor-pointer gap-3 rounded-xl p-1">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-[17px] w-[17px] shrink-0 accent-[#1d2448]"
+                    checked={form.newsOptIn}
+                    onChange={(e) => update('newsOptIn', e.target.checked)}
+                  />
+                  <span>
+                    Send me product tips and updates by email. <span className="text-[#5a6582]">(Optional)</span>
+                  </span>
+                </label>
+              </section>
+
+              {error && (
+                <p
+                  className="mt-4 rounded-xl border border-[#f2c9c9] bg-[#fff4f4] px-3.5 py-3 text-[13.5px] font-semibold text-[#b74545]"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="mt-5 w-full rounded-2xl bg-[linear-gradient(135deg,#1d2448_0%,#242f67_35%,#2eb9ae_100%)] py-3.5 text-[15px] font-bold text-white shadow-[0_22px_35px_rgba(29,36,72,0.22)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {submitting ? 'Creating account…' : 'Create account'}
+              </button>
+              <p className="mt-3 text-center text-[13px] text-[#5a6582]">
+                No credit card required. Your organization stays private from day one.
+              </p>
+            </form>
+          </div>
+        </main>
+      </div>
 
       <style>{`
         .field {
           width: 100%;
           padding: 12px 14px;
-          border: 1.5px solid var(--color-line);
-          border-radius: 12px;
+          border: 1.5px solid #dde5f6;
+          border-radius: 15px;
           font: inherit;
           font-size: 15px;
-          background: #fff;
-          color: var(--color-navy);
-          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+          background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+          color: #171d39;
+          transition: border-color 0.16s ease, box-shadow 0.16s ease;
         }
         .field:hover {
-          border-color: #c5cadc;
+          border-color: #b4c1df;
         }
         .field:focus-visible {
           outline: none;
-          border-color: var(--color-teal);
-          box-shadow: 0 0 0 4px rgba(59, 196, 202, 0.35);
+          border-color: #42cfc0;
+          box-shadow: 0 0 0 4px rgba(66, 207, 192, 0.22);
         }
         .field::placeholder {
-          color: #8b91ab;
+          color: #8a93af;
         }
       `}</style>
     </div>
@@ -354,7 +348,7 @@ export default function SignupPage() {
 
 function SectionLabel({ children }) {
   return (
-    <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted">
+    <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#5a6582]">
       {children}
     </p>
   )
@@ -363,8 +357,8 @@ function SectionLabel({ children }) {
 function Field({ label, hint, htmlFor, children }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="mb-1.5 block text-[13.5px] font-semibold text-navy">
-        {label} {hint && <span className="font-normal text-muted">({hint})</span>}
+      <label htmlFor={htmlFor} className="mb-1.5 block text-[13.5px] font-semibold text-[#1d2448]">
+        {label} {hint && <span className="font-normal text-[#5a6582]">({hint})</span>}
       </label>
       {children}
     </div>

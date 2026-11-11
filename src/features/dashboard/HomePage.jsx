@@ -55,69 +55,80 @@ export default function HomePage() {
   ]
 
   return (
-    <div>
+    <div className="space-y-6">
       {!user?.emailVerified && (
-        <div className="mb-4 rounded-[12px] border border-[#FECDCA] bg-[#FEF3F2] px-4 py-3 text-sm text-[#7A271A]">
+        <div className="rounded-[16px] border border-[#f3d5d5] bg-[#fff4f4] px-4 py-3 text-sm text-[#7d3d3d] shadow-[0_12px_24px_rgba(122,39,26,0.04)]">
           <b>Verify your email</b> to unlock patient-information features for this practice.
         </div>
       )}
 
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="m-0 text-[28px] font-bold tracking-[-0.02em] text-navy">Practice dashboard</h1>
-          <p className="mt-1 text-sm text-[#43476A]">
+          <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[#69789a]">Overview</p>
+          <h1 className="m-0 text-[30px] font-black tracking-[-0.05em] text-[#171d39]">Practice dashboard</h1>
+          <p className="mt-1 text-sm text-[#4c5678]">
             Live counts for {user?.organizationName}. Signed in as {roleLabel(user?.role)}.
           </p>
         </div>
       </div>
 
       {error && (
-        <p className="mb-4 rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-sm font-semibold text-warn">
+        <p className="rounded-xl border border-[#f3c9c9] bg-[#fff4f4] px-3.5 py-3 text-sm font-semibold text-[#b74545]">
           {error}
         </p>
       )}
 
-      <div className="mb-[18px] grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {kpis.map((kpi) => (
           <Link
             key={kpi.key}
             to={kpi.to}
-            className="rounded-[12px] border border-[#D9DAE1] bg-white px-5 py-[18px] no-underline transition hover:border-[#0A7A82]"
+            className="group rounded-[22px] border border-[#eaeef9] bg-[linear-gradient(135deg,#ffffff_0%,#f8faff_100%)] p-4 no-underline shadow-[0_12px_28px_rgba(17,24,52,0.06)] transition duration-200 hover:-translate-y-1 hover:border-[#9ddedc] hover:shadow-[0_20px_36px_rgba(17,24,52,0.09)]"
           >
-            <div className="font-mono text-[32px] font-medium tracking-[-0.02em] text-navy">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <span className="rounded-full bg-[#ebf7f7] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#1c8f8e]">
+                {kpi.key}
+              </span>
+            </div>
+            <div className="font-mono text-[30px] font-semibold tracking-[-0.04em] text-[#171d39]">
               {loading && summary == null ? '—' : (kpi.n ?? 0)}
             </div>
-            <div className="mt-1 text-[13px] text-[#43476A]">{kpi.l}</div>
+            <div className="mt-2 text-[13px] text-[#4c5678]">{kpi.l}</div>
           </Link>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-[18px]">
-        <section className="min-w-0 flex-[1_1_320px] rounded-[16px] border border-[#D9DAE1] bg-white px-5 py-[18px] shadow-[0_12px_32px_rgba(21,25,64,0.04)]">
-          <h2 className="mb-3 text-base font-semibold text-navy">Needs attention</h2>
+      <div className="flex flex-wrap gap-5">
+        <section className="min-w-0 flex-[1_1_360px] rounded-[24px] border border-[#eaeef9] bg-white p-5 shadow-[0_18px_32px_rgba(17,24,52,0.05)]">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-[#171d39]">Needs attention</h2>
+            <span className="rounded-full bg-[#ebf9f8] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[#1c8f8e]">
+              Live
+            </span>
+          </div>
           <ul className="m-0 list-none p-0">
             {(summary?.attention || []).map((item) => (
-              <li key={item.title} className="flex gap-3 border-b border-[#EAEBF4] py-3 last:border-0">
+              <li key={item.title} className="flex gap-3 border-b border-[#edf1fa] py-3 last:border-0">
                 <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${DOT[item.tone] || DOT.teal}`} />
-                <div>
-                  <p className="m-0 text-sm font-semibold text-navy">{item.title}</p>
-                  <p className="m-0 mt-0.5 text-[13px] text-[#4C5076]">{item.meta}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="m-0 text-sm font-semibold text-[#171d39]">{item.title}</p>
+                  <p className="m-0 mt-0.5 text-[13px] text-[#4c5678]">{item.meta}</p>
                 </div>
                 <span className={`ml-auto self-start rounded-full px-2.5 py-1 text-[11px] font-semibold ${TONE[item.tone] || TONE.teal}`}>
-                  Live
+                  {item.tone === 'red' ? 'Action' : 'Info'}
                 </span>
               </li>
             ))}
             {!loading && !summary?.attention?.length && (
-              <li className="py-3 text-sm text-[#4C5076]">No items yet — add providers, staff, vendors, or leads.</li>
+              <li className="py-3 text-sm text-[#4c5678]">No items yet — add providers, staff, vendors, or leads.</li>
             )}
           </ul>
         </section>
 
-        <section className="min-w-0 flex-[1_1_280px] rounded-[16px] border border-[#D9DAE1] bg-white px-4 py-[18px] shadow-[0_12px_32px_rgba(21,25,64,0.04)]">
+        <section className="min-w-0 flex-[1_1_290px] rounded-[24px] border border-[#eaeef9] bg-white p-5 shadow-[0_18px_32px_rgba(17,24,52,0.05)]">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-navy">Quick actions</h2>
-            <span className="rounded-full bg-[#EEF6F7] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0A7A82]">
+            <h2 className="text-lg font-semibold text-[#171d39]">Quick actions</h2>
+            <span className="rounded-full bg-[#fff3d8] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.1em] text-[#a8741e]">
               Fast
             </span>
           </div>
@@ -135,19 +146,19 @@ export default function HomePage() {
 
 function Action({ to, children, tone = 'teal' }) {
   const accent = {
-    teal: 'border-[#C9EAEF] bg-[#F3FBFB]',
-    amber: 'border-[#F5D7A8] bg-[#FFF9F0]',
-    lavender: 'border-[#D9D4F7] bg-[#F7F4FF]',
-    ink: 'border-[#D9DCEB] bg-[#F4F5FB]',
+    teal: 'border-[#cfeef0] bg-[#f2fbfb]',
+    amber: 'border-[#f1d9a9] bg-[#fffaf2]',
+    lavender: 'border-[#dfe0fb] bg-[#f7f5ff]',
+    ink: 'border-[#e4e8f7] bg-[#f7f9ff]',
   }
 
   return (
     <Link
       to={to}
-      className={`group flex min-h-[52px] items-center justify-between gap-3 rounded-[12px] border px-3.5 py-2.5 text-sm font-semibold text-[#151621] no-underline transition duration-150 hover:-translate-y-0.5 hover:border-[#97D7DB] hover:shadow-[0_10px_24px_rgba(21,25,64,0.06)] ${accent[tone] || accent.teal}`}
+      className={`group flex min-h-[56px] items-center justify-between gap-3 rounded-[16px] border px-3.5 py-2.5 text-sm font-semibold text-[#171d39] no-underline transition duration-150 hover:-translate-y-0.5 hover:border-[#8fd9d2] hover:shadow-[0_12px_24px_rgba(17,24,52,0.06)] ${accent[tone] || accent.teal}`}
     >
-      <span className="text-[14px] text-[#151621]">{children}</span>
-      <span className="text-[15px] font-bold text-[#151940] transition group-hover:translate-x-0.5">→</span>
+      <span className="text-[14px] text-[#171d39]">{children}</span>
+      <span className="text-[15px] font-bold text-[#171d39] transition group-hover:translate-x-0.5">→</span>
     </Link>
   )
 }
