@@ -49,6 +49,48 @@ const PERMS = {
   MEMBER: ['dash', 'inbox', 'resources', 'training', 'timeclock'],
 }
 
+const FEATURE_SERVICE = {
+  dash: null,
+  inbox: null,
+  creds: 'ops',
+  staff: 'ops',
+  vendors: 'ops',
+  docvault: 'ops',
+  resources: 'ops',
+  training: 'ops',
+  timeclock: 'tc',
+  inventory: 'ops',
+  patients: 'crm',
+  noshows: 'crm',
+  leads: 'mkt',
+  cms: 'mkt',
+  email: 'mkt',
+  social: 'mkt',
+  agents: 'mkt',
+  setup: null,
+  voip: null,
+  mail: null,
+  mobile: null,
+  brand: null,
+  access: null,
+}
+
+function normalizeEnabledServices(enabledServices) {
+  if (!enabledServices) return []
+  if (Array.isArray(enabledServices)) return enabledServices
+  if (enabledServices instanceof Set) return [...enabledServices]
+  if (typeof enabledServices === 'object') return Object.keys(enabledServices).filter((key) => enabledServices[key])
+  return []
+}
+
+function resolveEnabledServices(enabledServices) {
+  const normalized = normalizeEnabledServices(enabledServices)
+  if (enabledServices == null && normalized.length === 0) {
+    return ['crm', 'ops', 'mkt', 'tc']
+  }
+  return normalized
+}
+
 /** Full practice sidebar — aligned with Practice-CRM wireframe */
 export const NAV_SECTIONS = [
   {
@@ -61,31 +103,31 @@ export const NAV_SECTIONS = [
   {
     title: 'Practice operations',
     items: [
-      { id: 'creds', label: 'Providers', to: '/app/providers', perm: 'creds' },
-      { id: 'staff', label: 'Staff', to: '/app/staff', perm: 'staff' },
-      { id: 'vendors', label: 'Vendors', to: '/app/vendors', perm: 'vendors' },
-      { id: 'docvault', label: 'Document vault', to: '/app/document-vault', perm: 'docvault' },
-      { id: 'resources', label: 'Resources', to: '/app/resources', perm: 'resources' },
-      { id: 'training', label: 'Training', to: '/app/training', perm: 'training' },
-      { id: 'timeclock', label: 'Time clock', to: '/app/timeclock', perm: 'timeclock' },
-      { id: 'inventory', label: 'Inventory', to: '/app/inventory', perm: 'inventory' },
+      { id: 'creds', label: 'Providers', to: '/app/providers', perm: 'creds', service: 'ops' },
+      { id: 'staff', label: 'Staff', to: '/app/staff', perm: 'staff', service: 'ops' },
+      { id: 'vendors', label: 'Vendors', to: '/app/vendors', perm: 'vendors', service: 'ops' },
+      { id: 'docvault', label: 'Document vault', to: '/app/document-vault', perm: 'docvault', service: 'ops' },
+      { id: 'resources', label: 'Resources', to: '/app/resources', perm: 'resources', service: 'ops' },
+      { id: 'training', label: 'Training', to: '/app/training', perm: 'training', service: 'ops' },
+      { id: 'timeclock', label: 'Time clock', to: '/app/timeclock', perm: 'timeclock', service: 'tc' },
+      { id: 'inventory', label: 'Inventory', to: '/app/inventory', perm: 'inventory', service: 'ops' },
     ],
   },
   {
     title: 'Patients',
     items: [
-      { id: 'patients', label: 'Patient leads & calls', to: '/app/crm', perm: 'patients' },
-      { id: 'noshows', label: 'No-shows & cancellations', to: '/app/no-shows', perm: 'noshows' },
+      { id: 'patients', label: 'Patient leads & calls', to: '/app/crm', perm: 'patients', service: 'crm' },
+      { id: 'noshows', label: 'No-shows & cancellations', to: '/app/no-shows', perm: 'noshows', service: 'crm' },
     ],
   },
   {
     title: 'Marketing & outreach',
     items: [
-      { id: 'leads', label: 'Provider leads', to: '/app/provider-leads', perm: 'leads' },
-      { id: 'cms', label: 'CMS provider search', to: '/app/cms-search', perm: 'cms' },
-      { id: 'email', label: 'Email campaigns', to: '/app/email-campaigns', perm: 'email' },
-      { id: 'social', label: 'Social posts', to: '/app/social', perm: 'social' },
-      { id: 'agents', label: 'AI agents', to: '/app/agents', perm: 'agents' },
+      { id: 'leads', label: 'Provider leads', to: '/app/provider-leads', perm: 'leads', service: 'mkt' },
+      { id: 'cms', label: 'CMS provider search', to: '/app/cms-search', perm: 'cms', service: 'mkt' },
+      { id: 'email', label: 'Email campaigns', to: '/app/email-campaigns', perm: 'email', service: 'mkt' },
+      { id: 'social', label: 'Social posts', to: '/app/social', perm: 'social', service: 'mkt' },
+      { id: 'agents', label: 'AI agents', to: '/app/agents', perm: 'agents', service: 'mkt' },
     ],
   },
   {
@@ -114,11 +156,17 @@ export function permissionsFor(role) {
   return new Set(PERMS[normalizeRole(role)] || PERMS.MEMBER)
 }
 
-export function navForRole(role) {
+export function navForRole(role, enabledServices = []) {
   const perms = permissionsFor(role)
+  const allowed = new Set(resolveEnabledServices(enabledServices))
+
   return NAV_SECTIONS.map((section) => ({
     ...section,
-    items: section.items.filter((item) => perms.has(item.perm)),
+    items: section.items.filter((item) => {
+      if (!perms.has(item.perm)) return false
+      const required = FEATURE_SERVICE[item.perm] ?? item.service ?? null
+      return required == null || allowed.has(required)
+    }),
   })).filter((section) => section.items.length > 0)
 }
 
@@ -254,4 +302,10 @@ export function attentionItems(role) {
     ],
   }
   return shared[r] || shared.OWNER.map((x) => ({ ...x, title: x.title.replace('providers', 'items') })).slice(0, 3)
+}
+
+export function serviceAllowed(enabledServices, perm) {
+  const allowed = new Set(resolveEnabledServices(enabledServices))
+  const required = FEATURE_SERVICE[perm] ?? null
+  return required == null || allowed.has(required)
 }

@@ -30,7 +30,7 @@ export default function AppShell() {
     return () => clearInterval(timer)
   }, [booting, location.pathname, location.state, navigate])
 
-  const sections = useMemo(() => navForRole(user?.role), [user?.role])
+  const sections = useMemo(() => navForRole(user?.role, user?.enabledServices), [user?.role, user?.enabledServices])
 
   if (loading) {
     return <BootScreen progress={35} label="Checking your secure session…" />
