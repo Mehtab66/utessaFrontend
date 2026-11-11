@@ -93,7 +93,7 @@ export default function HomePage() {
       </div>
 
       <div className="flex flex-wrap gap-[18px]">
-        <section className="min-w-0 flex-[1_1_320px] rounded-[12px] border border-[#D9DAE1] bg-white px-5 py-[18px]">
+        <section className="min-w-0 flex-[1_1_320px] rounded-[16px] border border-[#D9DAE1] bg-white px-5 py-[18px] shadow-[0_12px_32px_rgba(21,25,64,0.04)]">
           <h2 className="mb-3 text-base font-semibold text-navy">Needs attention</h2>
           <ul className="m-0 list-none p-0">
             {(summary?.attention || []).map((item) => (
@@ -114,13 +114,18 @@ export default function HomePage() {
           </ul>
         </section>
 
-        <section className="min-w-0 flex-[1_1_280px] rounded-[12px] border border-[#D9DAE1] bg-white px-5 py-[18px]">
-          <h2 className="mb-3 text-base font-semibold text-navy">Quick actions</h2>
-          <div className="flex flex-col gap-2">
-            <Action to="/app/providers">Register a provider</Action>
-            <Action to="/app/staff">Add staff member</Action>
-            <Action to="/app/vendors">Add vendor + BAA</Action>
-            <Action to="/app/crm">Log a patient lead</Action>
+        <section className="min-w-0 flex-[1_1_280px] rounded-[16px] border border-[#D9DAE1] bg-white px-4 py-[18px] shadow-[0_12px_32px_rgba(21,25,64,0.04)]">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-navy">Quick actions</h2>
+            <span className="rounded-full bg-[#EEF6F7] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0A7A82]">
+              Fast
+            </span>
+          </div>
+          <div className="grid gap-2.5">
+            <Action to="/app/providers" tone="teal">Register a provider</Action>
+            <Action to="/app/staff" tone="amber">Add staff member</Action>
+            <Action to="/app/vendors" tone="lavender">Add vendor + BAA</Action>
+            <Action to="/app/crm" tone="ink">Log a patient lead</Action>
           </div>
         </section>
       </div>
@@ -128,13 +133,21 @@ export default function HomePage() {
   )
 }
 
-function Action({ to, children }) {
+function Action({ to, children, tone = 'teal' }) {
+  const accent = {
+    teal: 'border-[#C9EAEF] bg-[#F3FBFB]',
+    amber: 'border-[#F5D7A8] bg-[#FFF9F0]',
+    lavender: 'border-[#D9D4F7] bg-[#F7F4FF]',
+    ink: 'border-[#D9DCEB] bg-[#F4F5FB]',
+  }
+
   return (
     <Link
       to={to}
-      className="min-h-11 rounded-lg border border-[#C8C9D4] bg-white px-4 text-sm font-semibold text-[#151621] no-underline transition hover:bg-[#F1F2F8]"
+      className={`group flex min-h-[52px] items-center justify-between gap-3 rounded-[12px] border px-3.5 py-2.5 text-sm font-semibold text-[#151621] no-underline transition duration-150 hover:-translate-y-0.5 hover:border-[#97D7DB] hover:shadow-[0_10px_24px_rgba(21,25,64,0.06)] ${accent[tone] || accent.teal}`}
     >
-      {children}
+      <span className="text-[14px] text-[#151621]">{children}</span>
+      <span className="text-[15px] font-bold text-[#151940] transition group-hover:translate-x-0.5">→</span>
     </Link>
   )
 }

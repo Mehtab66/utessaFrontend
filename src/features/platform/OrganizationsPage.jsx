@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { DataTable, EmptyNote, Kpi, PageHeader, StatusPill, statusTone } from './ui'
 import { usePlatformApi } from './usePlatformApi'
 
 export default function OrganizationsPage() {
+  const navigate = useNavigate()
   const { data, loading, error } = usePlatformApi('/api/v1/platform/organizations')
   const [q, setQ] = useState('')
   const [status, setStatus] = useState('')
@@ -67,13 +69,14 @@ export default function OrganizationsPage() {
 
       <DataTable
         empty={loading ? 'Loading organizations…' : 'No organizations match these filters.'}
+        onRowClick={(row) => navigate(`/platform/organizations/${row.id}`)}
         columns={[
           {
             key: 'name',
             label: 'Organization',
             render: (r) => (
               <div>
-                <b>{r.name}</b>
+                <b className="text-[#075E66] underline-offset-2 group-hover:underline">{r.name}</b>
                 <div className="text-[13px] text-[#4A4E7A]">{r.orgType} · {r.slug}</div>
               </div>
             ),

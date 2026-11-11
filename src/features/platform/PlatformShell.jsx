@@ -37,7 +37,7 @@ export default function PlatformShell() {
                   <NavLink
                     key={item.id}
                     to={item.to}
-                    end={item.end ?? true}
+                    end={item.end === true}
                     className={({ isActive }) =>
                       `flex min-h-[42px] items-center rounded-[10px] px-3 pl-[30px] text-[15px] font-medium transition ${
                         isActive

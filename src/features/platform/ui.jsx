@@ -102,7 +102,7 @@ export function Cols({ rows }) {
   )
 }
 
-export function DataTable({ columns, rows, empty = 'No rows yet.' }) {
+export function DataTable({ columns, rows, empty = 'No rows yet.', onRowClick }) {
   return (
     <div className="overflow-x-auto rounded-[12px] border border-[#DCDFEE]">
       <table className="w-full min-w-[560px] border-collapse text-left">
@@ -125,7 +125,23 @@ export function DataTable({ columns, rows, empty = 'No rows yet.' }) {
             </tr>
           )}
           {rows.map((row) => (
-            <tr key={row.id || row.key} className="hover:bg-[#F8F9FD]">
+            <tr
+              key={row.id || row.key}
+              className={`hover:bg-[#F8F9FD] ${onRowClick ? 'cursor-pointer' : ''}`}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              onKeyDown={
+                onRowClick
+                  ? (e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onRowClick(row)
+                      }
+                    }
+                  : undefined
+              }
+              tabIndex={onRowClick ? 0 : undefined}
+              role={onRowClick ? 'link' : undefined}
+            >
               {columns.map((col) => (
                 <td
                   key={col.key}
