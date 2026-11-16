@@ -94,14 +94,14 @@ function resolveEnabledServices(enabledServices) {
 /** Full practice sidebar — aligned with Practice-CRM wireframe */
 export const NAV_SECTIONS = [
   {
-    title: 'Overview',
+    title: 'CRM',
     items: [
-      { id: 'dashboard', label: 'Dashboard', to: '/app', end: true, perm: 'dash' },
-      { id: 'inbox', label: 'Inbox', to: '/app/inbox', perm: 'inbox' },
+      { id: 'patients', label: 'Patient leads & calls', to: '/app/crm', perm: 'patients', service: 'crm' },
+      { id: 'noshows', label: 'No-shows & cancellations', to: '/app/no-shows', perm: 'noshows', service: 'crm' },
     ],
   },
   {
-    title: 'Practice operations',
+    title: 'Operations',
     items: [
       { id: 'creds', label: 'Providers', to: '/app/providers', perm: 'creds', service: 'ops' },
       { id: 'staff', label: 'Staff', to: '/app/staff', perm: 'staff', service: 'ops' },
@@ -109,15 +109,7 @@ export const NAV_SECTIONS = [
       { id: 'docvault', label: 'Document vault', to: '/app/document-vault', perm: 'docvault', service: 'ops' },
       { id: 'resources', label: 'Resources', to: '/app/resources', perm: 'resources', service: 'ops' },
       { id: 'training', label: 'Training', to: '/app/training', perm: 'training', service: 'ops' },
-      { id: 'timeclock', label: 'Time clock', to: '/app/timeclock', perm: 'timeclock', service: 'tc' },
       { id: 'inventory', label: 'Inventory', to: '/app/inventory', perm: 'inventory', service: 'ops' },
-    ],
-  },
-  {
-    title: 'Patients',
-    items: [
-      { id: 'patients', label: 'Patient leads & calls', to: '/app/crm', perm: 'patients', service: 'crm' },
-      { id: 'noshows', label: 'No-shows & cancellations', to: '/app/no-shows', perm: 'noshows', service: 'crm' },
     ],
   },
   {
@@ -131,14 +123,9 @@ export const NAV_SECTIONS = [
     ],
   },
   {
-    title: 'Settings',
+    title: 'Time clock',
     items: [
-      { id: 'setup', label: 'Practice setup', to: '/app/setup', perm: 'setup', badge: '11 left' },
-      { id: 'voip', label: 'Phone & text (VoIP)', to: '/app/voip', perm: 'voip' },
-      { id: 'mail', label: 'Email & domains', to: '/app/email-domains', perm: 'mail' },
-      { id: 'mobile', label: 'Mobile app', to: '/app/mobile', perm: 'mobile' },
-      { id: 'brand', label: 'Company & brand', to: '/app/brand', perm: 'brand' },
-      { id: 'access', label: 'Plans & access', to: '/app/plans-access', perm: 'access' },
+      { id: 'timeclock', label: 'Time clock', to: '/app/timeclock', perm: 'timeclock', service: 'tc' },
     ],
   },
 ]
@@ -218,62 +205,63 @@ export function dashboardCopy(role) {
       subtitle: 'Patient prep, training, and items that need clinical attention.',
       kpis: [
         { n: '9', l: 'Patients to prep', tone: 'teal' },
-        { n: '3', l: 'Training due', tone: 'amber' },
-        { n: '1', l: 'Policy acknowledgments', tone: 'ink' },
-        { n: '0', l: 'Open incidents', tone: 'green' },
+        { n: '6', l: 'Chart reviews open', tone: 'amber' },
+        { n: '3', l: 'Training reminders', tone: 'ink' },
+        { n: '1', l: 'Care gap alert', tone: 'red' },
       ],
     },
     PROVIDER: {
       title: 'Provider dashboard',
-      subtitle: 'Your schedule signals, credential status, and patient follow-ups.',
+      subtitle: 'Patient flow, treatment plans, and care coordination touchpoints.',
       kpis: [
-        { n: '16', l: 'Patients on panel', tone: 'teal' },
-        { n: '2', l: 'Credential tasks', tone: 'amber' },
-        { n: '5', l: 'Messages', tone: 'blue' },
-        { n: '1', l: 'Privileges pending', tone: 'ink' },
+        { n: '21', l: 'Patients scheduled', tone: 'teal' },
+        { n: '7', l: 'Follow-ups due', tone: 'amber' },
+        { n: '3', l: 'Care escalations', tone: 'red' },
+        { n: '4', l: 'Training items', tone: 'ink' },
       ],
     },
     BILLING: {
       title: 'Billing dashboard',
-      subtitle: 'Revenue-cycle signals without clinical chart access beyond your role.',
+      subtitle: 'Claims, accounts, and operational blockers across the billing queue.',
       kpis: [
-        { n: '42', l: 'Claims in process', tone: 'teal' },
-        { n: '7', l: 'Denials to work', tone: 'amber' },
-        { n: '3', l: 'Missing demographics', tone: 'red' },
-        { n: '1', l: 'Payer updates', tone: 'ink' },
+        { n: '41', l: 'Claims in review', tone: 'teal' },
+        { n: '17', l: 'Aging accounts', tone: 'amber' },
+        { n: '5', l: 'Insurance issues', tone: 'red' },
+        { n: '2', l: 'Policy updates', tone: 'ink' },
       ],
     },
     OUTREACH: {
       title: 'Outreach dashboard',
-      subtitle: 'Provider leads, campaigns, and agent activity.',
+      subtitle: 'Pipeline velocity, campaign health, and conversion signals.',
       kpis: [
-        { n: '64', l: 'Provider leads', tone: 'teal' },
-        { n: '5', l: 'Campaigns live', tone: 'blue' },
-        { n: '12', l: 'Meetings set', tone: 'green' },
-        { n: '2', l: 'Agents needing review', tone: 'amber' },
+        { n: '54', l: 'New lead inquiries', tone: 'teal' },
+        { n: '12', l: 'Campaigns active', tone: 'amber' },
+        { n: '7', l: 'AI agents running', tone: 'ink' },
+        { n: '3', l: 'Follow-up risks', tone: 'red' },
       ],
     },
     HR: {
       title: 'HR dashboard',
-      subtitle: 'Staff onboarding, credentials, and sensitive HR queues.',
+      subtitle: 'Staffing, credentialing, and onboarding across the practice.',
       kpis: [
-        { n: '6', l: 'Onboarding in progress', tone: 'teal' },
-        { n: '4', l: 'Licenses expiring', tone: 'amber' },
-        { n: '2', l: 'Offer letters pending', tone: 'ink' },
-        { n: '3', l: 'PTO approvals', tone: 'blue' },
+        { n: '16', l: 'Staff onboarding', tone: 'teal' },
+        { n: '9', l: 'Credential items', tone: 'amber' },
+        { n: '6', l: 'Open documents', tone: 'ink' },
+        { n: '2', l: 'Compliance checks', tone: 'red' },
       ],
     },
     MEMBER: {
-      title: 'Your dashboard',
-      subtitle: 'What you can access in this practice workspace.',
+      title: 'Team dashboard',
+      subtitle: 'Your operations summary and the work you need to complete today.',
       kpis: [
-        { n: '3', l: 'Training items', tone: 'teal' },
-        { n: '1', l: 'Unread messages', tone: 'blue' },
-        { n: '0', l: 'Time-card issues', tone: 'green' },
-        { n: '2', l: 'Resources to review', tone: 'ink' },
+        { n: '7', l: 'Tasks due', tone: 'teal' },
+        { n: '4', l: 'New updates', tone: 'amber' },
+        { n: '2', l: 'Resources shared', tone: 'ink' },
+        { n: '1', l: 'Training reminder', tone: 'blue' },
       ],
     },
   }
+
   return map[r] || map.MEMBER
 }
 
