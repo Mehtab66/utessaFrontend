@@ -1,28 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0F7F86;
-  --color-primary-hover: #0D6E74;
-  --color-primary-pressed: #0A5A5F;
-  --color-primary-disabled: #9FCFD0;
-  --color-accent: #FFC83D;
-  --color-accent-text: #0A3B40;
-  --color-text: #0A3B40;
-  --color-muted: #5B6B73;
-  --color-soft: #E1F4F5;
-  --color-page: #F6F8FA;
+  --color-primary: #1B1F4B;
+  --color-primary-hover: #262B66;
+  --color-primary-pressed: #12153A;
+  --color-primary-disabled: #9FA4C4;
+  --color-accent: #FFD23F;
+  --color-accent-text: #1B1F4B;
+  --color-text: #181C42;
+  --color-muted: #5E6485;
+  --color-faint: #8A90AD;
+  --color-soft: #F1F3F9;
+  --color-page: #F3F5FA;
   --color-card: #FFFFFF;
-  --color-border: #E2E8EC;
-  --color-navy: #0A3B40;
-  --color-navy-deep: #0A3B40;
-  --color-cyan: #0F7F86;
-  --color-lcyan: #E1F4F5;
-  --color-lavender: #E9F1F6;
-  --color-yellow: #FFC83D;
-  --color-teal: #0F7F86;
-  --color-bg: #F6F8FA;
-  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --shadow-panel: 0 10px 24px rgba(15, 23, 42, 0.06);
+  --color-border: #E1E4EE;
+  --color-navy: #1B1F4B;
+  --color-navy-deep: #12153A;
+  --color-cyan: #5CE1E6;
+  --color-lcyan: #8FEAEE;
+  --color-lavender: #C9CDF2;
+  --color-yellow: #FFD23F;
+  --color-teal: #3BC4CA;
+  --color-bg: #F5F6F8;
+  --color-warn: #B42318;
+  --color-ok: #12805C;
+  --font-sans: "Outfit", "Intel One", system-ui, -apple-system, sans-serif;
+  --shadow-panel: 0 1px 2px rgba(24,28,66,.05), 0 8px 24px -6px rgba(24,28,66,.10);
 }
 
 @layer base {

@@ -170,10 +170,10 @@ export function ResourceWorkspace({
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-[#151940]/45 px-3 py-4 sm:px-4 sm:py-6">
+        <div className="fixed inset-0 z-50 bg-[#151940]/45 px-3 py-4 sm:px-4 sm:py-6">
           <form
             onSubmit={stepped && !isLast ? goNext : submit}
-            className="flex h-[min(820px,94vh)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl"
+            className="flex h-full w-full flex-col overflow-hidden rounded-none bg-white shadow-xl sm:rounded-none"
           >
             <div className="shrink-0 border-b border-[#EAEBF4] px-5 pt-4 pb-0">
               <div className="flex items-start justify-between gap-3 pb-3">

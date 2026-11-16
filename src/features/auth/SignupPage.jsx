@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../../shared/api/client'
-import { Logo, Wordmark } from '../../shared/ui/Logo'
+import { Wordmark } from '../../shared/ui/Logo'
 
 const SIZE_OPTIONS = [
   { value: 5, label: '1–10' },
@@ -12,15 +12,6 @@ const SIZE_OPTIONS = [
   { value: 225, label: '151–300' },
   { value: 301, label: '300+' },
 ]
-
-const INCLUDES = [
-  { color: 'bg-[#53e4d4]', title: 'CRM', text: 'Leads, tracking, referrals, and outreach' },
-  { color: 'bg-[#ffca5c]', title: 'Ops', text: 'Documents, BAAs, and audit controls' },
-  { color: 'bg-[#9b96ff]', title: 'Marketing', text: 'Reviews, email, and text automation' },
-  { color: 'bg-[#2ec4b6]', title: 'Time clock', text: 'Scheduling, timesheets, and payroll' },
-]
-
-const STRENGTH_LABELS = ['', 'Too short', 'Weak', 'Okay', 'Strong']
 
 export default function SignupPage() {
   const navigate = useNavigate()
@@ -41,14 +32,23 @@ export default function SignupPage() {
   const strength = useMemo(() => {
     const v = form.password
     let score = 0
-    if (v.length >= 12) score++
-    if (v.length >= 16) score++
-    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++
-    if (/\d|[^A-Za-z0-9]/.test(v)) score++
+    if (v.length >= 12) score += 1
+    if (v.length >= 16) score += 1
+    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score += 1
+    if (/[0-9]/.test(v) || /[^A-Za-z0-9]/.test(v)) score += 1
     return score
   }, [form.password])
 
-  const meterColor = ['#E4E7F2', '#D95050', '#E6A02F', '#3CC9C1', '#1E8C68'][form.password ? Math.max(strength, 1) : 0]
+  const meterWidth = form.password ? `${Math.min((strength / 4) * 100, 100)}%` : '0%'
+  const meterColor = !form.password
+    ? '#F1F3F9'
+    : strength <= 1
+      ? '#D95050'
+      : strength === 2
+        ? '#E6A02F'
+        : strength === 3
+          ? '#3CC9C1'
+          : '#12805C'
 
   function update(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -83,284 +83,480 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(83,228,212,0.18),_transparent_22%),radial-gradient(circle_at_bottom_right,_rgba(247,199,90,0.14),_transparent_18%),linear-gradient(135deg,#f5f8ff_0%,#eef2fb_40%,#ecfaf8_100%)] text-navy">
-      <div className="flex min-h-screen flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
-        <aside className="relative flex min-h-[260px] w-full overflow-hidden bg-[#0b1020] text-white lg:min-h-screen lg:w-[46%] lg:flex-none">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(circle at 78% 12%, rgba(83,228,212,0.3), transparent 18%), radial-gradient(circle at 12% 86%, rgba(247,199,90,0.14), transparent 20%), linear-gradient(140deg, #0b1020 0%, #121a33 38%, #0d2335 100%)',
-            }}
-          />
-          <div className="animate-pulse-soft pointer-events-none absolute -right-10 top-20 h-52 w-52 rounded-full bg-[#53e4d4]/10 blur-3xl" />
-          <div className="animate-pulse-soft pointer-events-none absolute bottom-4 left-6 h-48 w-48 rounded-full bg-[#f7c75a]/10 blur-3xl" />
+    <div className="auth-shell">
+      <main className="auth-form-panel">
+        <div className="auth-topbar">
+          <Wordmark />
+          <span>
+            Have an account?{' '}
+            <Link to="/login">Sign in</Link>
+          </span>
+        </div>
 
-          <div className="relative z-10 flex w-full flex-col justify-between px-6 py-7 sm:px-8 lg:px-10 xl:px-12">
-            <Link to="/" className="animate-rise inline-flex w-fit items-center gap-3">
-              <Logo className="h-9 w-9" />
-              <Wordmark light />
-            </Link>
+        <form className="auth-form-wrap" onSubmit={onSubmit} noValidate>
+          <h1>Create your account</h1>
+          <p className="auth-subtitle">Start your 14-day free trial. No credit card required.</p>
 
-            <div className="animate-rise-delay max-w-lg py-4 lg:py-5">
-              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#9ceee8]">14-day free trial</p>
-              <h1 className="mt-3 text-4xl font-black leading-[0.98] tracking-[-0.06em] text-white sm:text-[3.1rem]">
-                Start with <span className="text-[#53e4d4]">Utessa</span>
-              </h1>
-              <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[#dbe3ff]/85">
-                One workspace for CRM, operations, outreach, and time — built for teams that want clarity, speed, and control.
-              </p>
+          <div className="auth-sso">
+            <button type="button" className="auth-sso-btn">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/>
+                <path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.7c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.8A11 11 0 0 0 12 23z"/>
+                <path fill="#FBBC05" d="M5.7 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8l3.6-2.8z"/>
+                <path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.1 7.1l3.6 2.8C6.6 7.4 9.1 5.4 12 5.4z"/>
+              </svg>
+              Continue with Google
+            </button>
+            <button type="button" className="auth-sso-btn">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#F25022" d="M2 2h9.5v9.5H2z"/>
+                <path fill="#7FBA00" d="M12.5 2H22v9.5h-9.5z"/>
+                <path fill="#00A4EF" d="M2 12.5h9.5V22H2z"/>
+                <path fill="#FFB900" d="M12.5 12.5H22V22h-9.5z"/>
+              </svg>
+              Continue with Microsoft
+            </button>
+          </div>
+
+          <div className="auth-divider">or sign up with email</div>
+
+          <div className="auth-grid-2">
+            <div className="auth-field">
+              <label htmlFor="fullName">Full name</label>
+              <div className="auth-icon-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="1.7"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+                <input id="fullName" type="text" value={form.fullName} onChange={(e) => update('fullName', e.target.value)} autoComplete="name" placeholder="Dr. Jane Smith" />
+              </div>
             </div>
 
-            <div className="animate-rise-delay space-y-2.5">
-              {INCLUDES.map((item) => (
-                <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 backdrop-blur-[2px]">
-                  <span className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${item.color}`} />
-                  <div>
-                    <div className="font-semibold text-white">{item.title}</div>
-                    <div className="text-sm text-[#dce3ff]/75">{item.text}</div>
-                  </div>
-                </div>
-              ))}
+            <div className="auth-field">
+              <label htmlFor="email">Work email</label>
+              <div className="auth-icon-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg>
+                <input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" placeholder="you@yourpractice.com" />
+              </div>
             </div>
           </div>
-        </aside>
 
-        <main className="flex w-full flex-1 items-center justify-center overflow-y-auto bg-[#f6f8fc] px-4 py-6 sm:px-6 lg:px-8 xl:px-12">
-          <div className="w-full max-w-[650px] py-1">
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <span className="inline-flex items-center rounded-full border border-[#dfe6f6] bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#58637e]">
-                About a minute to set up
+          <div className="auth-grid-2 mt-4">
+            <div className="auth-field">
+              <label htmlFor="password">Password</label>
+              <div className="auth-icon-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg>
+                <input id="password" type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} autoComplete="new-password" placeholder="12+ characters" className="auth-with-toggle" />
+                <button type="button" className="auth-show-toggle" onClick={() => setShowPassword((v) => !v)}>{showPassword ? 'Hide' : 'Show'}</button>
+              </div>
+              <div className="auth-meter"><i style={{ width: meterWidth, background: meterColor }} /></div>
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="phone">Phone <span className="auth-optional">(optional)</span></label>
+              <div className="auth-icon-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4.5-2 1.5a11 11 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/></svg>
+                <input id="phone" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} autoComplete="tel" placeholder="(555) 123-4567" />
+              </div>
+            </div>
+          </div>
+
+          <div className="auth-grid-2 mt-4">
+            <div className="auth-field">
+              <label htmlFor="organizationName">Practice name</label>
+              <div className="auth-icon-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5.5L12 3v17M12 8l8 2.5V20M2.5 20h19M7.5 8.5h1M7.5 12h1M7.5 15.5h1M15.5 13h1M15.5 16.5h1" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <input id="organizationName" type="text" value={form.organizationName} onChange={(e) => update('organizationName', e.target.value)} autoComplete="organization" placeholder="Riverside Family Clinic" />
+              </div>
+            </div>
+
+            <div className="auth-field">
+              <label htmlFor="teamSizeBand">Team size <span className="auth-optional">(users)</span></label>
+              <div className="auth-icon-field">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.7"/><path d="M2.5 19.5c.9-3 3.3-4.5 6.5-4.5s5.6 1.5 6.5 4.5M16 5.2a3.5 3.5 0 0 1 0 6.6M18 15.3c1.7.6 2.9 2 3.5 4.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+                <select id="teamSizeBand" value={form.teamSizeBand} onChange={(e) => update('teamSizeBand', e.target.value)}>
+                  <option value="">Choose…</option>
+                  {SIZE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="auth-checks" style={{ marginTop: 8 }}>
+            <label>
+              <input type="checkbox" checked={form.termsAccepted} onChange={(e) => update('termsAccepted', e.target.checked)} />
+              <span>
+                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, and I'm authorized to accept the <a href="#">Business Associate Agreement</a> on behalf of this practice.
               </span>
-              <p className="text-sm font-semibold text-navy">
-                Have an account?{' '}
-                <Link to="/login" className="text-[#1c8f8e] underline-offset-2 hover:underline">
-                  Sign in
-                </Link>
-              </p>
-            </div>
-
-            <form
-              className="animate-rise rounded-[30px] border border-[#edf1fa] bg-white p-4 shadow-[0_28px_70px_rgba(14,23,49,0.1)] sm:p-5"
-              onSubmit={onSubmit}
-              noValidate
-            >
-              <header className="mb-5">
-                <h2 className="text-[26px] font-black tracking-[-0.05em] text-[#171d39] sm:text-[30px]">
-                  Create your practice account
-                </h2>
-                <p className="mt-2 text-[14px] leading-relaxed text-[#5a6582]">
-                  All four services included. You choose what to keep when the trial ends.
-                </p>
-              </header>
-
-              <section className="space-y-3.5">
-                <SectionLabel>About you</SectionLabel>
-                <div className="grid gap-3.5 sm:grid-cols-2">
-                  <Field label="Full name" htmlFor="fullName">
-                    <input
-                      id="fullName"
-                      className="field"
-                      value={form.fullName}
-                      onChange={(e) => update('fullName', e.target.value)}
-                      autoComplete="name"
-                      autoFocus
-                    />
-                  </Field>
-                  <Field label="Work email" htmlFor="email">
-                    <input
-                      id="email"
-                      className="field"
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => update('email', e.target.value)}
-                      autoComplete="email"
-                      placeholder="you@yourpractice.com"
-                    />
-                  </Field>
-                </div>
-
-                <Field label="Password" htmlFor="password">
-                  <div className="relative">
-                    <input
-                      id="password"
-                      className="field pr-16"
-                      type={showPassword ? 'text' : 'password'}
-                      value={form.password}
-                      onChange={(e) => update('password', e.target.value)}
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-[#5a6582] transition hover:text-[#171d39]"
-                      onClick={() => setShowPassword((v) => !v)}
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  <div className="mt-2 flex items-center gap-3">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#edf2ff]">
-                      <i
-                        className="block h-full rounded-full transition-all duration-300"
-                        style={{
-                          width: form.password ? `${Math.max(strength, 1) * 25}%` : 0,
-                          background: meterColor,
-                        }}
-                      />
-                    </div>
-                    <span className="min-w-[4.5rem] text-right text-[12px] font-semibold text-[#5a6582]">
-                      {form.password ? STRENGTH_LABELS[Math.max(strength, 1)] : '12+ chars'}
-                    </span>
-                  </div>
-                </Field>
-              </section>
-
-              <section className="mt-5 space-y-3.5">
-                <SectionLabel>Your practice</SectionLabel>
-                <div className="grid gap-3.5 sm:grid-cols-2">
-                  <Field label="Practice name" htmlFor="organizationName">
-                    <input
-                      id="organizationName"
-                      className="field"
-                      value={form.organizationName}
-                      onChange={(e) => update('organizationName', e.target.value)}
-                      autoComplete="organization"
-                      placeholder="e.g. Riverside Family Clinic"
-                    />
-                  </Field>
-                  <Field label="Phone" hint="Optional" htmlFor="phone">
-                    <input
-                      id="phone"
-                      className="field"
-                      type="tel"
-                      value={form.phone}
-                      onChange={(e) => update('phone', e.target.value)}
-                      autoComplete="tel"
-                      placeholder="For setup help"
-                    />
-                  </Field>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-[13.5px] font-semibold text-[#1d2448]">
-                    Team size <span className="font-normal text-[#5a6582]">(people who will log in)</span>
-                  </p>
-                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4" role="group" aria-label="Team size">
-                    {SIZE_OPTIONS.map((o) => {
-                      const selected = String(form.teamSizeBand) === String(o.value)
-                      return (
-                        <button
-                          key={o.value}
-                          type="button"
-                          onClick={() => update('teamSizeBand', o.value)}
-                          className={`rounded-xl border-[1.5px] px-2 py-2.5 text-[13.5px] font-semibold transition ${
-                            selected
-                              ? 'border-[#2ec4b6] bg-[#eafaf9] text-[#171d39] shadow-[0_0_0_3px_rgba(46,196,182,.22)]'
-                              : 'border-[#dfe6f7] bg-white text-[#171d39] hover:border-[#9ecfd8]'
-                          }`}
-                          aria-pressed={selected}
-                        >
-                          {o.label}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              </section>
-
-              <section className="mt-4 space-y-2 text-sm leading-snug text-[#171d39]">
-                <label className="flex cursor-pointer gap-3 rounded-xl p-1">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 h-[17px] w-[17px] shrink-0 accent-[#1d2448]"
-                    checked={form.termsAccepted}
-                    onChange={(e) => update('termsAccepted', e.target.checked)}
-                  />
-                  <span>
-                    I agree to the Terms of Service and Privacy Policy, and I&apos;m authorized to accept the Business Associate Agreement (BAA) on behalf of this practice.
-                  </span>
-                </label>
-                <label className="flex cursor-pointer gap-3 rounded-xl p-1">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 h-[17px] w-[17px] shrink-0 accent-[#1d2448]"
-                    checked={form.newsOptIn}
-                    onChange={(e) => update('newsOptIn', e.target.checked)}
-                  />
-                  <span>
-                    Send me product tips and updates by email. <span className="text-[#5a6582]">(Optional)</span>
-                  </span>
-                </label>
-              </section>
-
-              {error && (
-                <p
-                  className="mt-4 rounded-xl border border-[#f2c9c9] bg-[#fff4f4] px-3.5 py-3 text-[13.5px] font-semibold text-[#b74545]"
-                  role="alert"
-                >
-                  {error}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="mt-5 w-full rounded-2xl bg-[linear-gradient(135deg,#1d2448_0%,#242f67_35%,#2eb9ae_100%)] py-3.5 text-[15px] font-bold text-white shadow-[0_22px_35px_rgba(29,36,72,0.22)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {submitting ? 'Creating account…' : 'Create account'}
-              </button>
-              <p className="mt-3 text-center text-[13px] text-[#5a6582]">
-                No credit card required. Your organization stays private from day one.
-              </p>
-            </form>
+            </label>
+            <label>
+              <input type="checkbox" checked={form.newsOptIn} onChange={(e) => update('newsOptIn', e.target.checked)} />
+              <span>Send me product tips and updates.</span>
+            </label>
           </div>
-        </main>
-      </div>
+
+          {error && <div className="auth-error" role="alert">{error}</div>}
+
+          <button type="submit" className="auth-primary-btn" disabled={submitting}>
+            {submitting ? 'Creating account…' : 'Create account'}
+          </button>
+
+          <p className="auth-form-foot">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg>
+            Protected by bot detection. We never ask for a card to start a trial.
+          </p>
+        </form>
+      </main>
+
+      <aside className="auth-visual" aria-label="Utessa platform preview">
+        <div className="auth-visual-overlay" />
+        <div className="auth-visual-copy">
+          <h2>Run your whole practice from one place</h2>
+          <p>Try CRM, Operations, Marketing and Time Clock free for 14 days. HIPAA-ready with a signed BAA, and no credit card to start.</p>
+          <ul className="auth-pills">
+            <li><i style={{ background: '#5CE1E6' }} />CRM</li>
+            <li><i style={{ background: '#C9CDF2' }} />Operations</li>
+            <li><i style={{ background: '#FFD23F' }} />Marketing</li>
+            <li><i style={{ background: '#3BC4CA' }} />Time Clock</li>
+          </ul>
+        </div>
+      </aside>
 
       <style>{`
-        .field {
+        .auth-shell {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          min-height: 100vh;
+          gap: 16px;
+          padding: 16px;
+          background: #ffffff;
+        }
+        .auth-form-panel {
+          display: flex;
+          flex-direction: column;
+          background: transparent;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+          padding: 22px clamp(20px, 4vw, 56px) 32px;
+        }
+        .auth-topbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          font-size: 14px;
+          color: #5E6485;
+        }
+        .auth-topbar a {
+          color: #1B1F4B;
+          font-weight: 600;
+          text-decoration: underline;
+          text-decoration-color: rgba(27,31,75,.25);
+          text-underline-offset: 3px;
+        }
+        .auth-form-wrap {
           width: 100%;
-          padding: 12px 14px;
-          border: 1.5px solid #dde5f6;
-          border-radius: 15px;
+          max-width: 480px;
+          margin: auto;
+          padding: 38px 0 14px;
+        }
+        .auth-form-wrap h1 {
+          margin: 0 0 8px;
+          font-size: clamp(2.2rem, 3vw, 3.1rem);
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+          color: #1B1F4B;
+        }
+        .auth-subtitle {
+          margin: 0 0 30px;
+          font-size: 15.5px;
+          line-height: 1.55;
+          color: #5E6485;
+        }
+        .auth-sso {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+        }
+        @media (max-width: 560px) {
+          .auth-sso { grid-template-columns: 1fr; }
+          .auth-grid-2 { grid-template-columns: 1fr; }
+        }
+        .auth-sso-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          height: 50px;
+          border: 1px solid #E1E4EE;
+          border-radius: 11px;
+          background: #fff;
+          color: #1B1F4B;
           font: inherit;
           font-size: 15px;
-          background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-          color: #171d39;
-          transition: border-color 0.16s ease, box-shadow 0.16s ease;
+          font-weight: 600;
+          cursor: pointer;
+          transition: border-color 0.15s ease, background 0.15s ease;
         }
-        .field:hover {
-          border-color: #b4c1df;
+        .auth-sso-btn:hover {
+          background: #FBFCFE;
+          border-color: #BFC5DA;
         }
-        .field:focus-visible {
+        .auth-sso-btn svg {
+          width: 18px;
+          height: 18px;
+        }
+        .auth-divider {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          margin: 22px 0;
+          color: #8A90AD;
+          font-size: 13px;
+        }
+        .auth-divider::before,
+        .auth-divider::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background: #E1E4EE;
+        }
+        .auth-grid-2 {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0 16px;
+        }
+        .auth-field {
+          margin-bottom: 16px;
+        }
+        .auth-field label {
+          display: block;
+          margin-bottom: 7px;
+          color: #1B1F4B;
+          font-size: 13.5px;
+          font-weight: 600;
+        }
+        .auth-optional {
+          color: #8A90AD;
+          font-weight: 400;
+        }
+        .auth-icon-field {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .auth-icon-field svg {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 19px;
+          height: 19px;
+          color: #7C83A3;
+          pointer-events: none;
+        }
+        .auth-icon-field input,
+        .auth-icon-field select {
+          width: 100%;
+          height: 52px;
+          padding: 0 14px 0 46px;
+          border: 1px solid #DCE4F5;
+          border-radius: 10px;
+          background: #EAF0FB;
+          color: #181C42;
+          font: inherit;
+          font-size: 15px;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+        .auth-icon-field input::placeholder {
+          color: #A5AAC2;
+        }
+        .auth-icon-field select {
+          appearance: none;
+          padding-right: 38px;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235E6485' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          background-size: 12px 8px;
+        }
+        .auth-icon-field input:hover,
+        .auth-icon-field select:hover {
+          border-color: #C5D1EC;
+        }
+        .auth-icon-field input:focus-visible,
+        .auth-icon-field select:focus-visible {
           outline: none;
-          border-color: #42cfc0;
-          box-shadow: 0 0 0 4px rgba(66, 207, 192, 0.22);
+          border-color: #3BC4CA;
+          box-shadow: 0 0 0 4px rgba(59,196,202,.35);
+          background: #fff;
         }
-        .field::placeholder {
-          color: #8a93af;
+        .auth-with-toggle {
+          padding-right: 48px !important;
+        }
+        .auth-show-toggle {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          border: none;
+          background: transparent;
+          color: #5E6485;
+          font-size: 12.5px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .auth-meter {
+          height: 4px;
+          margin-top: 9px;
+          overflow: hidden;
+          border-radius: 4px;
+          background: #F1F3F9;
+        }
+        .auth-meter i {
+          display: block;
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.25s ease, background 0.25s ease;
+        }
+        .auth-checks {
+          margin-top: 8px;
+          display: grid;
+          gap: 10px;
+        }
+        .auth-checks label {
+          display: flex;
+          align-items: flex-start;
+          gap: 11px;
+          font-size: 14px;
+          line-height: 1.5;
+          color: #5E6485;
+        }
+        .auth-checks input {
+          width: 18px;
+          height: 18px;
+          margin-top: 2px;
+          accent-color: #1B1F4B;
+          flex: none;
+        }
+        .auth-checks a {
+          color: #1B1F4B;
+          font-weight: 600;
+          text-decoration: underline;
+          text-decoration-color: rgba(27,31,75,.25);
+          text-underline-offset: 3px;
+        }
+        .auth-error {
+          min-height: 22px;
+          margin: 12px 0 0;
+          color: #B42318;
+          font-size: 13.5px;
+          font-weight: 600;
+        }
+        .auth-primary-btn {
+          width: 100%;
+          height: 52px;
+          margin-top: 14px;
+          border: 0;
+          border-radius: 11px;
+          background: #1B1F4B;
+          color: white;
+          font: inherit;
+          font-size: 16px;
+          font-weight: 600;
+          box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(27,31,75,.55);
+          cursor: pointer;
+        }
+        .auth-primary-btn:hover {
+          background: #262B66;
+        }
+        .auth-form-foot {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 16px;
+          font-size: 13px;
+          color: #5E6485;
+        }
+        .auth-form-foot svg {
+          width: 14px;
+          height: 14px;
+          color: #3BC4CA;
+        }
+        .auth-visual {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          overflow: hidden;
+          border-radius: 24px;
+          min-height: 560px;
+          background: #17242F url('/Connected Teal Network with Central Team.png') center/cover no-repeat;
+          box-shadow: 0 20px 50px -20px rgba(24,28,66,.35);
+        }
+        .auth-visual-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(14,34,38,0.12), rgba(14,34,38,0.52));
+        }
+        .auth-visual-copy {
+          position: relative;
+          z-index: 1;
+          padding: 30px clamp(22px, 3vw, 42px) clamp(24px, 4vw, 42px);
+          color: white;
+        }
+        .auth-visual-copy h2 {
+          margin: 0 0 10px;
+          max-width: 430px;
+          font-size: clamp(2.2rem, 3vw, 4rem);
+          line-height: 1.03;
+          letter-spacing: -0.045em;
+          color: white;
+        }
+        .auth-visual-copy p {
+          margin: 0;
+          max-width: 420px;
+          font-size: 17px;
+          line-height: 1.7;
+          color: rgba(255,255,255,0.85);
+        }
+        .auth-pills {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 20px;
+          padding: 0;
+          list-style: none;
+        }
+        .auth-pills li {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.88);
+          color: #1B1F4B;
+          font-size: 13px;
+          font-weight: 700;
+        }
+        .auth-pills i {
+          width: 10px;
+          height: 10px;
+          display: inline-block;
+          border-radius: 50%;
+        }
+        @media (max-width: 880px) {
+          .auth-shell {
+            grid-template-columns: 1fr;
+          }
+          .auth-form-panel {
+            padding-top: 18px;
+          }
+          .auth-visual {
+            min-height: 420px;
+          }
         }
       `}</style>
-    </div>
-  )
-}
-
-function SectionLabel({ children }) {
-  return (
-    <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#5a6582]">
-      {children}
-    </p>
-  )
-}
-
-function Field({ label, hint, htmlFor, children }) {
-  return (
-    <div>
-      <label htmlFor={htmlFor} className="mb-1.5 block text-[13.5px] font-semibold text-[#1d2448]">
-        {label} {hint && <span className="font-normal text-[#5a6582]">({hint})</span>}
-      </label>
-      {children}
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../shared/auth/AuthContext'
-import LandingPage from '../features/landing/LandingPage'
 import SignupPage from '../features/auth/SignupPage'
 import VerifyPage from '../features/auth/VerifyPage'
 import LoginPage from '../features/auth/LoginPage'
@@ -42,7 +41,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<Navigate to="/signup" replace />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/verify" element={<VerifyPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -88,7 +87,7 @@ export default function AppRouter() {
             <Route path="operations" element={<FeatureRoute permission="ops" element={<ComingSoonPage />} />} />
             <Route path="timeclock" element={<FeatureRoute permission="timeclock" element={<ComingSoonPage />} />} />
           </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/signup" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
