@@ -192,7 +192,9 @@ export default function LoginPage() {
         }
         .auth-form-wrap h1 {
           margin: 0 0 8px;
+          font-family: var(--font-sans);
           font-size: clamp(2.2rem, 3vw, 3.1rem);
+          font-weight: 500;
           line-height: 1.1;
           letter-spacing: -0.02em;
           color: #1B1F4B;
@@ -210,8 +212,11 @@ export default function LoginPage() {
           display: block;
           margin-bottom: 7px;
           color: #1B1F4B;
+          font-family: var(--font-sans);
           font-size: 13.5px;
-          font-weight: 600;
+          font-weight: 400;
+          line-height: 1.4;
+          letter-spacing: 0;
         }
         .auth-icon-field {
           position: relative;
@@ -236,24 +241,18 @@ export default function LoginPage() {
           border-radius: 10px;
           background: #EAF0FB;
           color: #181C42;
-          font: inherit;
+          font-family: var(--font-sans);
           font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0;
           transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
         .auth-icon-field input::placeholder {
           color: #A5AAC2;
-        }
-        .auth-icon-field input:hover {
-          border-color: #C5D1EC;
-        }
-        .auth-icon-field input:focus-visible {
-          outline: none;
-          border-color: #3BC4CA;
-          box-shadow: 0 0 0 4px rgba(59,196,202,.35);
-          background: #fff;
-        }
-        .auth-with-toggle {
-          padding-right: 48px !important;
+          font-family: var(--font-sans);
+          font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0;
         }
         .auth-show-toggle {
           position: absolute;
@@ -263,8 +262,10 @@ export default function LoginPage() {
           border: none;
           background: transparent;
           color: #5E6485;
+          font-family: var(--font-sans);
           font-size: 12.5px;
-          font-weight: 600;
+          font-weight: 400;
+          letter-spacing: 0;
           cursor: pointer;
         }
         .auth-row-between {
@@ -277,7 +278,9 @@ export default function LoginPage() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
+          font-family: var(--font-sans);
           font-size: 14px;
+          font-weight: 400;
           color: #5E6485;
         }
         .auth-checkbox-row input {
@@ -286,8 +289,9 @@ export default function LoginPage() {
           accent-color: #1B1F4B;
         }
         .auth-link {
+          font-family: var(--font-sans);
           font-size: 14px;
-          font-weight: 600;
+          font-weight: 400;
           color: #1B1F4B;
           text-decoration: underline;
           text-decoration-color: rgba(27,31,75,.25);
@@ -297,8 +301,9 @@ export default function LoginPage() {
           min-height: 22px;
           margin: 12px 0 0;
           color: #B42318;
+          font-family: var(--font-sans);
           font-size: 13.5px;
-          font-weight: 600;
+          font-weight: 400;
         }
         .auth-primary-btn {
           width: 100%;
@@ -308,9 +313,9 @@ export default function LoginPage() {
           border-radius: 11px;
           background: #1B1F4B;
           color: white;
-          font: inherit;
+          font-family: var(--font-sans);
           font-size: 16px;
-          font-weight: 600;
+          font-weight: 500;
           box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(27,31,75,.55);
           cursor: pointer;
         }

@@ -171,15 +171,6 @@ export default function SignupPage() {
               </svg>
               Continue with Google
             </button>
-            <button type="button" className="auth-sso-btn">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path fill="#F25022" d="M2 2h9.5v9.5H2z"/>
-                <path fill="#7FBA00" d="M12.5 2H22v9.5h-9.5z"/>
-                <path fill="#00A4EF" d="M2 12.5h9.5V22H2z"/>
-                <path fill="#FFB900" d="M12.5 12.5H22V22h-9.5z"/>
-              </svg>
-              Continue with Microsoft
-            </button>
           </div>
 
           <div className="auth-divider">or sign up with email</div>
@@ -238,7 +229,7 @@ export default function SignupPage() {
                     </svg>
                   </button>
                   <span className="auth-info-tooltip">
-                    Use 8–64 characters with at least one uppercase letter, one lowercase letter, one number, and one special character.
+                    Use at least 8 characters with at least one uppercase letter, one lowercase letter, one number, and one special character.
                   </span>
                 </span>
               </label>
@@ -394,7 +385,9 @@ export default function SignupPage() {
         }
         .auth-form-wrap h1 {
           margin: 0 0 8px;
+          font-family: var(--font-sans);
           font-size: clamp(2.2rem, 3vw, 3.1rem);
+          font-weight: 500;
           line-height: 1.1;
           letter-spacing: -0.02em;
           color: #1B1F4B;
@@ -407,7 +400,7 @@ export default function SignupPage() {
         }
         .auth-sso {
           display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          grid-template-columns: 1fr;
           gap: 12px;
         }
         @media (max-width: 560px) {
@@ -420,6 +413,7 @@ export default function SignupPage() {
           justify-content: center;
           gap: 10px;
           height: 50px;
+          width: 100%;
           border: 1px solid #E1E4EE;
           border-radius: 11px;
           background: #fff;
@@ -466,8 +460,11 @@ export default function SignupPage() {
           display: block;
           margin-bottom: 6px;
           color: #1B1F4B;
+          font-family: var(--font-sans);
           font-size: 13.5px;
-          font-weight: 600;
+          font-weight: 400;
+          line-height: 1.4;
+          letter-spacing: 0;
         }
         .auth-icon-field {
           position: relative;
@@ -493,34 +490,18 @@ export default function SignupPage() {
           border-radius: 10px;
           background: #EAF0FB;
           color: #181C42;
-          font: inherit;
+          font-family: var(--font-sans);
           font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0;
           transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
         .auth-icon-field input::placeholder {
           color: #A5AAC2;
-        }
-        .auth-icon-field select {
-          appearance: none;
-          padding-right: 38px;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235E6485' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 14px center;
-          background-size: 12px 8px;
-        }
-        .auth-icon-field input:hover,
-        .auth-icon-field select:hover {
-          border-color: #C5D1EC;
-        }
-        .auth-icon-field input:focus-visible,
-        .auth-icon-field select:focus-visible {
-          outline: none;
-          border-color: #3BC4CA;
-          box-shadow: 0 0 0 4px rgba(59,196,202,.35);
-          background: #fff;
-        }
-        .auth-with-toggle {
-          padding-right: 48px !important;
+          font-family: var(--font-sans);
+          font-size: 15px;
+          font-weight: 400;
+          letter-spacing: 0;
         }
         .auth-show-toggle {
           position: absolute;
@@ -530,8 +511,10 @@ export default function SignupPage() {
           border: none;
           background: transparent;
           color: #5E6485;
+          font-family: var(--font-sans);
           font-size: 12.5px;
-          font-weight: 600;
+          font-weight: 400;
+          letter-spacing: 0;
           cursor: pointer;
         }
         .auth-checks {
@@ -543,6 +526,7 @@ export default function SignupPage() {
           display: flex;
           align-items: flex-start;
           gap: 11px;
+          font-family: var(--font-sans);
           font-size: 14px;
           line-height: 1.5;
           color: #5E6485;
@@ -564,7 +548,9 @@ export default function SignupPage() {
         .auth-field-status {
           min-height: 16px;
           margin-top: 5px;
+          font-family: var(--font-sans);
           font-size: 12.25px;
+          font-weight: 400;
           line-height: 1.3;
           color: #B42318;
         }
@@ -575,8 +561,9 @@ export default function SignupPage() {
           min-height: 22px;
           margin: 10px 0 0;
           color: #B42318;
+          font-family: var(--font-sans);
           font-size: 13.5px;
-          font-weight: 600;
+          font-weight: 400;
         }
         .auth-primary-btn {
           width: 100%;
