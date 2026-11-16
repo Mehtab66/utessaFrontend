@@ -235,7 +235,7 @@ export default function PlatformHome() {
       <PageHeader
         title="Utessa at a glance"
         subtitle="Totals across every organization. Patient records, leads and documents never appear in this console."
-        right={<span className="rounded-full bg-[#F1F6FF] px-3 py-1.5 text-sm font-semibold text-[#1B1F4B]">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
+        right={<span className="rounded-full bg-[#E1F4F5] px-3 py-1.5 text-sm font-semibold text-[#0A3B40]">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
       />
 
       {error && (
@@ -244,7 +244,7 @@ export default function PlatformHome() {
         </p>
       )}
 
-      <div className="mb-5 flex flex-wrap gap-1.5 rounded-[12px] border border-[#DCE3F5] bg-white p-1.5 shadow-[0_4px_12px_rgba(27,31,75,0.02)]" role="tablist" aria-label="Overview sections">
+      <div className="mb-5 flex flex-wrap gap-1.5 rounded-[12px] border border-[#E2E8EC] bg-white p-1.5 shadow-[0_4px_12px_rgba(27,31,75,0.02)]" role="tablist" aria-label="Overview sections">
         {TABS.map(([id, label]) => (
           <button
             key={id}
@@ -254,8 +254,8 @@ export default function PlatformHome() {
             onClick={() => setTab(id)}
             className={`rounded-[10px] px-3 py-2.5 text-sm font-semibold transition ${
               tab === id
-                ? 'bg-[#1B1F4B] text-white shadow-[0_8px_22px_rgba(27,31,75,0.12)]'
-                : 'bg-transparent text-[#4A4E7A] hover:bg-[#F6F7FB] hover:text-[#1B1F4B]'
+                ? 'bg-[#0F7F86] text-white shadow-[0_8px_22px_rgba(15,127,134,0.14)]'
+                : 'bg-transparent text-[#5B6B73] hover:bg-[#E1F4F5] hover:text-[#0A3B40]'
             }`}
           >
             {label}

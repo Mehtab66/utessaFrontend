@@ -37,8 +37,8 @@ export const PLATFORM_NAV = [
 ]
 
 export const TONE_DOT = {
-  cyan: 'bg-[#3BC4CA]',
-  lav: 'bg-[#C9CDF2]',
-  yellow: 'bg-[#FFD23F]',
-  navy: 'bg-[#1B1F4B]',
+  cyan: 'bg-[#0F7F86]',
+  lav: 'bg-[#E1F4F5]',
+  yellow: 'bg-[#FFC83D]',
+  navy: 'bg-[#0A3B40]',
 }

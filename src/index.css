@@ -1,19 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #141b35;
-  --color-navy-deep: #0d1327;
-  --color-cyan: #1ea7a8;
-  --color-lcyan: #dffaf7;
-  --color-lavender: #e8ecff;
-  --color-yellow: #f4c65a;
-  --color-teal: #1e9ea2;
-  --color-soft: #f3f6fc;
-  --color-muted: #5b647c;
-  --color-line: #e4e8f3;
-  --color-bg: #ffffff;
-  --color-warn: #c74a3a;
-  --color-ok: #177a5f;
+  --color-primary: #0F7F86;
+  --color-primary-hover: #0D6E74;
+  --color-primary-pressed: #0A5A5F;
+  --color-primary-disabled: #9FCFD0;
+  --color-accent: #FFC83D;
+  --color-accent-text: #0A3B40;
+  --color-text: #0A3B40;
+  --color-muted: #5B6B73;
+  --color-soft: #E1F4F5;
+  --color-page: #F6F8FA;
+  --color-card: #FFFFFF;
+  --color-border: #E2E8EC;
+  --color-navy: #0A3B40;
+  --color-navy-deep: #0A3B40;
+  --color-cyan: #0F7F86;
+  --color-lcyan: #E1F4F5;
+  --color-lavender: #E9F1F6;
+  --color-yellow: #FFC83D;
+  --color-teal: #0F7F86;
+  --color-bg: #F6F8FA;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --shadow-panel: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
@@ -27,8 +34,8 @@
     margin: 0;
     min-height: 100vh;
     font-family: var(--font-sans);
-    color: var(--color-navy);
-    background: #ffffff;
+    color: var(--color-text);
+    background: var(--color-page);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
