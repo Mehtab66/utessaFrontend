@@ -43,9 +43,9 @@ export default function PlatformShell() {
   return (
     <div className="min-h-screen bg-[#F7F9FC] text-[#141B35]">
       <header className="sticky top-0 z-40 border-b border-[#E6EBF4] bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="flex w-full items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3">
+        <div className="w-full">
+          <div className="flex w-full items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+            <div className="flex shrink-0 items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3F6FC] ring-1 ring-[#E7ECF5]">
                 <Logo className="h-6 w-6" />
               </div>
@@ -139,7 +139,7 @@ export default function PlatformShell() {
               })}
             </nav>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
               <div className="hidden rounded-full border border-[#E7ECF5] bg-[#F8FAFF] px-3 py-1.5 text-xs font-semibold text-[#5B647C] lg:inline-flex">
                 {user.fullName}
               </div>
@@ -211,7 +211,7 @@ export default function PlatformShell() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+      <main className="w-full px-4 py-6 sm:px-6 lg:px-8">
         <Outlet />
       </main>
     </div>
