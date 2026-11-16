@@ -743,39 +743,51 @@ export default function SignupPage() {
         }
         .auth-label-with-icon {
           display: inline-flex;
-          align-items: center;
+          align-items: baseline;
+          justify-content: center;
           gap: 6px;
           margin-bottom: 0;
-          line-height: 1.2;
+          line-height: 1;
+          height: 18px;
         }
         .auth-info-tooltip-wrap {
           position: relative;
           display: inline-flex;
           align-items: center;
           justify-content: center;
+          width: 16px;
+          height: 16px;
+          min-width: 16px;
+          min-height: 16px;
+          flex: 0 0 16px;
+          transform: translateY(1px);
           line-height: 1;
         }
         .auth-info-button {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 16px;
-          height: 16px;
+          width: 15px;
+          height: 15px;
           padding: 0;
+          margin: 0;
           border: none;
           background: transparent;
           color: #6A7290;
           cursor: help;
           vertical-align: middle;
+          transform: translateY(1px);
         }
         .auth-info-icon {
+          display: block;
           width: 15px;
           height: 15px;
+          transform: translateY(0.5px);
         }
         .auth-info-tooltip {
           position: absolute;
           left: 50%;
-          top: calc(100% + 10px);
+          bottom: calc(100% + 10px);
           transform: translateX(-50%);
           width: max-content;
           max-width: 260px;
@@ -802,14 +814,14 @@ export default function SignupPage() {
         .auth-info-tooltip::before {
           content: '';
           position: absolute;
-          top: -6px;
+          bottom: -5px;
           left: 50%;
           transform: translateX(-50%) rotate(45deg);
           width: 10px;
           height: 10px;
           background: #1B1F4B;
-          border-left: 1px solid rgba(27, 31, 75, 0.12);
-          border-top: 1px solid rgba(27, 31, 75, 0.12);
+          border-right: 1px solid rgba(27, 31, 75, 0.12);
+          border-bottom: 1px solid rgba(27, 31, 75, 0.12);
         }
       `}</style>
     </div>
