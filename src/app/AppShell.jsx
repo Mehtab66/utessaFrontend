@@ -12,6 +12,15 @@ function IconSearch({ className = 'w-4 h-4' }) {
     </svg>
   )
 }
+function IconDiamond({ className = 'w-4 h-4' }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 4h12l4 5.5L12 21 2 9.5 6 4z" />
+      <path d="M2 9.5h20" />
+      <path d="M10 4l-2.5 5.5L12 21l4.5-11.5L14 4" />
+    </svg>
+  )
+}
 function IconBell({ className = 'w-5 h-5' }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -91,11 +100,11 @@ function IconClock({ className = 'w-5 h-5' }) {
 
 /* ─── Section definitions ───────────────────────────────────────────────── */
 const MAIN_SECTIONS = [
-  { id: 'dashboard', label: 'Home',       icon: IconHome,      to: '/app',               color: '#2f54eb' },
-  { id: 'crm',       label: 'CRM',        icon: IconCRM,       to: '/app/crm',           color: '#0ea47a' },
-  { id: 'ops',       label: 'Operations', icon: IconOps,       to: '/app/providers',     color: '#7c3aed' },
-  { id: 'mkt',       label: 'Marketing',  icon: IconMarketing, to: '/app/provider-leads',color: '#db6c14' },
-  { id: 'tc',        label: 'Time Clock', icon: IconClock,     to: '/app/timeclock',     color: '#0891b2' },
+  { id: 'dashboard', label: 'Home',       icon: IconHome,      to: '/app',               color: '#007f9b' },
+  { id: 'crm',       label: 'CRM',        icon: IconCRM,       to: '/app/crm',           color: '#007f9b' },
+  { id: 'ops',       label: 'Operations', icon: IconOps,       to: '/app/providers',     color: '#007f9b' },
+  { id: 'mkt',       label: 'Marketing',  icon: IconMarketing, to: '/app/provider-leads',color: '#007f9b' },
+  { id: 'tc',        label: 'Time Clock', icon: IconClock,     to: '/app/timeclock',     color: '#007f9b' },
 ]
 
 const SECTION_TITLE_MAP = {
@@ -177,7 +186,15 @@ export default function AppShell() {
     { id: 'dash',  label: 'Home',  to: '/app',       end: true },
     { id: 'inbox', label: 'Inbox', to: '/app/inbox', end: true },
   ]
-  const subItems   = activeSection === 'dashboard' ? dashItems : activeSubItems
+  const crmItems = [
+    { id: 'crm-dashboard',     label: 'Dashboard',          to: '/app/crm',                end: true },
+    { id: 'crm-accounts',      label: 'Accounts',           to: '/app/crm/accounts',       end: true },
+    { id: 'crm-outreach',      label: 'Outreach',           to: '/app/crm/outreach',       end: true },
+    { id: 'crm-contacts',      label: 'Contacts',           to: '/app/crm/contacts',       end: true },
+    { id: 'crm-opportunities', label: 'Opportunities',      to: '/app/crm/opportunities',  end: true },
+    { id: 'crm-targets',       label: 'Targets and quotas', to: '/app/crm/targets-quotas', end: true },
+  ]
+  const subItems   = activeSection === 'dashboard' ? dashItems : activeSection === 'crm' ? crmItems : activeSubItems
   const activeMeta = MAIN_SECTIONS.find(s => s.id === activeSection)
 
   if (loading)          return <BootScreen progress={35} label="Checking your secure session…" />
@@ -215,11 +232,9 @@ export default function AppShell() {
           </span>
           <button
             type="button"
-            className="ml-1 flex items-center gap-1.5 rounded-full border border-[#3BC4CA] bg-[#edfaf9] px-3 py-1 text-[12px] font-bold text-[#1aaa99] transition hover:bg-[#d5f5f2]"
+            className="ml-1 flex h-[29px] items-center gap-1.5 rounded-[5px] border border-[#007f9b] bg-transparent px-2.5 text-[13px] font-normal text-[#007f9b] transition hover:bg-[#007f9b]/8"
           >
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
-            </svg>
+            <IconDiamond className="h-4 w-4" />
             See plans
           </button>
         </div>
@@ -348,49 +363,50 @@ export default function AppShell() {
         {/* ── Narrow icon sidebar (matches Monday's left icon rail) ─────── */}
         <nav
           aria-label="Main sections"
-          className="flex w-[68px] flex-none flex-col items-center gap-1 overflow-y-auto bg-[#f6f7fb] py-3"
+          className="flex w-[84px] flex-none flex-col items-center gap-1.5 overflow-y-auto bg-[#f6f7fb] py-3"
         >
-          {MAIN_SECTIONS.map(sec => {
-            const Icon     = sec.icon
-            const isActive = activeSection === sec.id
-            return (
-              <button
-                key={sec.id}
-                type="button"
-                onClick={() => { setActiveSection(sec.id); navigate(sec.to) }}
-                className={`group flex flex-col items-center gap-1 rounded-xl px-1 py-2 w-14 transition-all ${
-                  isActive ? 'bg-white shadow-sm' : 'hover:bg-white/70'
-                }`}
-              >
-                <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
-                    isActive ? '' : 'text-[#676879] group-hover:text-[#171d39]'
+          {/* Navigation items starting from top, centered horizontally */}
+          <div className="flex w-full flex-col items-center gap-1.5">
+            {MAIN_SECTIONS.map(sec => {
+              const Icon     = sec.icon
+              const isActive = activeSection === sec.id
+              return (
+                <button
+                  key={sec.id}
+                  type="button"
+                  onClick={() => { setActiveSection(sec.id); navigate(sec.to) }}
+                  className={`group flex w-[68px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition-all ${
+                    isActive ? 'bg-white shadow-sm' : 'hover:bg-white/70'
                   }`}
-                  style={isActive ? { color: sec.color } : {}}
                 >
-                  <Icon className="h-[18px] w-[18px]" />
-                </span>
-                <span
-                  className={`text-[10px] font-semibold leading-none transition-colors ${
-                    isActive ? '' : 'text-[#9aaac8] group-hover:text-[#676879]'
-                  }`}
-                  style={isActive ? { color: sec.color } : {}}
-                >
-                  {sec.label}
-                </span>
-              </button>
-            )
-          })}
+                  <span
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
+                      isActive ? 'text-[#007f9b]' : 'text-[#676879] group-hover:text-[#171d39]'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span
+                    className={`text-[10px] font-semibold leading-none transition-colors ${
+                      isActive ? 'text-[#007f9b]' : 'text-[#9aaac8] group-hover:text-[#676879]'
+                    }`}
+                  >
+                    {sec.label}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
 
-          {/* Sign out at very bottom */}
+          {/* Sign out at bottom */}
           <button
             type="button"
             onClick={logout}
             title="Sign out"
-            className="mt-auto flex flex-col items-center gap-1 rounded-xl px-1 py-2 w-14 text-[#9aaac8] transition hover:bg-white/70 hover:text-red-400"
+            className="mt-auto flex w-[68px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[#9aaac8] transition hover:bg-white/70 hover:text-red-400"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-lg">
-              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M17 16l4-4m0 0l-4-4m4 4H7" />
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               </svg>

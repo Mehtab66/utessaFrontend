@@ -96,8 +96,12 @@ export const NAV_SECTIONS = [
   {
     title: 'CRM',
     items: [
-      { id: 'patients', label: 'Patient leads & calls', to: '/app/crm', perm: 'patients', service: 'crm' },
-      { id: 'noshows', label: 'No-shows & cancellations', to: '/app/no-shows', perm: 'noshows', service: 'crm' },
+      { id: 'crm-dashboard', label: 'Dashboard', to: '/app/crm', perm: 'patients', service: 'crm' },
+      { id: 'crm-accounts', label: 'Accounts', to: '/app/crm/accounts', perm: 'patients', service: 'crm' },
+      { id: 'crm-outreach', label: 'Outreach', to: '/app/crm/outreach', perm: 'patients', service: 'crm' },
+      { id: 'crm-contacts', label: 'Contacts', to: '/app/crm/contacts', perm: 'patients', service: 'crm' },
+      { id: 'crm-opportunities', label: 'Opportunities', to: '/app/crm/opportunities', perm: 'patients', service: 'crm' },
+      { id: 'crm-targets', label: 'Targets and quotas', to: '/app/crm/targets-quotas', perm: 'patients', service: 'crm' },
     ],
   },
   {

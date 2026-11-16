@@ -66,6 +66,11 @@ export default function AppRouter() {
             <Route path="staff" element={<FeatureRoute permission="staff" element={<StaffPage />} />} />
             <Route path="vendors" element={<FeatureRoute permission="vendors" element={<VendorsPage />} />} />
             <Route path="crm" element={<FeatureRoute permission="patients" element={<CrmPage />} />} />
+            <Route path="crm/accounts" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
+            <Route path="crm/outreach" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
+            <Route path="crm/contacts" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
+            <Route path="crm/opportunities" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
+            <Route path="crm/targets-quotas" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
             <Route path="document-vault" element={<FeatureRoute permission="docvault" element={<ComingSoonPage />} />} />
             <Route path="resources" element={<FeatureRoute permission="resources" element={<ComingSoonPage />} />} />
             <Route path="training" element={<FeatureRoute permission="training" element={<ComingSoonPage />} />} />
