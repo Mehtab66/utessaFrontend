@@ -3,6 +3,7 @@ import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-route
 import { useAuth } from '../shared/auth/AuthContext'
 import { Logo } from '../shared/ui/Logo'
 import { navForRole, roleLabel } from '../shared/security/roles'
+import PricingModal from '../features/dashboard/PricingModal'
 
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 function IconSearch({ className = 'w-4 h-4' }) {
@@ -111,6 +112,7 @@ export default function AppShell() {
   const [search, setSearch] = useState('')
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
+  const [pricingOpen, setPricingOpen] = useState(false)
   const [activeSection, setActiveSection] = useState(null)
 
   const profileRef = useRef(null)
@@ -237,6 +239,7 @@ export default function AppShell() {
           {/* See plans button */}
           <button
             type="button"
+            onClick={() => setPricingOpen(true)}
             className="mr-1 flex h-[30px] items-center gap-1.5 rounded-[5px] border border-[#007f9b] bg-transparent px-2.5 text-[13px] font-normal text-[#007f9b] transition hover:bg-[#007f9b]/8"
           >
             <IconDiamond className="h-4 w-4" />
@@ -430,6 +433,13 @@ export default function AppShell() {
           </div>
         </div>
       </div>
+
+      {/* Pricing & Upgrade Plan Modal */}
+      <PricingModal
+        isOpen={pricingOpen}
+        onClose={() => setPricingOpen(false)}
+        defaultSizeBand={user?.teamSizeBand ? Number(user.teamSizeBand) : undefined}
+      />
     </div>
   )
 }
