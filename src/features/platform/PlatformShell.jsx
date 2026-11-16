@@ -46,9 +46,6 @@ export default function PlatformShell() {
         <div className="w-full">
           <div className="flex w-full items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex shrink-0 items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E1F4F5] ring-1 ring-[#E2E8EC]">
-                <Logo className="h-6 w-6" />
-              </div>
               <div className="flex items-center gap-2">
                 <Wordmark />
               </div>

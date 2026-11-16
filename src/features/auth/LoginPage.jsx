@@ -126,13 +126,7 @@ export default function LoginPage() {
             {submitting ? 'Signing in…' : 'Sign in'}
           </button>
 
-          <p className="auth-form-foot">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8" />
-              <path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8" />
-            </svg>
-            Protected by bot detection. We never ask for a card to start a trial.
-          </p>
+         
         </form>
       </main>
 
@@ -140,13 +134,18 @@ export default function LoginPage() {
         <div className="auth-visual-overlay" />
         <div className="auth-visual-copy">
           <h2>Get your sales lifecycle streamlined today</h2>
-          <p>“SalesVault helped us optimize our lead management, deal tracking and sales forecasting.”</p>
+          <p>“Utessa helped us optimize our lead management, deal tracking and sales forecasting.”</p>
           <div className="auth-avatar-row">
             {[1, 2, 3].map((i) => (
               <div key={i} className="auth-avatar" />
             ))}
           </div>
         </div>
+        <img
+          src="/login.webp"
+          alt=""
+          className="auth-visual-image"
+        />
       </aside>
 
       <style>{`
@@ -379,6 +378,16 @@ export default function LoginPage() {
           border: 2px solid rgba(255,255,255,0.9);
           background: radial-gradient(circle at 30% 30%, #f4f5f7, #9bb7be 35%, #587b80 100%);
           box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+        }
+        .auth-visual-image {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          object-position: center center;
+          transform: scale(1.14);
+          filter: saturate(1.08) contrast(1.04);
         }
         @media (max-width: 880px) {
           .auth-shell {

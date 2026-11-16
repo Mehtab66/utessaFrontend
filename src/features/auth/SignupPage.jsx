@@ -200,10 +200,7 @@ export default function SignupPage() {
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
 
-          <p className="auth-form-foot">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg>
-            Protected by bot detection. We never ask for a card to start a trial.
-          </p>
+         
         </form>
       </main>
 
@@ -219,6 +216,11 @@ export default function SignupPage() {
             <li><i style={{ background: '#3BC4CA' }} />Time Clock</li>
           </ul>
         </div>
+        <img
+          src="/login.webp"
+          alt=""
+          className="auth-visual-image"
+        />
       </aside>
 
       <style>{`
@@ -555,6 +557,16 @@ export default function SignupPage() {
           .auth-visual {
             min-height: 420px;
           }
+        }
+        .auth-visual-image {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          object-position: center center;
+          transform: scale(1.14);
+          filter: saturate(1.08) contrast(1.04);
         }
       `}</style>
     </div>
