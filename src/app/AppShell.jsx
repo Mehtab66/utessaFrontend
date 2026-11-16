@@ -29,21 +29,6 @@ function IconBell({ className = 'w-5 h-5' }) {
     </svg>
   )
 }
-function IconChat({ className = 'w-5 h-5' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  )
-}
-function IconGrid({ className = 'w-5 h-5' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
-    </svg>
-  )
-}
 function IconHelp({ className = 'w-5 h-5' }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -100,42 +85,42 @@ function IconClock({ className = 'w-5 h-5' }) {
 
 /* ─── Section definitions ───────────────────────────────────────────────── */
 const MAIN_SECTIONS = [
-  { id: 'dashboard', label: 'Home',       icon: IconHome,      to: '/app',               color: '#007f9b' },
-  { id: 'crm',       label: 'CRM',        icon: IconCRM,       to: '/app/crm',           color: '#007f9b' },
-  { id: 'ops',       label: 'Operations', icon: IconOps,       to: '/app/providers',     color: '#007f9b' },
-  { id: 'mkt',       label: 'Marketing',  icon: IconMarketing, to: '/app/provider-leads',color: '#007f9b' },
-  { id: 'tc',        label: 'Time Clock', icon: IconClock,     to: '/app/timeclock',     color: '#007f9b' },
+  { id: 'dashboard', label: 'Home', icon: IconHome, to: '/app', color: '#007f9b' },
+  { id: 'ops', label: 'Operations', icon: IconOps, to: '/app/providers', color: '#007f9b' },
+  { id: 'crm', label: 'CRM', icon: IconCRM, to: '/app/crm', color: '#007f9b' },
+  { id: 'mkt', label: 'Marketing', icon: IconMarketing, to: '/app/provider-leads', color: '#007f9b' },
+  { id: 'tc', label: 'Time Clock', icon: IconClock, to: '/app/timeclock', color: '#007f9b' },
 ]
 
 const SECTION_TITLE_MAP = {
   dashboard: ['Dashboard'],
-  crm:       ['CRM'],
-  ops:       ['Operations'],
-  mkt:       ['Marketing & outreach'],
-  tc:        ['Time clock'],
+  ops: ['Operations'],
+  crm: ['CRM'],
+  mkt: ['Marketing & outreach'],
+  tc: ['Time clock'],
 }
 
 /* ─── AppShell ──────────────────────────────────────────────────────────── */
 export default function AppShell() {
   const { user, loading, logout, isAuthenticated } = useAuth()
-  const location  = useLocation()
-  const navigate  = useNavigate()
+  const location = useLocation()
+  const navigate = useNavigate()
 
-  const [booting, setBooting]           = useState(() => Boolean(location.state?.bootDashboard))
+  const [booting, setBooting] = useState(() => Boolean(location.state?.bootDashboard))
   const [bootProgress, setBootProgress] = useState(0)
-  const [search, setSearch]             = useState('')
-  const [profileOpen, setProfileOpen]   = useState(false)
-  const [notifOpen, setNotifOpen]       = useState(false)
+  const [search, setSearch] = useState('')
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const [activeSection, setActiveSection] = useState(null)
 
   const profileRef = useRef(null)
-  const notifRef   = useRef(null)
+  const notifRef = useRef(null)
 
   /* Outside-click closes dropdowns */
   useEffect(() => {
     function h(e) {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false)
-      if (notifRef.current   && !notifRef.current.contains(e.target))   setNotifOpen(false)
+      if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false)
     }
     document.addEventListener('mousedown', h)
     return () => document.removeEventListener('mousedown', h)
@@ -163,12 +148,12 @@ export default function AppShell() {
   /* Auto-detect active section from URL */
   useEffect(() => {
     const p = location.pathname
-    if (p === '/app' || p === '/app/inbox') { setActiveSection('dashboard'); return }
+    if (p === '/app' || p === '/app/' || p === '/app/inbox') { setActiveSection('dashboard'); return }
+    if (['/app/providers', '/app/staff', '/app/vendors', '/app/document-vault',
+      '/app/resources', '/app/training', '/app/inventory', '/app/operations'].some(x => p.startsWith(x))) { setActiveSection('ops'); return }
     if (p.startsWith('/app/crm') || p.startsWith('/app/no-shows')) { setActiveSection('crm'); return }
-    if (['/app/providers','/app/staff','/app/vendors','/app/document-vault',
-         '/app/resources','/app/training','/app/inventory'].some(x => p.startsWith(x))) { setActiveSection('ops'); return }
-    if (['/app/provider-leads','/app/cms-search','/app/email-campaigns',
-         '/app/social','/app/agents'].some(x => p.startsWith(x))) { setActiveSection('mkt'); return }
+    if (['/app/provider-leads', '/app/cms-search', '/app/email-campaigns',
+      '/app/social', '/app/agents', '/app/marketing'].some(x => p.startsWith(x))) { setActiveSection('mkt'); return }
     if (p.startsWith('/app/timeclock')) { setActiveSection('tc'); return }
   }, [location.pathname])
 
@@ -183,21 +168,21 @@ export default function AppShell() {
   }, [activeSection, sections])
 
   const dashItems = [
-    { id: 'dash',  label: 'Home',  to: '/app',       end: true },
+    { id: 'dash', label: 'Home', to: '/app', end: true },
     { id: 'inbox', label: 'Inbox', to: '/app/inbox', end: true },
   ]
   const crmItems = [
-    { id: 'crm-dashboard',     label: 'Dashboard',          to: '/app/crm',                end: true },
-    { id: 'crm-accounts',      label: 'Accounts',           to: '/app/crm/accounts',       end: true },
-    { id: 'crm-outreach',      label: 'Outreach',           to: '/app/crm/outreach',       end: true },
-    { id: 'crm-contacts',      label: 'Contacts',           to: '/app/crm/contacts',       end: true },
-    { id: 'crm-opportunities', label: 'Opportunities',      to: '/app/crm/opportunities',  end: true },
-    { id: 'crm-targets',       label: 'Targets and quotas', to: '/app/crm/targets-quotas', end: true },
+    { id: 'crm-dashboard', label: 'Dashboard', to: '/app/crm', end: true },
+    { id: 'crm-accounts', label: 'Accounts', to: '/app/crm/accounts', end: true },
+    { id: 'crm-outreach', label: 'Outreach', to: '/app/crm/outreach', end: true },
+    { id: 'crm-contacts', label: 'Contacts', to: '/app/crm/contacts', end: true },
+    { id: 'crm-opportunities', label: 'Opportunities', to: '/app/crm/opportunities', end: true },
+    { id: 'crm-targets', label: 'Targets and quotas', to: '/app/crm/targets-quotas', end: true },
   ]
-  const subItems   = activeSection === 'dashboard' ? dashItems : activeSection === 'crm' ? crmItems : activeSubItems
+  const subItems = activeSection === 'dashboard' ? dashItems : activeSection === 'crm' ? crmItems : activeSubItems
   const activeMeta = MAIN_SECTIONS.find(s => s.id === activeSection)
 
-  if (loading)          return <BootScreen progress={35} label="Checking your secure session…" />
+  if (loading) return <BootScreen progress={35} label="Checking your secure session…" />
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (user?.superAdmin) return <Navigate to="/platform" replace />
   if (user && !user.onboardingDone) return <Navigate to="/welcome" replace />
@@ -222,21 +207,14 @@ export default function AppShell() {
       {/* ══════════════════════════════════════════════════════════════════
           TOP NAVBAR  (matches Monday CRM header)
       ══════════════════════════════════════════════════════════════════ */}
-      <header className="flex h-[52px] flex-none items-center gap-3 bg-[#f6f7fb] px-4">
+      <header className="flex h-[56px] flex-none items-center gap-3 bg-[#f6f7fb] px-4">
 
-        {/* Left: Logo + wordmark + See Plans pill */}
+        {/* Left: Logo + wordmark */}
         <div className="flex shrink-0 items-center gap-2.5 pr-3">
-          <Logo className="h-7 w-7 flex-none" />
-          <span className="text-[17px] font-semibold tracking-[-0.01em] text-[#1B1F4B]">
+          <Logo className="h-9 w-9 flex-none" />
+          <span className="text-[19px] font-bold tracking-[-0.01em] text-[#1B1F4B]">
             <b className="font-extrabold text-[#3BC4CA]">U</b>tessa
           </span>
-          <button
-            type="button"
-            className="ml-1 flex h-[29px] items-center gap-1.5 rounded-[5px] border border-[#007f9b] bg-transparent px-2.5 text-[13px] font-normal text-[#007f9b] transition hover:bg-[#007f9b]/8"
-          >
-            <IconDiamond className="h-4 w-4" />
-            See plans
-          </button>
         </div>
 
         {/* Center: Search bar */}
@@ -248,16 +226,23 @@ export default function AppShell() {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search for anything..."
+            placeholder="Search accounts,contacts,opportunities..."
             className="h-9 w-full rounded-lg border border-[#d8dae5] bg-white pl-9 pr-20 text-[13px] text-[#171d39] placeholder-[#9aaac8] outline-none transition focus:border-[#2f54eb] focus:ring-2 focus:ring-[#2f54eb]/15"
           />
-          <span className="pointer-events-none absolute right-3 flex items-center gap-0.5 rounded border border-[#e0e2e9] bg-[#f6f7fb] px-1.5 py-0.5 text-[10px] font-semibold text-[#9aaac8]">
-            Ctrl K
-          </span>
+
         </div>
 
         {/* Right: icon actions + avatar */}
-        <div className="ml-auto flex shrink-0 items-center gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {/* See plans button */}
+          <button
+            type="button"
+            className="mr-1 flex h-[30px] items-center gap-1.5 rounded-[5px] border border-[#007f9b] bg-transparent px-2.5 text-[13px] font-normal text-[#007f9b] transition hover:bg-[#007f9b]/8"
+          >
+            <IconDiamond className="h-4 w-4" />
+            See plans
+          </button>
+
           {/* Bell */}
           <div className="relative" ref={notifRef}>
             <button
@@ -298,16 +283,6 @@ export default function AppShell() {
               </div>
             )}
           </div>
-
-          {/* Chat */}
-          <button type="button" className="flex h-8 w-8 items-center justify-center rounded-lg text-[#676879] transition hover:bg-[#ecedf5]" aria-label="Chat">
-            <IconChat className="h-5 w-5" />
-          </button>
-
-          {/* Apps grid */}
-          <button type="button" className="flex h-8 w-8 items-center justify-center rounded-lg text-[#676879] transition hover:bg-[#ecedf5]" aria-label="Apps">
-            <IconGrid className="h-4.5 w-4.5" />
-          </button>
 
           {/* Help */}
           <button type="button" className="flex h-8 w-8 items-center justify-center rounded-lg text-[#676879] transition hover:bg-[#ecedf5]" aria-label="Help">
@@ -368,28 +343,25 @@ export default function AppShell() {
           {/* Navigation items starting from top, centered horizontally */}
           <div className="flex w-full flex-col items-center gap-1.5">
             {MAIN_SECTIONS.map(sec => {
-              const Icon     = sec.icon
+              const Icon = sec.icon
               const isActive = activeSection === sec.id
               return (
                 <button
                   key={sec.id}
                   type="button"
                   onClick={() => { setActiveSection(sec.id); navigate(sec.to) }}
-                  className={`group flex w-[68px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition-all ${
-                    isActive ? 'bg-white shadow-sm' : 'hover:bg-white/70'
-                  }`}
+                  className={`group flex w-[68px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition-all ${isActive ? 'bg-white shadow-sm' : 'hover:bg-white/70'
+                    }`}
                 >
                   <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
-                      isActive ? 'text-[#007f9b]' : 'text-[#676879] group-hover:text-[#171d39]'
-                    }`}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${isActive ? 'text-[#007f9b]' : 'text-[#676879] group-hover:text-[#171d39]'
+                      }`}
                   >
                     <Icon className="h-5 w-5" />
                   </span>
                   <span
-                    className={`text-[10px] font-semibold leading-none transition-colors ${
-                      isActive ? 'text-[#007f9b]' : 'text-[#9aaac8] group-hover:text-[#676879]'
-                    }`}
+                    className={`text-[10px] font-semibold leading-none transition-colors ${isActive ? 'text-[#007f9b]' : 'text-[#9aaac8] group-hover:text-[#676879]'
+                      }`}
                   >
                     {sec.label}
                   </span>
@@ -397,22 +369,6 @@ export default function AppShell() {
               )
             })}
           </div>
-
-          {/* Sign out at bottom */}
-          <button
-            type="button"
-            onClick={logout}
-            title="Sign out"
-            className="mt-auto flex w-[68px] flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[#9aaac8] transition hover:bg-white/70 hover:text-red-400"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg">
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 16l4-4m0 0l-4-4m4 4H7" />
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              </svg>
-            </span>
-            <span className="text-[10px] font-semibold leading-none">Sign out</span>
-          </button>
         </nav>
 
         {/* ── Main content card ─────────────────────────────────────────── */}
@@ -427,9 +383,6 @@ export default function AppShell() {
                   Trial: <b className="text-[#171d39]">{daysLeft}</b> day{daysLeft === 1 ? '' : 's'} left
                 </p>
               </div>
-              <span className="rounded-full border border-[#e0e2e9] bg-[#f6f7fb] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#687699]">
-                {roleLabel(user.role)}
-              </span>
             </div>
 
             {/* Section sub-nav tabs */}
@@ -449,8 +402,7 @@ export default function AppShell() {
                       to={item.to}
                       end={item.end ?? true}
                       className={({ isActive }) =>
-                        `relative shrink-0 px-3.5 pb-2.5 pt-2 text-[13px] font-semibold transition-colors ${
-                          isActive ? 'text-[#171d39]' : 'text-[#9aaac8] hover:text-[#676879]'
+                        `relative shrink-0 px-3.5 pb-2.5 pt-2 text-[13px] font-semibold transition-colors ${isActive ? 'text-[#171d39]' : 'text-[#9aaac8] hover:text-[#676879]'
                         }`
                       }
                     >

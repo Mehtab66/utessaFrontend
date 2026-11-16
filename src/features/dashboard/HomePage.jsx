@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../shared/api/client'
 import { useAuth } from '../../shared/auth/AuthContext'
-import { roleLabel } from '../../shared/security/roles'
 
 const DOT = {
   teal: 'bg-[#0A7A82]',
@@ -67,7 +66,7 @@ export default function HomePage() {
           <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.14em] text-[#69789a]">Overview</p>
           <h1 className="m-0 text-[30px] font-black tracking-[-0.05em] text-[#171d39]">Practice dashboard</h1>
           <p className="mt-1 text-sm text-[#4c5678]">
-            Live counts for {user?.organizationName}. Signed in as {roleLabel(user?.role)}.
+            Live counts for {user?.organizationName}.
           </p>
         </div>
       </div>
