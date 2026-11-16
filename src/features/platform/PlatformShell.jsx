@@ -1,10 +1,38 @@
-import { NavLink, Navigate, Outlet } from 'react-router-dom'
+import { useMemo, useRef, useState } from 'react'
+import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../shared/auth/AuthContext'
 import { Logo, Wordmark } from '../../shared/ui/Logo'
-import { PLATFORM_NAV, TONE_DOT } from './platformNav'
+import { PLATFORM_NAV } from './platformNav'
 
 export default function PlatformShell() {
   const { user, loading, logout, isAuthenticated } = useAuth()
+  const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState(null)
+  const closeTimerRef = useRef(null)
+
+  const activeSection = useMemo(() => {
+    const flatItems = PLATFORM_NAV.flatMap((section) => section.items)
+    const activeItem = flatItems.find((item) => item.to === location.pathname || (item.end && location.pathname === item.to))
+
+    if (!activeItem) return PLATFORM_NAV[0]
+
+    return PLATFORM_NAV.find((section) => section.items.some((item) => item.id === activeItem.id)) || PLATFORM_NAV[0]
+  }, [location.pathname])
+
+  const handleSubmenuEnter = (sectionTitle) => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+    setOpenDropdown(sectionTitle)
+  }
+
+  const handleSubmenuLeave = () => {
+    closeTimerRef.current = setTimeout(() => {
+      setOpenDropdown(null)
+    }, 120)
+  }
 
   if (loading) {
     return <Boot label="Checking secure platform session…" />
@@ -13,77 +41,179 @@ export default function PlatformShell() {
   if (!user?.superAdmin) return <Navigate to="/app" replace />
 
   return (
-    <div className="flex min-h-screen bg-white text-[#141B35]">
-      <aside
-        aria-label="Platform"
-        className="flex w-full flex-col border-b border-[#E4E8F3] bg-[#F9FAFC] md:sticky md:top-0 md:h-screen md:w-[290px] md:flex-none md:border-b-0 md:border-r"
-      >
-        <div className="flex items-center gap-3 border-b border-[#EEF2FA] bg-white px-4 py-4 md:px-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#F3F6FC] ring-1 ring-[#E4E8F3]">
-            <Logo className="h-6 w-6" />
-          </div>
-          <div>
-            <Wordmark />
-          </div>
-        </div>
-
-        <nav className="hide-scrollbar flex-1 space-y-4 overflow-y-auto px-3 py-4">
-          {PLATFORM_NAV.map((section) => (
-            <div key={section.title} className="rounded-2xl border border-[#EEF2FA] bg-white p-2.5 shadow-[0_6px_18px_rgba(17,24,39,0.02)]">
-              <p className="mb-2 flex items-center gap-2 px-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#5B647C]">
-                <i className={`inline-block h-2.5 w-2.5 rounded-[4px] ${TONE_DOT[section.tone]}`} />
-                {section.title}
-              </p>
-              <div className="space-y-1.5">
-                {section.items.map((item) => (
-                  <NavLink
-                    key={item.id}
-                    to={item.to}
-                    end={item.end === true}
-                    className={({ isActive }) =>
-                      `flex min-h-[42px] items-center rounded-xl px-3 text-[15px] font-medium transition ${
-                        isActive
-                          ? 'bg-[#F1F6FF] text-[#141B35] shadow-[inset_2px_0_0_0_#1EA7A8]'
-                          : 'text-[#5B647C] hover:bg-[#F4F7FB] hover:text-[#141B35]'
-                      }`
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                ))}
+    <div className="min-h-screen bg-[#F7F9FC] text-[#141B35]">
+      <header className="sticky top-0 z-40 border-b border-[#E6EBF4] bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="flex w-full items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F3F6FC] ring-1 ring-[#E7ECF5]">
+                <Logo className="h-6 w-6" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Wordmark />
               </div>
             </div>
-          ))}
-        </nav>
 
-        <div className="border-t border-[#EEF2FA] bg-white p-3 md:p-4">
-          <div className="rounded-2xl border border-[#E4E8F3] bg-[#F9FBFF] p-3">
-            <div className="text-sm font-semibold text-[#141B35]">{user.fullName}</div>
-            <div className="mt-1 truncate text-xs text-[#5B647C]">{user.email}</div>
-            <button
-              type="button"
-              onClick={logout}
-              className="mt-3 w-full rounded-xl border border-[#E4E8F3] bg-white px-3 py-2 text-sm font-semibold text-[#141B35] transition hover:bg-[#F5F7FB]"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </aside>
+            <nav className="hidden flex-1 items-center justify-center gap-1.5 lg:flex">
+              {PLATFORM_NAV.map((section) => {
+                const isOpen = openDropdown === section.title
+                const isActive = section.items.some((item) => item.to === location.pathname)
 
-      <div className="min-w-0 flex-1">
-        <header className="border-b border-[#E4E8F3] bg-white px-4 py-3 sm:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="m-0 text-[11px] font-bold uppercase tracking-[0.14em] text-[#5B647C]">Utessa control plane</p>
-              <p className="m-0 text-sm text-[#5B647C]">Operations, access, and platform health</p>
+                return (
+                  <div
+                    key={section.title}
+                    className="relative"
+                    onMouseEnter={() => handleSubmenuEnter(section.title)}
+                    onMouseLeave={() => handleSubmenuLeave()}
+                  >
+                    <div
+                      onClick={() => {
+                        if (isOpen) {
+                          setOpenDropdown(null)
+                          return
+                        }
+                        setOpenDropdown(section.title)
+                      }}
+                      className={`flex cursor-pointer items-center gap-1 rounded-full border px-3 py-2.5 text-[13px] font-medium leading-none transition-all duration-200 ${
+                        isActive
+                          ? 'border-[#1E7AFF] bg-[#1E7AFF] text-white shadow-[0_10px_22px_rgba(30,122,255,0.22)]'
+                          : 'border-transparent bg-transparent text-[#3B4763] hover:bg-[#F3F6FC] hover:text-[#141B35]'
+                      }`}
+                    >
+                      <NavLink
+                        to={section.items[0].to}
+                        end={section.items[0].end === true}
+                        className="flex min-w-[100px] items-center justify-center text-center"
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setOpenDropdown(null)
+                        }}
+                      >
+                        {section.title}
+                      </NavLink>
+
+                      {section.items.length > 1 && (
+                        <span
+                          aria-hidden="true"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            setOpenDropdown((current) => (current === section.title ? null : section.title))
+                          }}
+                          className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
+                            isActive || isOpen ? 'bg-white/10 text-white' : 'bg-[#EEF2F8] text-[#5B647C]'
+                          }`}
+                        >
+                          ▾
+                        </span>
+                      )}
+                    </div>
+
+                    {section.items.length > 1 && isOpen && (
+                      <div
+                        className="absolute left-0 top-full z-50 w-52 overflow-hidden rounded-2xl border border-[#E7ECF5] bg-white p-1.5 shadow-[0_18px_34px_rgba(17,24,39,0.12)]"
+                        onMouseEnter={() => handleSubmenuEnter(section.title)}
+                        onMouseLeave={() => handleSubmenuLeave()}
+                        style={{ marginTop: 0 }}
+                      >
+                        {section.items.map((item) => (
+                          <NavLink
+                            key={item.id}
+                            to={item.to}
+                            end={item.end === true}
+                            onClick={() => setOpenDropdown(null)}
+                            className={({ isActive }) =>
+                              `flex rounded-xl px-3 py-2 text-sm font-medium transition ${
+                                isActive
+                                  ? 'bg-[#1E7AFF] text-white'
+                                  : 'text-[#5B647C] hover:bg-[#F3F6FC] hover:text-[#141B35]'
+                              }`
+                            }
+                          >
+                            {item.label}
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </nav>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="hidden rounded-full border border-[#E7ECF5] bg-[#F8FAFF] px-3 py-1.5 text-xs font-semibold text-[#5B647C] lg:inline-flex">
+                {user.fullName}
+              </div>
+
+              <button
+                type="button"
+                aria-label="Toggle navigation menu"
+                onClick={() => setMenuOpen((value) => !value)}
+                className="inline-flex items-center justify-center rounded-full border border-[#E7ECF5] bg-white px-3 py-2 text-sm font-semibold text-[#141B35] transition hover:border-[#D9E0F0] hover:bg-[#F3F6FC] lg:hidden"
+              >
+                Menu
+              </button>
+
+              <button
+                type="button"
+                onClick={logout}
+                className="hidden rounded-full border border-[#E7ECF5] bg-white px-3 py-2 text-sm font-semibold text-[#141B35] transition hover:border-[#D9E0F0] hover:bg-[#F3F6FC] lg:inline-flex"
+              >
+                Sign out
+              </button>
             </div>
           </div>
-        </header>
-        <main className="bg-white px-4 py-6 sm:px-8">
-          <Outlet />
-        </main>
-      </div>
+
+          {menuOpen && (
+            <div className="border-t border-[#F0F3FA] bg-[#FBFCFE] px-4 py-3 sm:px-6 lg:hidden">
+              <div className="mx-auto max-w-[1600px] rounded-2xl border border-[#E7ECF5] bg-white p-3 shadow-[0_14px_28px_rgba(17,24,39,0.05)]">
+                {PLATFORM_NAV.map((section) => (
+                  <div key={section.title} className="py-2 first:pt-0 last:pb-0">
+                    <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5B647C]">
+                      {section.title}
+                    </p>
+                    <div className="space-y-1.5">
+                      {section.items.map((item) => (
+                        <NavLink
+                          key={item.id}
+                          to={item.to}
+                          end={item.end === true}
+                          onClick={() => setMenuOpen(false)}
+                          className={({ isActive }) =>
+                            `flex rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                              isActive
+                                ? 'bg-[#1E7AFF] text-white'
+                                : 'bg-[#F3F6FC] text-[#5B647C] hover:bg-[#EEF3F9] hover:text-[#141B35]'
+                            }`
+                          }
+                        >
+                          {item.label}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                <div className="mt-3 border-t border-[#EEF2F7] pt-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false)
+                      logout()
+                    }}
+                    className="flex w-full items-center justify-center rounded-xl border border-[#E7ECF5] bg-white px-3 py-2.5 text-sm font-semibold text-[#141B35] hover:bg-[#F3F6FC]"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
+        <Outlet />
+      </main>
     </div>
   )
 }

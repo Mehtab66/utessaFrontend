@@ -3,7 +3,6 @@ export function PageHeader({ title, subtitle, right }) {
     <div className="mb-6 rounded-[16px] border border-[#DCE3F5] bg-white p-5 shadow-[0_6px_18px_rgba(27,31,75,0.04)]">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="max-w-3xl">
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#1E8E94]">Super admin</p>
           <h1 className="m-0 text-[clamp(28px,3vw,36px)] font-bold tracking-[-0.03em] text-[#1B1F4B]">{title}</h1>
           {subtitle && <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[#4A4E7A]">{subtitle}</p>}
         </div>
