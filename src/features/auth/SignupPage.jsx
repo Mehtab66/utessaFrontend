@@ -29,6 +29,7 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
+  const [passwordInfoOpen, setPasswordInfoOpen] = useState(false)
   const [fieldFocus, setFieldFocus] = useState({
     fullName: false,
     email: false,
@@ -57,12 +58,21 @@ export default function SignupPage() {
   const passwordFieldValidation = useMemo(() => {
     if (!form.password) return 'Please enter a password.'
     if (form.password.length < 8 || form.password.length > 64) return 'Password must be 8–64 characters long.'
-    if (!/[A-Z]/.test(form.password)) return 'Include at least one uppercase letter.'
-    if (!/[a-z]/.test(form.password)) return 'Include at least one lowercase letter.'
-    if (!/\d/.test(form.password)) return 'Include at least one number.'
-    if (!/[^A-Za-z0-9]/.test(form.password)) return 'Include at least one special character.'
+    if (!/[A-Z]/.test(form.password) || !/[a-z]/.test(form.password) || !/\d/.test(form.password) || !/[^A-Za-z0-9]/.test(form.password)) {
+      return 'Password must include uppercase, lowercase, a number, and a special character.'
+    }
     return ''
   }, [form.password])
+
+  const passwordRequirementsText = 'Use 8–64 characters with at least one uppercase letter, one lowercase letter, one number, and one special character.'
+
+  const passwordRequirements = [
+    'At least 8 characters',
+    'At least 1 uppercase letter',
+    'At least 1 lowercase letter',
+    'At least 1 number',
+    'At least 1 special character',
+  ]
 
   const requiredFieldHint = (field) => {
     const value = fieldValidation[field]
@@ -214,7 +224,24 @@ export default function SignupPage() {
 
           <div className="auth-grid-2">
             <div className="auth-field">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password" className="auth-label-with-icon">
+                <span>Password</span>
+                <span className="auth-info-tooltip-wrap">
+                  <button
+                    type="button"
+                    className="auth-info-button"
+                    aria-label="Password requirements"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="auth-info-icon">
+                      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                      <path d="M12 10.5v5.2M12 7.5h.01" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                  <span className="auth-info-tooltip">
+                    Use 8–64 characters with at least one uppercase letter, one lowercase letter, one number, and one special character.
+                  </span>
+                </span>
+              </label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg>
                 <input
@@ -713,6 +740,76 @@ export default function SignupPage() {
         }
         .auth-password-rule.is-valid .auth-password-dot {
           background: #0F8A5F;
+        }
+        .auth-label-with-icon {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 0;
+          line-height: 1.2;
+        }
+        .auth-info-tooltip-wrap {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
+        }
+        .auth-info-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 16px;
+          height: 16px;
+          padding: 0;
+          border: none;
+          background: transparent;
+          color: #6A7290;
+          cursor: help;
+          vertical-align: middle;
+        }
+        .auth-info-icon {
+          width: 15px;
+          height: 15px;
+        }
+        .auth-info-tooltip {
+          position: absolute;
+          left: 50%;
+          top: calc(100% + 10px);
+          transform: translateX(-50%);
+          width: max-content;
+          max-width: 260px;
+          padding: 9px 10px;
+          border: 1px solid rgba(27, 31, 75, 0.12);
+          border-radius: 10px;
+          background: #1B1F4B;
+          color: #fff;
+          font-size: 11.5px;
+          line-height: 1.5;
+          box-shadow: 0 16px 30px rgba(19, 25, 48, 0.18);
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.15s ease, visibility 0.15s ease;
+          pointer-events: none;
+          white-space: normal;
+          z-index: 20;
+        }
+        .auth-info-tooltip-wrap:hover .auth-info-tooltip,
+        .auth-info-tooltip-wrap:focus-within .auth-info-tooltip {
+          opacity: 1;
+          visibility: visible;
+        }
+        .auth-info-tooltip::before {
+          content: '';
+          position: absolute;
+          top: -6px;
+          left: 50%;
+          transform: translateX(-50%) rotate(45deg);
+          width: 10px;
+          height: 10px;
+          background: #1B1F4B;
+          border-left: 1px solid rgba(27, 31, 75, 0.12);
+          border-top: 1px solid rgba(27, 31, 75, 0.12);
         }
       `}</style>
     </div>
