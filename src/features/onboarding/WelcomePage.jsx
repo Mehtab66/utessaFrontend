@@ -140,7 +140,7 @@ export default function WelcomePage() {
                 onClick={() => finish(false)}
                 disabled={submitting}
               >
-                {submitting ? 'Opening dashboard…' : 'Go to my dashboard'}
+                {submitting ? 'Opening dashboard…' : 'Go to dashboard'}
               </button>
             </div>
           </div>
@@ -371,33 +371,64 @@ export default function WelcomePage() {
           align-items: center;
           justify-content: space-between;
           gap: 16px;
-          margin-top: 12px;
+          margin-top: 14px;
           width: 100%;
         }
         .welcome-link-btn {
-          margin-right: auto;
+          margin: 0;
           border: 0;
           background: transparent;
           color: #1B1F4B;
           font-family: var(--font-sans);
-          font-size: 16px;
-          font-weight: 500;
-          line-height: 1.4;
-          padding: 0;
-          cursor: pointer;
-        }
-        .welcome-submit {
-          width: auto;
-          min-width: 220px;
-          margin-left: auto;
-          height: 46px;
-          padding: 0 22px;
-          border-radius: 12px;
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 600;
+          line-height: 1.4;
+          padding: 8px 0;
+          cursor: pointer;
+          white-space: nowrap;
+          text-decoration: underline;
+          text-decoration-color: rgba(27, 31, 75, 0.3);
+          text-underline-offset: 4px;
+          transition: color 0.15s ease, text-decoration-color 0.15s ease;
+        }
+        .welcome-link-btn:hover {
+          color: #262B66;
+          text-decoration-color: #262B66;
+        }
+        .welcome-link-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        .welcome-actions .welcome-submit,
+        .auth-primary-btn.welcome-submit {
+          width: auto !important;
+          min-width: 180px;
+          margin-left: auto;
+          height: 48px;
+          padding: 0 24px;
+          border: 0;
+          border-radius: 12px;
+          background: #1B1F4B;
+          color: #ffffff;
+          font-family: var(--font-sans);
+          font-size: 15px;
+          font-weight: 600;
+          box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(27,31,75,.55);
           display: inline-flex;
           align-items: center;
           justify-content: center;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: background-color 0.15s ease;
+        }
+        .welcome-actions .welcome-submit:hover,
+        .auth-primary-btn.welcome-submit:hover {
+          background: #262B66;
+        }
+        .welcome-actions .welcome-submit:disabled,
+        .auth-primary-btn.welcome-submit:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
         .auth-primary-btn {
           width: 100%;
