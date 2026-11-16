@@ -235,7 +235,7 @@ export default function PlatformHome() {
       <PageHeader
         title="Utessa at a glance"
         subtitle="Totals across every organization. Patient records, leads and documents never appear in this console."
-        right={<span className="text-sm text-[#4A4E7A]">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
+        right={<span className="rounded-full bg-[#F1F6FF] px-3 py-1.5 text-sm font-semibold text-[#1B1F4B]">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
       />
 
       {error && (
@@ -244,7 +244,7 @@ export default function PlatformHome() {
         </p>
       )}
 
-      <div className="mb-5 flex flex-wrap gap-1.5 border-b border-[#DCDFEE] pb-0" role="tablist" aria-label="Overview sections">
+      <div className="mb-5 flex flex-wrap gap-1.5 rounded-[12px] border border-[#DCE3F5] bg-white p-1.5 shadow-[0_4px_12px_rgba(27,31,75,0.02)]" role="tablist" aria-label="Overview sections">
         {TABS.map(([id, label]) => (
           <button
             key={id}
@@ -252,10 +252,10 @@ export default function PlatformHome() {
             role="tab"
             aria-selected={tab === id}
             onClick={() => setTab(id)}
-            className={`-mb-px border-b-2 px-3 py-2.5 text-sm font-semibold transition ${
+            className={`rounded-[10px] px-3 py-2.5 text-sm font-semibold transition ${
               tab === id
-                ? 'border-[#3BC4CA] text-[#1B1F4B]'
-                : 'border-transparent text-[#4A4E7A] hover:text-[#1B1F4B]'
+                ? 'bg-[#1B1F4B] text-white shadow-[0_8px_22px_rgba(27,31,75,0.12)]'
+                : 'bg-transparent text-[#4A4E7A] hover:bg-[#F6F7FB] hover:text-[#1B1F4B]'
             }`}
           >
             {label}
@@ -303,14 +303,14 @@ function SummaryTab({ data, loading }) {
         <Panel title="Needs attention" right="Live">
           <ul className="m-0 list-none space-y-3 p-0">
             {(data?.attention || []).map((item) => (
-              <li key={`${item.priority}-${item.title}`} className="border-b border-[#EBECF4] pb-3 last:border-0 last:pb-0">
-                <div className="mb-1">
+              <li key={`${item.priority}-${item.title}`} className="rounded-[12px] border border-[#EBECF4] bg-[#F8F9FD] p-3">
+                <div className="mb-2">
                   <StatusPill tone={statusTone(item.priority)}>{item.priority}</StatusPill>
                 </div>
                 <p className="m-0 text-sm font-semibold text-[#1B1F4B]">{item.title}</p>
-                <p className="m-0 mt-0.5 text-[13px] text-[#4A4E7A]">{item.detail}</p>
+                <p className="m-0 mt-1 text-[13px] text-[#4A4E7A]">{item.detail}</p>
                 {item.href && (
-                  <Link to={item.href} className="mt-1 inline-block text-[13px] font-semibold text-[#1E8E94]">
+                  <Link to={item.href} className="mt-2 inline-block text-[13px] font-semibold text-[#1E8E94]">
                     Open
                   </Link>
                 )}
@@ -384,7 +384,6 @@ function RevenueTab({ data }) {
         <Panel title="Revenue by plan" right="Monthly">
           <Bars rows={revenue.byPlan || []} colors={['#C9CDF2', '#3BC4CA', '#FFD23F', '#1B1F4B']} />
         </Panel>
-
         <Panel title="Revenue by organization type" right="Monthly">
           <Bars rows={revenue.byType || []} colors={['#3BC4CA', '#C9CDF2', '#FFD23F', '#1B1F4B']} />
         </Panel>

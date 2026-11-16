@@ -5,9 +5,9 @@ import { useAuth } from '../../shared/auth/AuthContext'
 import { Logo, Wordmark } from '../../shared/ui/Logo'
 
 const HIGHLIGHTS = [
-  { color: 'bg-[#53e4d4]', title: 'Unified workspace', text: 'CRM, operations, outreach, and time in one place' },
-  { color: 'bg-[#ffca5c]', title: 'Protected by design', text: 'Pharmacy-grade privacy and tenant-safe access' },
-  { color: 'bg-[#9a96ff]', title: 'Audit-ready', text: 'Clear workflows for compliance and governance' },
+  { accent: 'bg-[#1EA7A8]', title: 'Unified workspace', text: 'CRM, operations, outreach, and time in one place' },
+  { accent: 'bg-[#F4C65A]', title: 'Protected by design', text: 'Privacy-first access with clear audit trails' },
+  { accent: 'bg-[#7E8BD9]', title: 'Audit-ready', text: 'Governance and compliance built into daily workflows' },
 ]
 
 export default function LoginPage() {
@@ -44,42 +44,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(83,228,212,0.18),_transparent_22%),radial-gradient(circle_at_bottom_right,_rgba(247,199,90,0.14),_transparent_18%),linear-gradient(135deg,#f5f8ff_0%,#eef2fb_40%,#ecfaf8_100%)] text-navy">
+    <div className="min-h-screen bg-white text-[#141B35]">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="relative flex min-h-[300px] w-full overflow-hidden bg-[#0b1020] text-white lg:min-h-screen lg:w-[46%]">
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(circle at 78% 12%, rgba(83,228,212,0.3), transparent 18%), radial-gradient(circle at 12% 86%, rgba(247,199,90,0.14), transparent 20%), linear-gradient(140deg, #0b1020 0%, #121a33 38%, #0d2335 100%)',
-            }}
-          />
-          <div className="animate-pulse-soft pointer-events-none absolute -right-10 top-20 h-52 w-52 rounded-full bg-[#53e4d4]/10 blur-3xl" />
-          <div className="animate-pulse-soft pointer-events-none absolute bottom-4 left-6 h-48 w-48 rounded-full bg-[#f7c75a]/10 blur-3xl" />
-
+        <aside className="relative flex min-h-[290px] w-full overflow-hidden bg-[#111827] text-white lg:min-h-screen lg:w-[44%]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(30,167,168,0.22),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(244,198,90,0.18),_transparent_24%),linear-gradient(130deg,#111827_0%,#1a2542_38%,#17263f_100%)]" />
           <div className="relative z-10 flex w-full flex-col justify-between px-6 py-7 sm:px-8 lg:px-10 xl:px-12">
-            <Link to="/" className="animate-rise inline-flex w-fit items-center gap-3">
+            <Link to="/" className="inline-flex w-fit items-center gap-3">
               <Logo className="h-9 w-9" />
               <Wordmark light />
             </Link>
 
-            <div className="animate-rise-delay max-w-lg py-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#9ceee8]">Welcome back</p>
-              <h1 className="mt-4 text-4xl font-black leading-[0.98] tracking-[-0.06em] text-white sm:text-[3.2rem]">
-                Sign in to <span className="text-[#53e4d4]">Utessa</span>
+            <div className="max-w-lg py-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#BAF0F1]">Welcome back</p>
+              <h1 className="mt-4 text-4xl font-black leading-[1.02] tracking-[-0.06em] text-white sm:text-[3.1rem]">
+                Sign in to <span className="text-[#66D9D5]">Utessa</span>
               </h1>
-              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[#dbe3ff]/85">
+              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[#DDE7FF]/80">
                 Bring your practice operations into one focused system for patient access, staff workflows, outreach, and compliance.
               </p>
             </div>
 
-            <div className="animate-rise-delay space-y-3">
+            <div className="space-y-3">
               {HIGHLIGHTS.map((item) => (
-                <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 backdrop-blur-[2px]">
-                  <span className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${item.color}`} />
+                <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5">
+                  <span className={`mt-1.5 h-3 w-3 shrink-0 rounded-full ${item.accent}`} />
                   <div>
                     <div className="font-semibold text-white">{item.title}</div>
-                    <div className="text-sm text-[#dce3ff]/75">{item.text}</div>
+                    <div className="text-sm text-[#DDE7FF]/75">{item.text}</div>
                   </div>
                 </div>
               ))}
@@ -87,35 +78,35 @@ export default function LoginPage() {
           </div>
         </aside>
 
-        <main className="flex w-full flex-1 items-center justify-center bg-[#f6f8fc] px-4 py-10 sm:px-6 lg:px-8 xl:px-12">
-          <div className="w-full max-w-[520px]">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <span className="inline-flex items-center rounded-full border border-[#dfe6f6] bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#58637e]">
+        <main className="flex w-full flex-1 items-center justify-center bg-white px-4 py-10 sm:px-6 lg:px-8 xl:px-12">
+          <div className="w-full max-w-[500px]">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <span className="inline-flex items-center rounded-full border border-[#E4E8F3] bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5B647C]">
                 Secure access
               </span>
-              <p className="text-sm font-semibold text-navy">
+              <p className="text-sm font-medium text-[#141B35]">
                 New here?{' '}
-                <Link to="/signup" className="text-[#1c8f8e] underline-offset-2 hover:underline">
+                <Link to="/signup" className="font-semibold text-[#1C8F90] underline-offset-2 hover:underline">
                   Start trial
                 </Link>
               </p>
             </div>
 
             <form
-              className="animate-rise rounded-[30px] border border-[#edf1fa] bg-white p-5 shadow-[0_28px_70px_rgba(14,23,49,0.1)] sm:p-7"
+              className="rounded-[28px] border border-[#E9EEF9] bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] sm:p-7"
               onSubmit={onSubmit}
               noValidate
             >
               <header className="mb-6">
-                <h2 className="text-[30px] font-black tracking-[-0.05em] text-[#171d39]">Sign in</h2>
-                <p className="mt-2 text-[15px] leading-relaxed text-[#5a6582]">
+                <h2 className="text-[30px] font-black tracking-[-0.06em] text-[#141B35]">Sign in</h2>
+                <p className="mt-2 text-[15px] leading-relaxed text-[#5B647C]">
                   Use the work email for your Utessa organization.
                 </p>
               </header>
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="mb-1.5 block text-[13.5px] font-semibold text-[#1d2448]">
+                  <label htmlFor="email" className="mb-1.5 block text-[13.5px] font-semibold text-[#1D2448]">
                     Work email
                   </label>
                   <input
@@ -134,7 +125,7 @@ export default function LoginPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="mb-1.5 block text-[13.5px] font-semibold text-[#1d2448]">
+                  <label htmlFor="password" className="mb-1.5 block text-[13.5px] font-semibold text-[#1D2448]">
                     Password
                   </label>
                   <div className="relative">
@@ -151,7 +142,7 @@ export default function LoginPage() {
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-[#5a6582] transition hover:text-[#1d2448]"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-[#5B647C] transition hover:text-[#141B35]"
                       onClick={() => setShowPassword((v) => !v)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
@@ -162,10 +153,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <p
-                  className="mt-4 rounded-xl border border-[#f2c9c9] bg-[#fff4f4] px-3.5 py-3 text-[13.5px] font-semibold text-[#b74545]"
-                  role="alert"
-                >
+                <p className="mt-4 rounded-xl border border-[#F2CDCD] bg-[#FFF5F5] px-3.5 py-3 text-[13.5px] font-semibold text-[#B44545]" role="alert">
                   {error}
                 </p>
               )}
@@ -173,14 +161,14 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="mt-6 w-full rounded-2xl bg-[linear-gradient(135deg,#1d2448_0%,#242f67_35%,#2eb9ae_100%)] py-3.5 text-[15px] font-bold text-white shadow-[0_22px_35px_rgba(29,36,72,0.22)] transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-6 w-full rounded-2xl bg-[#141B35] py-3.5 text-[15px] font-bold text-white shadow-[0_16px_28px_rgba(20,27,53,0.18)] transition hover:bg-[#1B2445] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? 'Signing in…' : 'Sign in'}
               </button>
 
-              <p className="mt-5 text-center text-[13.5px] text-[#5a6582]">
+              <p className="mt-5 text-center text-[13.5px] text-[#5B647C]">
                 Need an account?{' '}
-                <Link to="/signup" className="font-semibold text-[#1d2448] underline-offset-2 hover:underline">
+                <Link to="/signup" className="font-semibold text-[#141B35] underline-offset-2 hover:underline">
                   Start your free 14-day trial
                 </Link>
               </p>
@@ -194,23 +182,23 @@ export default function LoginPage() {
           width: 100%;
           padding: 12px 14px;
           border: 1.5px solid #dde5f6;
-          border-radius: 15px;
+          border-radius: 14px;
           font: inherit;
           font-size: 15px;
-          background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-          color: #171d39;
-          transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+          background: #ffffff;
+          color: #141B35;
+          transition: border-color 0.16s ease, box-shadow 0.16s ease;
         }
         .field:hover {
-          border-color: #b4c1df;
+          border-color: #b8c6e8;
         }
         .field:focus-visible {
           outline: none;
-          border-color: #42cfc0;
-          box-shadow: 0 0 0 4px rgba(66, 207, 192, 0.22);
+          border-color: #1EA7A8;
+          box-shadow: 0 0 0 4px rgba(30, 167, 168, 0.14);
         }
         .field::placeholder {
-          color: #8a93af;
+          color: #8B93AA;
         }
       `}</style>
     </div>

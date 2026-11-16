@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #161c3a;
-  --color-navy-deep: #0d132d;
-  --color-cyan: #53e4d4;
-  --color-lcyan: #baf7f1;
-  --color-lavender: #d7defa;
-  --color-yellow: #f7c75a;
-  --color-teal: #2ec4b6;
-  --color-soft: #eef2ff;
-  --color-muted: #5a6582;
-  --color-line: #dfe6f7;
-  --color-bg: #eef3ff;
-  --color-warn: #cd3d3d;
-  --color-ok: #1e8c68;
+  --color-navy: #141b35;
+  --color-navy-deep: #0d1327;
+  --color-cyan: #1ea7a8;
+  --color-lcyan: #dffaf7;
+  --color-lavender: #e8ecff;
+  --color-yellow: #f4c65a;
+  --color-teal: #1e9ea2;
+  --color-soft: #f3f6fc;
+  --color-muted: #5b647c;
+  --color-line: #e4e8f3;
+  --color-bg: #ffffff;
+  --color-warn: #c74a3a;
+  --color-ok: #177a5f;
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --shadow-panel: 0 12px 32px rgba(17, 24, 52, 0.12);
+  --shadow-panel: 0 10px 24px rgba(15, 23, 42, 0.06);
 }
 
 @layer base {
@@ -28,25 +28,9 @@
     min-height: 100vh;
     font-family: var(--font-sans);
     color: var(--color-navy);
-    background:
-      radial-gradient(circle at top left, rgba(83, 228, 212, 0.18), transparent 20%),
-      radial-gradient(circle at bottom right, rgba(247, 199, 90, 0.18), transparent 18%),
-      linear-gradient(135deg, #f4f7ff 0%, #eef2fb 40%, #eefaf9 100%);
+    background: #ffffff;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px);
-    background-size: 28px 28px;
-    mask-image: radial-gradient(circle at center, black 35%, transparent 100%);
-    opacity: 0.35;
   }
 
   #root {
@@ -59,6 +43,15 @@
 
   * {
     box-sizing: border-box;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -79,7 +72,7 @@
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
 }
 
@@ -91,7 +84,7 @@
   }
   50% {
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.04);
   }
 }
 
