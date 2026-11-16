@@ -154,7 +154,7 @@ export default function LoginPage() {
           grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
           min-height: 100vh;
           gap: 16px;
-          padding: 16px;
+          padding: 12px;
           background: #ffffff;
         }
         .auth-form-panel {
@@ -164,7 +164,7 @@ export default function LoginPage() {
           border: 0;
           border-radius: 0;
           box-shadow: none;
-          padding: 22px clamp(20px, 4vw, 56px) 32px;
+          padding: 18px clamp(12px, 2vw, 28px) 20px;
         }
         .auth-topbar {
           display: flex;
@@ -183,9 +183,9 @@ export default function LoginPage() {
         }
         .auth-form-wrap {
           width: 100%;
-          max-width: 480px;
+          max-width: 560px;
           margin: auto;
-          padding: 38px 0 14px;
+          padding: 26px 0 12px;
         }
         .auth-form-wrap h1 {
           margin: 0 0 8px;
