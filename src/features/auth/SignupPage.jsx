@@ -28,29 +28,61 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
+  const [fieldFocus, setFieldFocus] = useState({
+    fullName: false,
+    email: false,
+    organizationName: false,
+    teamSizeBand: false,
+  })
 
-  const strength = useMemo(() => {
-    const v = form.password
-    let score = 0
-    if (v.length >= 12) score += 1
-    if (v.length >= 16) score += 1
-    if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score += 1
-    if (/[0-9]/.test(v) || /[^A-Za-z0-9]/.test(v)) score += 1
-    return score
+  const passwordRules = useMemo(() => {
+    const value = form.password
+    return [
+      { label: 'At least 8 characters', valid: value.length >= 8 },
+      { label: 'At least one uppercase letter', valid: /[A-Z]/.test(value) },
+      { label: 'At least one lowercase letter', valid: /[a-z]/.test(value) },
+      { label: 'At least one number', valid: /\d/.test(value) },
+      { label: 'At least one special character', valid: /[^A-Za-z0-9]/.test(value) },
+    ]
   }, [form.password])
 
-  const meterWidth = form.password ? `${Math.min((strength / 4) * 100, 100)}%` : '0%'
-  const meterColor = !form.password
-    ? '#F1F3F9'
-    : strength <= 1
-      ? '#D95050'
-      : strength === 2
-        ? '#E6A02F'
-        : strength === 3
-          ? '#3CC9C1'
-          : '#12805C'
+  const fieldValidation = useMemo(() => ({
+    fullName: !form.fullName.trim() ? 'Please enter your full name.' : '',
+    email: !form.email.trim() ? 'Please enter your work email.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) ? 'Please enter a valid work email.' : '',
+    organizationName: !form.organizationName.trim() ? 'Please enter your practice name.' : '',
+    teamSizeBand: !form.teamSizeBand ? 'Please select your team size.' : '',
+  }), [form])
 
-  function update(field, value) {
+  const passwordFieldValidation = useMemo(() => {
+    if (!form.password) return 'Please enter a password.'
+    if (form.password.length < 8 || form.password.length > 64) return 'Password must be 8–64 characters long.'
+    if (!/[A-Z]/.test(form.password)) return 'Include at least one uppercase letter.'
+    if (!/[a-z]/.test(form.password)) return 'Include at least one lowercase letter.'
+    if (!/\d/.test(form.password)) return 'Include at least one number.'
+    if (!/[^A-Za-z0-9]/.test(form.password)) return 'Include at least one special character.'
+    return ''
+  }, [form.password])
+
+  const requiredFieldHint = (field) => {
+    const value = fieldValidation[field]
+    if (!value) return ''
+    return fieldFocus[field] || (typeof form[field] === 'string' ? form[field].trim() : form[field]) ? value : ''
+  }
+
+  const passwordInlineError = useMemo(() => {
+    if (!form.password) return ''
+    if (form.password.length < 8) return 'Use at least 8 characters.'
+    if (!/[A-Z]/.test(form.password)) return 'Add at least one uppercase letter.'
+    if (!/[a-z]/.test(form.password)) return 'Add at least one lowercase letter.'
+    if (!/\d/.test(form.password)) return 'Add at least one number.'
+    if (!/[^A-Za-z0-9]/.test(form.password)) return 'Add at least one special character.'
+    return ''
+  }, [form.password])
+
+  const passwordValid = passwordRules.every((rule) => rule.valid)
+
+  async function update(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (error) setError('')
   }
@@ -60,7 +92,8 @@ export default function SignupPage() {
     setError('')
     if (!form.fullName.trim()) return setError('Add your full name.')
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return setError('Enter a valid work email.')
-    if (form.password.length < 12) return setError('Use a password of at least 12 characters.')
+    const passwordMessage = passwordErrorMessage()
+    if (passwordMessage) return setError(passwordMessage)
     if (!form.organizationName.trim()) return setError('Add your practice name.')
     if (!form.teamSizeBand) return setError('Choose your team size.')
     if (!form.termsAccepted) return setError('Accept the terms and BAA to create your account.')
@@ -86,12 +119,22 @@ export default function SignupPage() {
     return (
       form.fullName.trim() &&
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) &&
-      form.password.length >= 12 &&
+      passwordValid &&
       form.organizationName.trim() &&
       form.teamSizeBand &&
       form.termsAccepted
     )
-  }, [form])
+  }, [form, passwordValid])
+
+  function passwordErrorMessage() {
+    if (!form.password) return 'Enter a password.'
+    if (form.password.length < 8 || form.password.length > 64) return 'Password must be 8–64 characters long.'
+    if (!/[A-Z]/.test(form.password)) return 'Include at least one uppercase letter.'
+    if (!/[a-z]/.test(form.password)) return 'Include at least one lowercase letter.'
+    if (!/\d/.test(form.password)) return 'Include at least one number.'
+    if (!/[^A-Za-z0-9]/.test(form.password)) return 'Include at least one special character.'
+    return ''
+  }
 
   return (
     <div className="auth-shell">
@@ -136,27 +179,58 @@ export default function SignupPage() {
               <label htmlFor="fullName">Full name</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="1.7"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
-                <input id="fullName" type="text" value={form.fullName} onChange={(e) => update('fullName', e.target.value)} autoComplete="name" placeholder="Enter your full name" />
+                <input
+                  id="fullName"
+                  type="text"
+                  value={form.fullName}
+                  onChange={(e) => update('fullName', e.target.value)}
+                  onFocus={() => setFieldFocus((v) => ({ ...v, fullName: true }))}
+                  onBlur={() => setFieldFocus((v) => ({ ...v, fullName: false }))}
+                  autoComplete="name"
+                  placeholder="Enter your full name"
+                />
               </div>
+              <div className="auth-field-status">{requiredFieldHint('fullName') || ''}</div>
             </div>
 
             <div className="auth-field">
               <label htmlFor="email">Work email</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg>
-                <input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" placeholder="Enter your work email" />
+                <input
+                  id="email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => update('email', e.target.value)}
+                  onFocus={() => setFieldFocus((v) => ({ ...v, email: true }))}
+                  onBlur={() => setFieldFocus((v) => ({ ...v, email: false }))}
+                  autoComplete="email"
+                  placeholder="Enter your work email"
+                />
               </div>
+              <div className="auth-field-status">{requiredFieldHint('email') || ''}</div>
             </div>
           </div>
 
-          <div className="auth-grid-2 mt-4">
+          <div className="auth-grid-2">
             <div className="auth-field">
               <label htmlFor="password">Password</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg>
-                <input id="password" type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} autoComplete="new-password" placeholder="Enter a password" className="auth-with-toggle" />
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => update('password', e.target.value)}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
+                  autoComplete="new-password"
+                  placeholder="Enter a password"
+                  className="auth-with-toggle"
+                />
                 <button type="button" className="auth-show-toggle" onClick={() => setShowPassword((v) => !v)}>{showPassword ? 'Hide' : 'Show'}</button>
               </div>
+              <div className="auth-field-status">{(passwordFieldValidation && (passwordFocused || form.password)) ? passwordFieldValidation : ''}</div>
             </div>
 
             <div className="auth-field">
@@ -165,29 +239,47 @@ export default function SignupPage() {
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4.5-2 1.5a11 11 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/></svg>
                 <input id="phone" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} autoComplete="tel" placeholder="Enter your phone number" />
               </div>
+              <div className="auth-field-status" />
             </div>
           </div>
 
-          <div className="auth-grid-2 mt-4">
+          <div className="auth-grid-2">
             <div className="auth-field">
               <label htmlFor="organizationName">Practice name</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5.5L12 3v17M12 8l8 2.5V20M2.5 20h19M7.5 8.5h1M7.5 12h1M7.5 15.5h1M15.5 13h1M15.5 16.5h1" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <input id="organizationName" type="text" value={form.organizationName} onChange={(e) => update('organizationName', e.target.value)} autoComplete="organization" placeholder="Enter your practice name" />
+                <input
+                  id="organizationName"
+                  type="text"
+                  value={form.organizationName}
+                  onChange={(e) => update('organizationName', e.target.value)}
+                  onFocus={() => setFieldFocus((v) => ({ ...v, organizationName: true }))}
+                  onBlur={() => setFieldFocus((v) => ({ ...v, organizationName: false }))}
+                  autoComplete="organization"
+                  placeholder="Enter your practice name"
+                />
               </div>
+              <div className="auth-field-status">{requiredFieldHint('organizationName') || ''}</div>
             </div>
 
             <div className="auth-field">
               <label htmlFor="teamSizeBand">Team size <span className="auth-optional">(users)</span></label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5" fill="none" stroke="currentColor" strokeWidth="1.7"/><path d="M2.5 19.5c.9-3 3.3-4.5 6.5-4.5s5.6 1.5 6.5 4.5M16 5.2a3.5 3.5 0 0 1 0 6.6M18 15.3c1.7.6 2.9 2 3.5 4.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
-                <select id="teamSizeBand" value={form.teamSizeBand} onChange={(e) => update('teamSizeBand', e.target.value)}>
+                <select
+                  id="teamSizeBand"
+                  value={form.teamSizeBand}
+                  onChange={(e) => update('teamSizeBand', e.target.value)}
+                  onFocus={() => setFieldFocus((v) => ({ ...v, teamSizeBand: true }))}
+                  onBlur={() => setFieldFocus((v) => ({ ...v, teamSizeBand: false }))}
+                >
                   <option value="">Choose…</option>
                   {SIZE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </div>
+              <div className="auth-field-status">{requiredFieldHint('teamSizeBand') || ''}</div>
             </div>
           </div>
 
@@ -198,7 +290,6 @@ export default function SignupPage() {
                 I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, and I'm authorized to accept the <a href="#">Business Associate Agreement</a> on behalf of this practice.
               </span>
             </label>
-            
           </div>
 
           {error && <div className="auth-error" role="alert">{error}</div>}
@@ -210,8 +301,6 @@ export default function SignupPage() {
           >
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
-
-         
         </form>
       </main>
 
@@ -341,20 +430,17 @@ export default function SignupPage() {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 0 16px;
+          margin-top: 0;
         }
         .auth-field {
-          margin-bottom: 16px;
+          margin-bottom: 0;
         }
         .auth-field label {
           display: block;
-          margin-bottom: 7px;
+          margin-bottom: 6px;
           color: #1B1F4B;
           font-size: 13.5px;
           font-weight: 600;
-        }
-        .auth-optional {
-          color: #8A90AD;
-          font-weight: 400;
         }
         .auth-icon-field {
           position: relative;
@@ -421,19 +507,6 @@ export default function SignupPage() {
           font-weight: 600;
           cursor: pointer;
         }
-        .auth-meter {
-          height: 4px;
-          margin-top: 9px;
-          overflow: hidden;
-          border-radius: 4px;
-          background: #F1F3F9;
-        }
-        .auth-meter i {
-          display: block;
-          height: 100%;
-          border-radius: 4px;
-          transition: width 0.25s ease, background 0.25s ease;
-        }
         .auth-checks {
           margin-top: 8px;
           display: grid;
@@ -461,9 +534,19 @@ export default function SignupPage() {
           text-decoration-color: rgba(27,31,75,.25);
           text-underline-offset: 3px;
         }
+        .auth-field-status {
+          min-height: 16px;
+          margin-top: 5px;
+          font-size: 12.25px;
+          line-height: 1.3;
+          color: #B42318;
+        }
+        .auth-field-status-error {
+          color: #B42318;
+        }
         .auth-error {
           min-height: 22px;
-          margin: 12px 0 0;
+          margin: 10px 0 0;
           color: #B42318;
           font-size: 13.5px;
           font-weight: 600;
@@ -471,7 +554,7 @@ export default function SignupPage() {
         .auth-primary-btn {
           width: 100%;
           height: 52px;
-          margin-top: 14px;
+          margin-top: 12px;
           border: 0;
           border-radius: 11px;
           background: #1B1F4B;
@@ -489,20 +572,6 @@ export default function SignupPage() {
         }
         .auth-primary-btn:hover:not(:disabled) {
           background: #262B66;
-        }
-        .auth-form-foot {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-top: 16px;
-          font-size: 13px;
-          color: #5E6485;
-        }
-        .auth-form-foot svg {
-          width: 14px;
-          height: 14px;
-          color: #3BC4CA;
         }
         .auth-visual {
           position: relative;
@@ -615,6 +684,35 @@ export default function SignupPage() {
           transform: scale(1.14);
           filter: saturate(1.08) contrast(1.04) drop-shadow(0 18px 25px rgba(0,0,0,0.45));
           z-index: 0;
+        }
+        .auth-password-rules {
+          display: grid;
+          gap: 6px;
+          margin-top: 10px;
+          padding: 8px 10px;
+          border: 1px solid #E7ECF8;
+          border-radius: 10px;
+          background: #F7F9FD;
+          min-height: 118px;
+        }
+        .auth-password-rule {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12.5px;
+          color: #6B728B;
+        }
+        .auth-password-rule.is-valid {
+          color: #0F8A5F;
+        }
+        .auth-password-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: currentColor;
+        }
+        .auth-password-rule.is-valid .auth-password-dot {
+          background: #0F8A5F;
         }
       `}</style>
     </div>
