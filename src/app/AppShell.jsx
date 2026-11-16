@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../shared/auth/AuthContext'
-import { Wordmark } from '../shared/ui/Logo'
+import { Logo, Wordmark } from '../shared/ui/Logo'
 import { navForRole, roleLabel } from '../shared/security/roles'
 
 export default function AppShell() {

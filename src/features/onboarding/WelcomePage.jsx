@@ -65,7 +65,6 @@ export default function WelcomePage() {
 
         <div className="auth-form-wrap welcome-form-wrap">
           <div className="welcome-header">
-            <p className="welcome-kicker">Almost there</p>
             <h1>Welcome, <span>{firstName}</span></h1>
             <p className="welcome-subtitle">Three quick questions so we can tailor your practice checklist. Everything stays unlocked either way.</p>
           </div>
