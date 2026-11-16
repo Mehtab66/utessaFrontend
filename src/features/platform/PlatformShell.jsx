@@ -140,10 +140,6 @@ export default function PlatformShell() {
             </nav>
 
             <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
-              <div className="hidden rounded-full border border-[#E7ECF5] bg-[#F8FAFF] px-3 py-1.5 text-xs font-semibold text-[#5B647C] lg:inline-flex">
-                {user.fullName}
-              </div>
-
               <button
                 type="button"
                 aria-label="Toggle navigation menu"
