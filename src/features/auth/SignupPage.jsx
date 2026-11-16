@@ -188,10 +188,7 @@ export default function SignupPage() {
                 I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>, and I'm authorized to accept the <a href="#">Business Associate Agreement</a> on behalf of this practice.
               </span>
             </label>
-            <label>
-              <input type="checkbox" checked={form.newsOptIn} onChange={(e) => update('newsOptIn', e.target.checked)} />
-              <span>Send me product tips and updates.</span>
-            </label>
+            
           </div>
 
           {error && <div className="auth-error" role="alert">{error}</div>}
@@ -494,16 +491,36 @@ export default function SignupPage() {
           border-radius: 24px;
           min-height: 560px;
           background: #17242F url('/Connected Teal Network with Central Team.png') center/cover no-repeat;
-          box-shadow: 0 20px 50px -20px rgba(24,28,66,.35);
+          box-shadow:
+            inset 0 80px 90px -50px rgba(3,10,17,0.82),
+            inset 0 -120px 150px rgba(2,8,14,0.82),
+            0 26px 44px -20px rgba(15,20,32,0.52);
+        }
+        .auth-visual::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 0.94) 16%,
+            rgba(0, 0, 0, 0.76) 30%,
+            rgba(0, 0, 0, 0.38) 52%,
+            rgba(0, 0, 0, 0.08) 74%,
+            rgba(0, 0, 0, 0) 100%
+          );
+          z-index: 1;
+          pointer-events: none;
         }
         .auth-visual-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(14,34,38,0.12), rgba(14,34,38,0.52));
+          background: linear-gradient(180deg, rgba(2,5,12,0) 0%, rgba(2,5,12,0.18) 42%, rgba(2,5,12,0.9) 100%);
+          z-index: 2;
         }
         .auth-visual-copy {
           position: relative;
-          z-index: 1;
+          z-index: 2;
           padding: 30px clamp(22px, 3vw, 42px) clamp(24px, 4vw, 42px);
           color: white;
         }
@@ -566,7 +583,8 @@ export default function SignupPage() {
           object-fit: contain;
           object-position: center center;
           transform: scale(1.14);
-          filter: saturate(1.08) contrast(1.04);
+          filter: saturate(1.08) contrast(1.04) drop-shadow(0 18px 25px rgba(0,0,0,0.45));
+          z-index: 0;
         }
       `}</style>
     </div>
