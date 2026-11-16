@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../shared/auth/AuthContext'
-import { Logo, Wordmark } from '../shared/ui/Logo'
+import { Wordmark } from '../shared/ui/Logo'
 import { navForRole, roleLabel } from '../shared/security/roles'
 
 export default function AppShell() {
@@ -60,10 +60,7 @@ export default function AppShell() {
           className="flex w-full flex-col gap-4 border-b border-[#dfe6f7] bg-[linear-gradient(180deg,#0d1429_0%,#121d3e_100%)] px-3.5 py-5 text-white md:min-h-screen md:w-[250px] md:flex-none md:border-b-0 md:border-r md:border-[#203057]"
         >
           <div className="flex items-center gap-2.5 px-1.5">
-            <Logo className="h-8 w-8" />
-            <div className="min-w-0">
-              <Wordmark light />
-            </div>
+            <Wordmark light />
           </div>
 
           <div className="flex-1 space-y-4 overflow-y-auto px-0.5">
