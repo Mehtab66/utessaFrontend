@@ -133,7 +133,10 @@ export default function LoginPage() {
       <aside className="auth-visual" aria-label="Utessa platform preview">
         <div className="auth-visual-overlay" />
         <div className="auth-visual-copy">
-          <h2>Get your sales lifecycle streamlined today</h2>
+          <h2>
+            <span>Get your sales lifecycle</span>
+            <span> streamlined today</span>
+          </h2>
           <p>“Utessa helped us optimize our lead management, deal tracking and sales forecasting.”</p>
           <div className="auth-avatar-row">
             {[1, 2, 3].map((i) => (
@@ -372,11 +375,19 @@ export default function LoginPage() {
         }
         .auth-visual-copy h2 {
           margin: 0 0 10px;
-          max-width: 430px;
+          max-width: 360px;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
           font-size: clamp(2.2rem, 3vw, 4rem);
-          line-height: 1.03;
+          line-height: 0.96;
           letter-spacing: -0.045em;
           color: white;
+          white-space: nowrap;
+        }
+        .auth-visual-copy h2 span {
+          display: block;
+          white-space: nowrap;
         }
         .auth-visual-copy p {
           margin: 0;

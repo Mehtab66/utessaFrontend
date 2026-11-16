@@ -204,7 +204,10 @@ export default function SignupPage() {
       <aside className="auth-visual" aria-label="Utessa platform preview">
         <div className="auth-visual-overlay" />
         <div className="auth-visual-copy">
-          <h2>Run your whole practice from one place</h2>
+          <h2>
+            <span>Run your whole practice</span>
+            <span> from one place</span>
+          </h2>
           <p>Try CRM, Operations, Marketing and Time Clock free for 14 days. HIPAA-ready with a signed BAA, and no credit card to start.</p>
           <ul className="auth-pills">
             <li><i style={{ background: '#5CE1E6' }} />CRM</li>
@@ -526,11 +529,19 @@ export default function SignupPage() {
         }
         .auth-visual-copy h2 {
           margin: 0 0 10px;
-          max-width: 430px;
+          max-width: 360px;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
           font-size: clamp(2.2rem, 3vw, 4rem);
-          line-height: 1.03;
+          line-height: 0.96;
           letter-spacing: -0.045em;
           color: white;
+          white-space: nowrap;
+        }
+        .auth-visual-copy h2 span {
+          display: block;
+          white-space: nowrap;
         }
         .auth-visual-copy p {
           margin: 0;
