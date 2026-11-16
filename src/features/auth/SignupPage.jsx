@@ -82,6 +82,17 @@ export default function SignupPage() {
     }
   }
 
+  const isFormValid = useMemo(() => {
+    return (
+      form.fullName.trim() &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) &&
+      form.password.length >= 12 &&
+      form.organizationName.trim() &&
+      form.teamSizeBand &&
+      form.termsAccepted
+    )
+  }, [form])
+
   return (
     <div className="auth-shell">
       <main className="auth-form-panel">
@@ -125,7 +136,7 @@ export default function SignupPage() {
               <label htmlFor="fullName">Full name</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="1.7"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
-                <input id="fullName" type="text" value={form.fullName} onChange={(e) => update('fullName', e.target.value)} autoComplete="name" placeholder="Dr. Jane Smith" />
+                <input id="fullName" type="text" value={form.fullName} onChange={(e) => update('fullName', e.target.value)} autoComplete="name" placeholder="Enter your full name" />
               </div>
             </div>
 
@@ -133,7 +144,7 @@ export default function SignupPage() {
               <label htmlFor="email">Work email</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/></svg>
-                <input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" placeholder="you@yourpractice.com" />
+                <input id="email" type="email" value={form.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" placeholder="Enter your work email" />
               </div>
             </div>
           </div>
@@ -143,17 +154,16 @@ export default function SignupPage() {
               <label htmlFor="password">Password</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1.8"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" fill="none" stroke="currentColor" strokeWidth="1.8"/></svg>
-                <input id="password" type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} autoComplete="new-password" placeholder="12+ characters" className="auth-with-toggle" />
+                <input id="password" type={showPassword ? 'text' : 'password'} value={form.password} onChange={(e) => update('password', e.target.value)} autoComplete="new-password" placeholder="Enter a password" className="auth-with-toggle" />
                 <button type="button" className="auth-show-toggle" onClick={() => setShowPassword((v) => !v)}>{showPassword ? 'Hide' : 'Show'}</button>
               </div>
-              <div className="auth-meter"><i style={{ width: meterWidth, background: meterColor }} /></div>
             </div>
 
             <div className="auth-field">
               <label htmlFor="phone">Phone <span className="auth-optional">(optional)</span></label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4.5-2 1.5a11 11 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/></svg>
-                <input id="phone" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} autoComplete="tel" placeholder="(555) 123-4567" />
+                <input id="phone" type="tel" value={form.phone} onChange={(e) => update('phone', e.target.value)} autoComplete="tel" placeholder="Enter your phone number" />
               </div>
             </div>
           </div>
@@ -163,7 +173,7 @@ export default function SignupPage() {
               <label htmlFor="organizationName">Practice name</label>
               <div className="auth-icon-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5.5L12 3v17M12 8l8 2.5V20M2.5 20h19M7.5 8.5h1M7.5 12h1M7.5 15.5h1M15.5 13h1M15.5 16.5h1" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <input id="organizationName" type="text" value={form.organizationName} onChange={(e) => update('organizationName', e.target.value)} autoComplete="organization" placeholder="Riverside Family Clinic" />
+                <input id="organizationName" type="text" value={form.organizationName} onChange={(e) => update('organizationName', e.target.value)} autoComplete="organization" placeholder="Enter your practice name" />
               </div>
             </div>
 
@@ -193,7 +203,11 @@ export default function SignupPage() {
 
           {error && <div className="auth-error" role="alert">{error}</div>}
 
-          <button type="submit" className="auth-primary-btn" disabled={submitting}>
+          <button
+            type="submit"
+            className="auth-primary-btn"
+            disabled={submitting || !isFormValid}
+          >
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
 
@@ -468,7 +482,12 @@ export default function SignupPage() {
           box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(27,31,75,.55);
           cursor: pointer;
         }
-        .auth-primary-btn:hover {
+        .auth-primary-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          box-shadow: none;
+        }
+        .auth-primary-btn:hover:not(:disabled) {
           background: #262B66;
         }
         .auth-form-foot {
