@@ -94,7 +94,11 @@ export default function VerifyPage() {
 
           {error && <p className="auth-error verify-error" role="alert">{error}</p>}
 
-          <button type="submit" disabled={submitting} className="auth-primary-btn verify-btn">
+          <button
+            type="submit"
+            disabled={submitting}
+            className={`auth-primary-btn verify-btn${error ? ' verify-btn-error' : ''}`}
+          >
             {submitting ? 'Verifying…' : 'Verify'}
           </button>
 
@@ -228,11 +232,14 @@ export default function VerifyPage() {
         .verify-code-row {
           display: flex;
           gap: 10px;
+          width: 100%;
           margin-top: 22px;
           margin-bottom: 18px;
         }
         .verify-code-input {
-          width: 54px;
+          flex: 1;
+          width: 100%;
+          max-width: none;
           height: 60px;
           border: 1.5px solid #DCE4F5;
           border-radius: 12px;
@@ -251,8 +258,12 @@ export default function VerifyPage() {
           box-shadow: 0 0 0 4px rgba(59,196,202,.18);
         }
         .verify-error {
-          min-height: 20px;
-          margin: 16px 0 0;
+          min-height: 18px;
+          margin: 0 0 10px;
+          color: #B42318;
+          font-family: var(--font-sans);
+          font-size: 13.5px;
+          font-weight: 400;
         }
         .verify-actions {
           display: flex;
@@ -263,10 +274,19 @@ export default function VerifyPage() {
         }
         .verify-meta {
           margin: 12px 0 0;
-          color: #5E6485;
+          color: #1B1F4B;
           font-size: 13px;
           line-height: 1.5;
           text-align: center;
+        }
+        .verify-meta .auth-link,
+        .verify-meta .auth-link:visited,
+        .verify-meta .auth-link:hover,
+        .verify-meta .auth-link:focus {
+          color: #1B1F4B;
+          text-decoration: underline;
+          text-decoration-color: rgba(27,31,75,.3);
+          text-underline-offset: 3px;
         }
         .verify-btn {
           width: 100%;
@@ -291,6 +311,13 @@ export default function VerifyPage() {
         .auth-primary-btn:disabled {
           opacity: 0.6;
           cursor: not-allowed;
+        }
+        .verify-btn-error {
+          background: #1B1F4B;
+          box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(27,31,75,.55);
+        }
+        .verify-btn-error:hover {
+          background: #262B66;
         }
         .auth-visual {
           position: relative;
