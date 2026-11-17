@@ -24,7 +24,10 @@
   --color-bg: #F5F6F8;
   --color-warn: #B42318;
   --color-ok: #12805C;
-  --font-sans: "Outfit", "Intel One", system-ui, -apple-system, sans-serif;
+  --font-sans: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-heading: "Poppins", "Figtree", "Segoe UI", system-ui, sans-serif;
+  /* Numbers stay in Figtree, with tabular figures so columns line up */
+  --font-mono: "Figtree", "Segoe UI", system-ui, sans-serif;
   --shadow-panel: 0 1px 2px rgba(24, 28, 66, .05), 0 8px 24px -6px rgba(24, 28, 66, .10);
 }
 
@@ -117,4 +120,34 @@
 
 .animate-pulse-soft {
   animation: pulse-soft 5s ease-in-out infinite;
+}
+
+/*
+ * Typography (unlayered, so it wins over utility classes on purpose):
+ * Figtree for UI text, Poppins medium for page and card titles — the
+ * same pairing as monday.com's design system.
+ */
+body {
+  font-size: 14px;
+  line-height: 1.5;
+  font-feature-settings: "kern", "liga";
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.font-mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }

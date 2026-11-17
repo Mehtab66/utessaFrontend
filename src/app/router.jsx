@@ -7,7 +7,19 @@ import WelcomePage from '../features/onboarding/WelcomePage'
 import AppShell from './AppShell'
 import HomePage from '../features/dashboard/HomePage'
 import InboxPage from '../features/dashboard/InboxPage'
-import CrmPage from '../features/crm/CrmPage'
+import CrmDashboardPage from '../features/crm/CrmDashboardPage'
+import CallDeskPage from '../features/crm/CallDeskPage'
+import PatientListPage from '../features/crm/PatientListPage'
+import PatientDetailPage from '../features/crm/PatientDetailPage'
+import ReferralsPage from '../features/crm/ReferralsPage'
+import OpportunitiesPage, { OpportunityDetailPage } from '../features/crm/OpportunitiesPage'
+import AppointmentsPage from '../features/crm/AppointmentsPage'
+import CrmTasksPage from '../features/crm/TasksPage'
+import TargetsPage from '../features/crm/TargetsPage'
+import IntegrationsPage from '../features/crm/IntegrationsPage'
+import RecallsPage from '../features/crm/RecallsPage'
+import CallAnalyticsPage from '../features/crm/CallAnalyticsPage'
+import PhonePage from '../features/crm/PhonePage'
 import ProvidersPage from '../features/operations/ProvidersPage'
 import StaffPage from '../features/operations/StaffPage'
 import VendorsPage from '../features/operations/VendorsPage'
@@ -65,18 +77,31 @@ export default function AppRouter() {
             <Route path="providers" element={<FeatureRoute permission="creds" element={<ProvidersPage />} />} />
             <Route path="staff" element={<FeatureRoute permission="staff" element={<StaffPage />} />} />
             <Route path="vendors" element={<FeatureRoute permission="vendors" element={<VendorsPage />} />} />
-            <Route path="crm" element={<FeatureRoute permission="patients" element={<CrmPage />} />} />
-            <Route path="crm/accounts" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
-            <Route path="crm/outreach" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
-            <Route path="crm/contacts" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
-            <Route path="crm/opportunities" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
-            <Route path="crm/targets-quotas" element={<FeatureRoute permission="patients" element={<ComingSoonPage />} />} />
+            <Route path="crm" element={<FeatureRoute permission="patients" element={<CrmDashboardPage />} />} />
+            <Route path="crm/call-desk" element={<FeatureRoute permission="patients" element={<CallDeskPage />} />} />
+            <Route path="crm/leads" element={<FeatureRoute permission="patients" element={<PatientListPage key="leads" mode="LEAD" />} />} />
+            <Route path="crm/patients" element={<FeatureRoute permission="patients" element={<PatientListPage key="patients" mode="PATIENT" />} />} />
+            <Route path="crm/patients/:id" element={<FeatureRoute permission="patients" element={<PatientDetailPage />} />} />
+            <Route path="crm/referrals" element={<FeatureRoute permission="patients" element={<ReferralsPage />} />} />
+            <Route path="crm/opportunities" element={<FeatureRoute permission="patients" element={<OpportunitiesPage />} />} />
+            <Route path="crm/opportunities/:id" element={<FeatureRoute permission="patients" element={<OpportunityDetailPage />} />} />
+            <Route path="crm/appointments" element={<FeatureRoute permission="patients" element={<AppointmentsPage />} />} />
+            <Route path="crm/tasks" element={<FeatureRoute permission="patients" element={<CrmTasksPage />} />} />
+            <Route path="crm/targets-quotas" element={<FeatureRoute permission="patients" element={<TargetsPage />} />} />
+            <Route path="crm/recalls" element={<FeatureRoute permission="patients" element={<RecallsPage />} />} />
+            <Route path="crm/call-analytics" element={<FeatureRoute permission="patients" element={<CallAnalyticsPage />} />} />
+            <Route path="crm/phone" element={<FeatureRoute permission="patients" element={<PhonePage />} />} />
+            <Route path="crm/integrations" element={<FeatureRoute permission="patients" element={<IntegrationsPage />} />} />
+            {/* Legacy CRM paths from the earlier wireframe */}
+            <Route path="crm/accounts" element={<Navigate to="/app/crm/referrals?tab=partners" replace />} />
+            <Route path="crm/outreach" element={<Navigate to="/app/crm/leads" replace />} />
+            <Route path="crm/contacts" element={<Navigate to="/app/crm/patients" replace />} />
             <Route path="document-vault" element={<FeatureRoute permission="docvault" element={<ComingSoonPage />} />} />
             <Route path="resources" element={<FeatureRoute permission="resources" element={<ComingSoonPage />} />} />
             <Route path="training" element={<FeatureRoute permission="training" element={<ComingSoonPage />} />} />
             <Route path="inventory" element={<FeatureRoute permission="inventory" element={<ComingSoonPage />} />} />
             <Route path="no-shows" element={<FeatureRoute permission="noshows" element={<ComingSoonPage />} />} />
-            <Route path="phone" element={<FeatureRoute permission="voip" element={<ComingSoonPage />} />} />
+            <Route path="phone" element={<Navigate to="/app/crm/phone" replace />} />
             <Route path="voip" element={<FeatureRoute permission="voip" element={<ComingSoonPage />} />} />
             <Route path="email-domains" element={<FeatureRoute permission="mail" element={<ComingSoonPage />} />} />
             <Route path="mobile" element={<FeatureRoute permission="mobile" element={<ComingSoonPage />} />} />

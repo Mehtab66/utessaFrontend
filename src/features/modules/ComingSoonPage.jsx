@@ -1,32 +1,6 @@
 import { useLocation } from 'react-router-dom'
-import { ModuleStub } from '../crm/CrmPage'
 
 const MODULES = {
-  '/app/crm/accounts': {
-    title: 'Accounts',
-    color: 'bg-teal',
-    copy: 'Manage practice accounts, organizations, partner clinics, and enterprise relationships.',
-  },
-  '/app/crm/outreach': {
-    title: 'Outreach',
-    color: 'bg-teal',
-    copy: 'Sequence automated follow-ups, calls, messages, and patient re-engagement.',
-  },
-  '/app/crm/contacts': {
-    title: 'Contacts',
-    color: 'bg-teal',
-    copy: 'Search and manage all customer, patient, and partner contacts.',
-  },
-  '/app/crm/opportunities': {
-    title: 'Opportunities',
-    color: 'bg-teal',
-    copy: 'Track pipeline value, treatment deals, proposals, and conversion stages.',
-  },
-  '/app/crm/targets-quotas': {
-    title: 'Targets and quotas',
-    color: 'bg-teal',
-    copy: 'Set monthly targets, practice revenue quotas, team goals, and performance metrics.',
-  },
   '/app/document-vault': {
     title: 'Document vault',
     color: 'bg-lavender',
@@ -137,4 +111,16 @@ export default function ComingSoonPage() {
     copy: 'This module is on the roadmap for your practice workspace.',
   }
   return <ModuleStub title={mod.title} color={mod.color} copy={mod.copy} />
+}
+
+function ModuleStub({ title, color, copy }) {
+  return (
+    <div>
+      <div className="mb-4 flex items-center gap-2">
+        <span className={`h-3 w-3 rounded-sm ${color}`} />
+        <h1 className="m-0 text-[28px] font-bold text-navy">{title}</h1>
+      </div>
+      <p className="text-sm text-[#43476A]">{copy}</p>
+    </div>
+  )
 }

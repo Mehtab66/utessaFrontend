@@ -45,8 +45,8 @@ export default function HomePage() {
   }, [])
 
   const kpis = [
-    { key: 'leads', n: summary?.activePatientLeads, l: 'Patient leads', to: '/app/crm' },
-    { key: 'followups', n: summary?.openLeadFollowUps, l: 'Open lead follow-ups', to: '/app/crm' },
+    { key: 'leads', n: summary?.activePatientLeads, l: 'Open patient leads', to: '/app/crm/leads' },
+    { key: 'followups', n: summary?.openLeadFollowUps, l: 'Leads awaiting contact', to: '/app/crm/tasks' },
     { key: 'providers', n: summary?.providerCount, l: 'Providers registered', to: '/app/providers' },
     { key: 'onboarding', n: summary?.staffOnboarding, l: 'Staff onboarding', to: '/app/staff' },
     { key: 'licenses', n: summary?.expiringLicenses, l: 'Licenses ≤ 60 days', to: '/app/providers' },
@@ -135,7 +135,7 @@ export default function HomePage() {
             <Action to="/app/providers" tone="teal">Register a provider</Action>
             <Action to="/app/staff" tone="amber">Add staff member</Action>
             <Action to="/app/vendors" tone="lavender">Add vendor + BAA</Action>
-            <Action to="/app/crm" tone="ink">Log a patient lead</Action>
+            <Action to="/app/crm/call-desk" tone="ink">Take a patient call</Action>
           </div>
         </section>
       </div>

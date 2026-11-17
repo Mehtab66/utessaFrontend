@@ -2,17 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../shared/auth/AuthContext'
 import { Logo } from '../shared/ui/Logo'
-import { navForRole, roleLabel } from '../shared/security/roles'
+import { navForRole, permissionsFor, roleLabel, serviceAllowed } from '../shared/security/roles'
 import PricingModal from '../features/dashboard/PricingModal'
+import GlobalSearch from '../features/crm/GlobalSearch'
 
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
-function IconSearch({ className = 'w-4 h-4' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="22" y2="22" />
-    </svg>
-  )
-}
 function IconDiamond({ className = 'w-4 h-4' }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -109,7 +103,6 @@ export default function AppShell() {
 
   const [booting, setBooting] = useState(() => Boolean(location.state?.bootDashboard))
   const [bootProgress, setBootProgress] = useState(0)
-  const [search, setSearch] = useState('')
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [pricingOpen, setPricingOpen] = useState(false)
@@ -160,6 +153,7 @@ export default function AppShell() {
   }, [location.pathname])
 
   const sections = useMemo(() => navForRole(user?.role, user?.enabledServices), [user?.role, user?.enabledServices])
+  const canSearchCrm = permissionsFor(user?.role).has('patients') && serviceAllowed(user?.enabledServices, 'patients')
 
   const activeSubItems = useMemo(() => {
     if (!activeSection) return []
@@ -173,14 +167,10 @@ export default function AppShell() {
     { id: 'dash', label: 'Home', to: '/app', end: true },
     { id: 'inbox', label: 'Inbox', to: '/app/inbox', end: true },
   ]
-  const crmItems = [
-    { id: 'crm-dashboard', label: 'Dashboard', to: '/app/crm', end: true },
-    { id: 'crm-accounts', label: 'Accounts', to: '/app/crm/accounts', end: true },
-    { id: 'crm-outreach', label: 'Outreach', to: '/app/crm/outreach', end: true },
-    { id: 'crm-contacts', label: 'Contacts', to: '/app/crm/contacts', end: true },
-    { id: 'crm-opportunities', label: 'Opportunities', to: '/app/crm/opportunities', end: true },
-    { id: 'crm-targets', label: 'Targets and quotas', to: '/app/crm/targets-quotas', end: true },
-  ]
+  const crmItems = sections.find(sec => sec.title === 'CRM')?.items.map(item => ({
+    ...item,
+    end: item.to === '/app/crm' || !['/app/crm/patients', '/app/crm/opportunities'].includes(item.to),
+  })) ?? []
   const subItems = activeSection === 'dashboard' ? dashItems : activeSection === 'crm' ? crmItems : activeSubItems
   const activeMeta = MAIN_SECTIONS.find(s => s.id === activeSection)
 
@@ -219,20 +209,8 @@ export default function AppShell() {
           </span>
         </div>
 
-        {/* Center: Search bar */}
-        <div className="relative mx-auto flex w-full max-w-md items-center">
-          <span className="pointer-events-none absolute left-3 text-[#9aaac8]">
-            <IconSearch className="h-4 w-4" />
-          </span>
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search accounts,contacts,opportunities..."
-            className="h-9 w-full rounded-lg border border-[#d8dae5] bg-white pl-9 pr-20 text-[13px] text-[#171d39] placeholder-[#9aaac8] outline-none transition focus:border-[#2f54eb] focus:ring-2 focus:ring-[#2f54eb]/15"
-          />
-
-        </div>
+        {/* Center: Global search (patients, leads, opportunities, partners) */}
+        <GlobalSearch enabled={canSearchCrm} />
 
         {/* Right: icon actions + avatar */}
         <div className="ml-auto flex shrink-0 items-center gap-2">
@@ -398,7 +376,7 @@ export default function AppShell() {
                   {activeMeta?.label}
                 </span>
                 <span className="mr-1 h-4 w-px bg-[#e0e2e9]" />
-                <nav aria-label={`${activeMeta?.label} tabs`} className="flex items-end gap-0.5 overflow-x-auto">
+                <nav aria-label={`${activeMeta?.label} tabs`} className="hide-scrollbar flex items-end gap-0.5 overflow-x-auto">
                   {subItems.map(item => (
                     <NavLink
                       key={item.id}
