@@ -175,7 +175,7 @@ export default function LoginPage() {
           justify-content: space-between;
           gap: 12px;
           font-size: 14px;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-topbar a {
           color: #1B1F4B;
@@ -203,7 +203,7 @@ export default function LoginPage() {
           margin: 0 0 30px;
           font-size: 15.5px;
           line-height: 1.55;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-field {
           margin-bottom: 16px;
@@ -230,17 +230,17 @@ export default function LoginPage() {
           transform: translateY(-50%);
           width: 19px;
           height: 19px;
-          color: #7C83A3;
+          color: #727799;
           pointer-events: none;
         }
         .auth-icon-field input {
           width: 100%;
           height: 52px;
           padding: 0 14px 0 46px;
-          border: 1px solid #DCE4F5;
+          border: 1px solid #DCE8FA;
           border-radius: 10px;
-          background: #EAF0FB;
-          color: #181C42;
+          background: #EEF4FD;
+          color: #11143A;
           font-family: var(--font-sans);
           font-size: 15px;
           font-weight: 400;
@@ -248,7 +248,7 @@ export default function LoginPage() {
           transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
         .auth-icon-field input::placeholder {
-          color: #A5AAC2;
+          color: #9DA2C0;
           font-family: var(--font-sans);
           font-size: 15px;
           font-weight: 400;
@@ -261,7 +261,7 @@ export default function LoginPage() {
           transform: translateY(-50%);
           border: none;
           background: transparent;
-          color: #5E6485;
+          color: #5A5F85;
           font-family: var(--font-sans);
           font-size: 12.5px;
           font-weight: 400;
@@ -281,7 +281,7 @@ export default function LoginPage() {
           font-family: var(--font-sans);
           font-size: 14px;
           font-weight: 400;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-checkbox-row input {
           width: 18px;
@@ -300,7 +300,7 @@ export default function LoginPage() {
         .auth-error {
           min-height: 22px;
           margin: 12px 0 0;
-          color: #B42318;
+          color: #C4321F;
           font-family: var(--font-sans);
           font-size: 13.5px;
           font-weight: 400;
@@ -320,7 +320,7 @@ export default function LoginPage() {
           cursor: pointer;
         }
         .auth-primary-btn:hover {
-          background: #262B66;
+          background: #22265A;
         }
         .auth-form-foot {
           display: flex;
@@ -329,7 +329,7 @@ export default function LoginPage() {
           gap: 8px;
           margin-top: 16px;
           font-size: 13px;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-form-foot svg {
           width: 14px;
@@ -344,7 +344,7 @@ export default function LoginPage() {
           overflow: hidden;
           border-radius: 24px;
           min-height: 560px;
-          background: #17242F;
+          background: #11143A;
           box-shadow:
             inset 0 80px 90px -50px rgba(3,10,17,0.82),
             inset 0 -120px 150px rgba(2,8,14,0.82),
@@ -412,7 +412,7 @@ export default function LoginPage() {
           height: 48px;
           border-radius: 50%;
           border: 2px solid rgba(255,255,255,0.9);
-          background: radial-gradient(circle at 30% 30%, #f4f5f7, #9bb7be 35%, #587b80 100%);
+          background: radial-gradient(circle at 30% 30%, #F4F5FA, #C6CADF 35%, #187279 100%);
           box-shadow: 0 6px 14px rgba(0,0,0,0.25);
         }
         .auth-visual-image {

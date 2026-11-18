@@ -84,7 +84,7 @@ export default function OpportunitiesPage() {
           empty="No opportunities yet. Create one from a lead or the call desk."
           columns={[
             { key: 'name', label: 'Opportunity', render: (o) => <b>{o.name}</b> },
-            { key: 'patientName', label: 'Patient / lead', render: (o) => <Link onClick={(e) => e.stopPropagation()} className="text-[#0A7A82]" to={`/app/crm/patients/${o.patientId}`}>{o.patientName}</Link> },
+            { key: 'patientName', label: 'Patient / lead', render: (o) => <Link onClick={(e) => e.stopPropagation()} className="text-brand-700" to={`/app/crm/patients/${o.patientId}`}>{o.patientName}</Link> },
             { key: 'serviceLine', label: 'Service line' },
             { key: 'stage', label: 'Stage', render: (o) => <EnumPill list={OPP_STAGES} value={o.stage} />, sortValue: (o) => OPP_STAGES.findIndex((s) => s.value === o.stage) },
             { key: 'priority', label: 'Priority', render: (o) => <EnumPill list={PRIORITIES} value={o.priority} /> },
@@ -124,7 +124,7 @@ function StageColumn({ stage, items, onOpen, onDrop }) {
   const total = items.reduce((s, o) => s + (Number(o.estimatedValue) || 0), 0)
   return (
     <div
-      className="flex min-h-[380px] flex-col rounded-[14px] border border-[#E4E6EF] bg-[#F7F8FB]"
+      className="flex min-h-[380px] flex-col rounded-[14px] border border-mist-200 bg-mist-25"
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         const raw = e.dataTransfer.getData('application/json')
@@ -133,12 +133,12 @@ function StageColumn({ stage, items, onOpen, onDrop }) {
         if (o.stage !== stage.value) onDrop(o, stage.value)
       }}
     >
-      <div className="border-b border-[#E4E6EF] px-3 py-2.5">
+      <div className="border-b border-mist-200 px-3 py-2.5">
         <div className="flex items-center justify-between">
           <EnumPill list={OPP_STAGES} value={stage.value} />
-          <span className="font-mono text-[12px] font-semibold text-[#687699]">{items.length}</span>
+          <span className="font-mono text-[12px] font-semibold text-mist-500">{items.length}</span>
         </div>
-        <p className="m-0 mt-1 font-mono text-[12px] text-[#4C5076]">{fmtMoney(total)}</p>
+        <p className="m-0 mt-1 font-mono text-[12px] text-mist-700">{fmtMoney(total)}</p>
       </div>
       <div className="flex flex-1 flex-col gap-2 p-2">
         {items.map((o) => (
@@ -148,17 +148,17 @@ function StageColumn({ stage, items, onOpen, onDrop }) {
             draggable
             onDragStart={(e) => e.dataTransfer.setData('application/json', JSON.stringify(o))}
             onClick={() => onOpen(o)}
-            className="rounded-[10px] border border-[#E4E6EF] bg-white p-2.5 text-left shadow-[0_1px_2px_rgba(24,28,66,0.05)] transition hover:border-[#9ddedc]"
+            className="rounded-[10px] border border-mist-200 bg-white p-2.5 text-left transition hover:border-brand-200"
           >
             <p className="m-0 text-[13px] font-semibold text-navy">{o.name}</p>
-            <p className="m-0 mt-0.5 text-[12px] text-[#687699]">{o.patientName}</p>
+            <p className="m-0 mt-0.5 text-[12px] text-mist-500">{o.patientName}</p>
             <div className="mt-1.5 flex items-center justify-between text-[12px]">
               <span className="font-mono font-semibold text-navy">{fmtMoney(o.estimatedValue)}</span>
-              <span className="text-[#8A8DA8]">{o.ownerName || 'Unassigned'}</span>
+              <span className="text-mist-500">{o.ownerName || 'Unassigned'}</span>
             </div>
           </button>
         ))}
-        {items.length === 0 && <p className="m-0 px-1 py-4 text-center text-[12px] text-[#9aaac8]">Drag cards here</p>}
+        {items.length === 0 && <p className="m-0 px-1 py-4 text-center text-[12px] text-mist-500">Drag cards here</p>}
       </div>
     </div>
   )
@@ -204,14 +204,14 @@ export function OpportunityDetailPage() {
 
   return (
     <div className="space-y-4">
-      <Link to="/app/crm/opportunities" className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#0A7A82]"><Icon name="arrowLeft" className="h-3.5 w-3.5" /> Opportunities</Link>
-      <section className="rounded-[16px] border border-[#E4E6EF] bg-white p-4">
+      <Link to="/app/crm/opportunities" className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-brand-700"><Icon name="arrowLeft" className="h-3.5 w-3.5" /> Opportunities</Link>
+      <section className="rounded-[16px] border border-mist-200 bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="m-0 text-[11px] font-bold uppercase tracking-[0.12em] text-[#69789a]">Opportunity</p>
+            <p className="m-0 text-[12px] font-semibold text-mist-500">Opportunity</p>
             <h1 className="m-0 text-[24px] font-bold tracking-[-0.02em] text-navy">{o.name}</h1>
-            <p className="m-0 mt-1 text-[13px] text-[#43476A]">
-              <Link to={`/app/crm/patients/${o.patientId}`} className="font-semibold text-[#0A7A82]">{o.patientName}</Link>
+            <p className="m-0 mt-1 text-[13px] text-mist-700">
+              <Link to={`/app/crm/patients/${o.patientId}`} className="font-semibold text-brand-700">{o.patientName}</Link>
               {o.serviceLine ? ` · ${o.serviceLine}` : ''}{o.providerName ? ` · ${o.providerName}` : ''}
             </p>
           </div>
@@ -245,10 +245,10 @@ export function OpportunityDetailPage() {
               o.stage === 'LOST' ? ['Lost reason', o.lostReason] : null,
               ['Created', fmtDateTime(o.createdAt)],
             ]} />
-            {o.notes && <p className="m-0 mt-3 whitespace-pre-line text-[13px] text-[#43476A]">{o.notes}</p>}
+            {o.notes && <p className="m-0 mt-3 whitespace-pre-line text-[13px] text-mist-700">{o.notes}</p>}
           </Card>
           <Card title="Linked appointments">
-            {linkedAppts.length === 0 ? <p className="m-0 text-sm text-[#687699]">None yet — schedule a consult to advance the stage automatically.</p> : (
+            {linkedAppts.length === 0 ? <p className="m-0 text-sm text-mist-500">None yet — schedule a consult to advance the stage automatically.</p> : (
               <ul className="m-0 list-none space-y-1.5 p-0 text-[13px]">
                 {linkedAppts.map((a) => <li key={a.id}><b>{fmtDateTime(a.startsAt)}</b> · {a.title} · {a.status.toLowerCase().replace('_', ' ')}</li>)}
               </ul>

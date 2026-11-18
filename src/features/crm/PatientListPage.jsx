@@ -93,7 +93,7 @@ export default function PatientListPage({ mode = 'LEAD' }) {
           <Avatar name={r.fullName} size="sm" tone={r.lifecycleStage === 'PATIENT' ? 'teal' : 'blue'} />
           <div className="min-w-0">
             <p className="m-0 whitespace-nowrap font-semibold text-navy">{r.fullName}</p>
-            <p className="m-0 whitespace-nowrap text-[12px] text-[#687699]">{r.phone ? formatPhone(r.phone) : r.email || 'No contact info'}</p>
+            <p className="m-0 whitespace-nowrap text-[12px] text-mist-500">{r.phone ? formatPhone(r.phone) : r.email || 'No contact info'}</p>
           </div>
           {r.doNotContact && <Pill tone="red">DNC</Pill>}
         </div>
@@ -105,16 +105,16 @@ export default function PatientListPage({ mode = 'LEAD' }) {
     { key: 'priority', label: 'Priority', render: (r) => <EnumPill list={PRIORITIES} value={r.priority} />, sortValue: (r) => PRIORITIES.findIndex((s) => s.value === r.priority) },
     isLead ? { key: 'source', label: 'Source', render: (r) => r.source || '—' } : { key: 'dateOfBirth', label: 'DOB', render: (r) => fmtDate(r.dateOfBirth), nowrap: true },
     { key: 'interestedService', label: isLead ? 'Interest' : 'Service', render: (r) => r.interestedService || '—' },
-    { key: 'insurancePayer', label: 'Insurance', render: (r) => (r.insurancePayer ? <span>{r.insurancePayer}{r.insuranceVerified && <Icon name="check" title="Verified" className="ml-1 inline h-3.5 w-3.5 text-[#155E62]" strokeWidth={2.4} />}</span> : '—') },
-    { key: 'ownerName', label: 'Owner', nowrap: true, render: (r) => r.ownerName || <span className="text-[#9aaac8]">Unassigned</span> },
+    { key: 'insurancePayer', label: 'Insurance', render: (r) => (r.insurancePayer ? <span>{r.insurancePayer}{r.insuranceVerified && <Icon name="check" title="Verified" className="ml-1 inline h-3.5 w-3.5 text-brand-800" strokeWidth={2.4} />}</span> : '—') },
+    { key: 'ownerName', label: 'Owner', nowrap: true, render: (r) => r.ownerName || <span className="text-mist-500">Unassigned</span> },
     {
       key: 'nextFollowUp',
       label: 'Next follow-up',
       nowrap: true,
       render: (r) => {
-        if (!r.nextFollowUp) return <span className="text-[#9aaac8]">—</span>
+        if (!r.nextFollowUp) return <span className="text-mist-500">—</span>
         const overdue = r.nextFollowUp < new Date().toISOString().slice(0, 10)
-        return <span className={overdue ? 'font-semibold text-[#B42318]' : ''}>{fmtDate(r.nextFollowUp)}</span>
+        return <span className={overdue ? 'font-semibold text-danger-600' : ''}>{fmtDate(r.nextFollowUp)}</span>
       },
     },
     { key: 'lastContactAt', label: 'Last contact', nowrap: true, render: (r) => (r.lastContactAt ? fmtRelative(r.lastContactAt) : 'Never') },
@@ -125,6 +125,7 @@ export default function PatientListPage({ mode = 'LEAD' }) {
     <div>
       <PageHeader
         title={isLead ? 'Patient leads' : 'Patients'}
+        count={data ? `${rows.length} ${isLead ? (rows.length === 1 ? 'lead' : 'leads') : (rows.length === 1 ? 'patient' : 'patients')}` : null}
         subtitle={isLead
           ? 'Every inquiry from phone, web, walk-ins and referrals — prioritized, assigned and followed up until they book.'
           : 'Converted and existing patients with their chart link, insurance and EHR sync status.'}
@@ -171,7 +172,7 @@ export default function PatientListPage({ mode = 'LEAD' }) {
       </Toolbar>
 
       {selected.length > 0 && (
-        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-[12px] border border-[#cfeef0] bg-[#f2fbfb] px-3 py-2 text-[13px]">
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-[12px] border border-brand-100 bg-brand-50 px-3 py-2 text-[13px]">
           <b className="text-navy">{selected.length} selected</b>
           <Button size="sm" variant="secondary" onClick={() => setBulk('ASSIGN')}>Assign…</Button>
           <Button size="sm" variant="secondary" onClick={() => setBulk('PRIORITY')}>Set priority…</Button>
@@ -230,16 +231,16 @@ function LeadBoard({ rows, counts, onOpen, onMove }) {
         return (
           <div
             key={status}
-            className="flex min-h-[360px] flex-col rounded-[14px] border border-[#E4E6EF] bg-[#F7F8FB]"
+            className="flex min-h-[360px] flex-col rounded-[14px] border border-mist-200 bg-mist-25"
             onDragOver={(e) => e.preventDefault()}
             onDrop={() => {
               if (dragging && dragging.leadStatus !== status) onMove(dragging, status)
               setDragging(null)
             }}
           >
-            <div className="flex items-center justify-between border-b border-[#E4E6EF] px-3 py-2.5">
+            <div className="flex items-center justify-between border-b border-mist-200 px-3 py-2.5">
               <EnumPill list={LEAD_STATUSES} value={status} />
-              <span className="font-mono text-[12px] font-semibold text-[#687699]">{counts[status] || 0}</span>
+              <span className="font-mono text-[12px] font-semibold text-mist-500">{counts[status] || 0}</span>
             </div>
             <div className="flex flex-1 flex-col gap-2 p-2">
               {items.map((r) => (
@@ -249,21 +250,21 @@ function LeadBoard({ rows, counts, onOpen, onMove }) {
                   draggable
                   onDragStart={() => setDragging(r)}
                   onClick={() => onOpen(r)}
-                  className="rounded-[10px] border border-[#E4E6EF] bg-white p-2.5 text-left shadow-[0_1px_2px_rgba(24,28,66,0.05)] transition hover:border-[#9ddedc]"
+                  className="rounded-[10px] border border-mist-200 bg-white p-2.5 text-left transition hover:border-brand-200"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <p className="m-0 text-[13px] font-semibold text-navy">{r.fullName}</p>
                     <EnumPill list={PRIORITIES} value={r.priority} dot={false} />
                   </div>
-                  <p className="m-0 mt-0.5 text-[12px] text-[#687699]">{r.phone || r.email || '—'}</p>
-                  <p className="m-0 mt-1 truncate text-[12px] text-[#43476A]">{r.interestedService || r.reasonForVisit || r.source || ''}</p>
-                  <div className="mt-1.5 flex items-center justify-between text-[11px] text-[#8A8DA8]">
+                  <p className="m-0 mt-0.5 text-[12px] text-mist-500">{r.phone || r.email || '—'}</p>
+                  <p className="m-0 mt-1 truncate text-[12px] text-mist-700">{r.interestedService || r.reasonForVisit || r.source || ''}</p>
+                  <div className="mt-1.5 flex items-center justify-between text-[11px] text-mist-500">
                     <span>{r.ownerName || 'Unassigned'}</span>
                     <span>{r.nextFollowUp ? `F/U ${fmtDate(r.nextFollowUp)}` : fmtRelative(r.createdAt)}</span>
                   </div>
                 </button>
               ))}
-              {items.length === 0 && <p className="m-0 px-1 py-4 text-center text-[12px] text-[#9aaac8]">Drop leads here</p>}
+              {items.length === 0 && <p className="m-0 px-1 py-4 text-center text-[12px] text-mist-500">Drop leads here</p>}
             </div>
           </div>
         )

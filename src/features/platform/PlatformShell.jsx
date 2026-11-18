@@ -41,8 +41,8 @@ export default function PlatformShell() {
   if (!user?.superAdmin) return <Navigate to="/app" replace />
 
   return (
-    <div className="min-h-screen bg-[#F6F8FA] text-[#0A3B40]">
-      <header className="sticky top-0 z-40 border-b border-[#E2E8EC] bg-white/95 backdrop-blur-xl">
+    <div className="min-h-screen bg-mist-25 text-brand-950">
+      <header className="sticky top-0 z-40 border-b border-mist-200 bg-white/95 backdrop-blur-xl">
         <div className="w-full">
           <div className="flex w-full items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex shrink-0 items-center gap-3">
@@ -73,8 +73,8 @@ export default function PlatformShell() {
                       }}
                       className={`flex cursor-pointer items-center gap-1 rounded-full border px-3 py-2.5 text-[13px] font-medium leading-none transition-all duration-200 ${
                         isActive
-                          ? 'border-[#0F7F86] bg-[#0F7F86] text-white shadow-[0_10px_22px_rgba(15,127,134,0.18)]'
-                          : 'border-transparent bg-transparent text-[#0A3B40] hover:bg-[#E1F4F5] hover:text-[#0A3B40]'
+                          ? 'border-brand-600 bg-brand-600 text-white shadow-[0_10px_22px_rgba(15,127,134,0.18)]'
+                          : 'border-transparent bg-transparent text-brand-950 hover:bg-brand-50 hover:text-brand-950'
                       }`}
                     >
                       <NavLink
@@ -97,7 +97,7 @@ export default function PlatformShell() {
                             setOpenDropdown((current) => (current === section.title ? null : section.title))
                           }}
                           className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                            isActive || isOpen ? 'bg-white/10 text-white' : 'bg-[#E1F4F5] text-[#0F7F86]'
+                            isActive || isOpen ? 'bg-white/10 text-white' : 'bg-brand-50 text-brand-700'
                           }`}
                         >
                           ▾
@@ -107,7 +107,7 @@ export default function PlatformShell() {
 
                     {section.items.length > 1 && isOpen && (
                       <div
-                        className="absolute left-0 top-full z-50 w-52 overflow-hidden rounded-2xl border border-[#E2E8EC] bg-white p-1.5 shadow-[0_18px_34px_rgba(10,59,64,0.10)]"
+                        className="absolute left-0 top-full z-50 w-52 overflow-hidden rounded-2xl border border-mist-200 bg-white p-1.5"
                         onMouseEnter={() => handleSubmenuEnter(section.title)}
                         onMouseLeave={() => handleSubmenuLeave()}
                         style={{ marginTop: 0 }}
@@ -121,8 +121,8 @@ export default function PlatformShell() {
                             className={({ isActive }) =>
                               `flex rounded-xl px-3 py-2 text-sm font-medium transition ${
                                 isActive
-                                  ? 'bg-[#0F7F86] text-white'
-                                  : 'text-[#5B6B73] hover:bg-[#E1F4F5] hover:text-[#0A3B40]'
+                                  ? 'bg-brand-600 text-white'
+                                  : 'text-mist-500 hover:bg-brand-50 hover:text-brand-950'
                               }`
                             }
                           >
@@ -141,7 +141,7 @@ export default function PlatformShell() {
                 type="button"
                 aria-label="Toggle navigation menu"
                 onClick={() => setMenuOpen((value) => !value)}
-                className="inline-flex items-center justify-center rounded-full border border-[#E2E8EC] bg-white px-3 py-2 text-sm font-semibold text-[#0A3B40] transition hover:border-[#D5E7E9] hover:bg-[#E1F4F5] lg:hidden"
+                className="inline-flex items-center justify-center rounded-full border border-mist-200 bg-white px-3 py-2 text-sm font-semibold text-brand-950 transition hover:border-brand-100 hover:bg-brand-50 lg:hidden"
               >
                 Menu
               </button>
@@ -149,7 +149,7 @@ export default function PlatformShell() {
               <button
                 type="button"
                 onClick={logout}
-                className="hidden rounded-full border border-[#E2E8EC] bg-white px-3 py-2 text-sm font-semibold text-[#0A3B40] transition hover:border-[#D5E7E9] hover:bg-[#E1F4F5] lg:inline-flex"
+                className="hidden rounded-full border border-mist-200 bg-white px-3 py-2 text-sm font-semibold text-brand-950 transition hover:border-brand-100 hover:bg-brand-50 lg:inline-flex"
               >
                 Sign out
               </button>
@@ -157,11 +157,11 @@ export default function PlatformShell() {
           </div>
 
           {menuOpen && (
-            <div className="border-t border-[#E2E8EC] bg-[#F6F8FA] px-4 py-3 sm:px-6 lg:hidden">
-              <div className="mx-auto max-w-[1600px] rounded-2xl border border-[#E2E8EC] bg-white p-3 shadow-[0_14px_28px_rgba(10,59,64,0.05)]">
+            <div className="border-t border-mist-200 bg-mist-25 px-4 py-3 sm:px-6 lg:hidden">
+              <div className="mx-auto max-w-[1600px] rounded-2xl border border-mist-200 bg-white p-3">
                 {PLATFORM_NAV.map((section) => (
                   <div key={section.title} className="py-2 first:pt-0 last:pb-0">
-                    <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#5B6B73]">
+                    <p className="px-2 pb-2 text-[12px] font-semibold text-mist-500">
                       {section.title}
                     </p>
                     <div className="space-y-1.5">
@@ -174,8 +174,8 @@ export default function PlatformShell() {
                           className={({ isActive }) =>
                             `flex rounded-xl px-3 py-2.5 text-sm font-medium transition ${
                               isActive
-                                ? 'bg-[#0F7F86] text-white'
-                                : 'bg-[#E1F4F5] text-[#0A3B40] hover:bg-[#D9EEF0] hover:text-[#0A3B40]'
+                                ? 'bg-brand-600 text-white'
+                                : 'bg-brand-50 text-brand-950 hover:bg-brand-100 hover:text-brand-950'
                             }`
                           }
                         >
@@ -186,14 +186,14 @@ export default function PlatformShell() {
                   </div>
                 ))}
 
-                <div className="mt-3 border-t border-[#E2E8EC] pt-3">
+                <div className="mt-3 border-t border-mist-200 pt-3">
                   <button
                     type="button"
                     onClick={() => {
                       setMenuOpen(false)
                       logout()
                     }}
-                    className="flex w-full items-center justify-center rounded-xl border border-[#E2E8EC] bg-white px-3 py-2.5 text-sm font-semibold text-[#0A3B40] hover:bg-[#E1F4F5]"
+                    className="flex w-full items-center justify-center rounded-xl border border-mist-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-950 hover:bg-brand-50"
                   >
                     Sign out
                   </button>
@@ -214,9 +214,9 @@ export default function PlatformShell() {
 function Boot({ label }) {
   return (
     <div className="grid min-h-screen place-items-center bg-white px-4">
-      <div className="w-full max-w-md rounded-[18px] border border-[#E4E8F3] bg-white p-8 text-center shadow-[0_10px_24px_rgba(17,24,39,0.06)]">
+      <div className="w-full max-w-md rounded-[18px] border border-mist-200 bg-white p-8 text-center shadow-[0_10px_24px_rgba(17,24,39,0.06)]">
         <Logo className="mx-auto mb-5 h-12 w-12" />
-        <h1 className="text-[22px] font-bold text-[#141B35]">{label}</h1>
+        <h1 className="text-[22px] font-bold text-ink-950">{label}</h1>
       </div>
     </div>
   )

@@ -7,8 +7,8 @@ import { Chip, Hero } from './kit'
 import { workspace } from './workspaceApi'
 
 const ROLE_TONE = {
-  OWNER: '#1B1F4B', ADMIN: '#3A3F8F', MANAGER: '#0A7A82', FRONT: '#2E8FD0', CLINICAL: '#34C38F',
-  PROVIDER: '#7C6CF0', BILLING: '#F5A524', OUTREACH: '#E46FA8', HR: '#8B93F0', MEMBER: '#64748B',
+  OWNER: '#1B1F4B', ADMIN: '#474C8E', MANAGER: '#1E8E94', FRONT: '#2E7FD9', CLINICAL: '#1FA971',
+  PROVIDER: '#6D74C9', BILLING: '#D69508', OUTREACH: '#6D74C9', HR: '#8A91DC', MEMBER: '#727799',
 }
 
 export default function TeamPage() {
@@ -39,8 +39,8 @@ export default function TeamPage() {
           {roles.map((r) => <Chip key={r} active={role === r} onClick={() => setRole(r)}>{roleLabel(r)}</Chip>)}
         </div>
         <div className="relative">
-          <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9AA3BF]" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search people" className="h-9 w-60 rounded-lg border border-[#E1E4EE] bg-white pl-9 pr-3 text-[13px] outline-none focus:border-[#0A7A82]" />
+          <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search people" className="h-9 w-60 rounded-lg border border-mist-200 bg-white pl-9 pr-3 text-[13px] outline-none focus:border-brand-600" />
         </div>
       </div>
 
@@ -51,23 +51,23 @@ export default function TeamPage() {
             const tone = ROLE_TONE[m.role] || ROLE_TONE.MEMBER
             const initials = (m.fullName || '?').split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase()
             return (
-              <article key={m.userId} className="overflow-hidden rounded-2xl border border-[#E6E9F2] bg-white shadow-[0_1px_2px_rgba(24,28,66,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-14px_rgba(17,24,52,0.3)]">
-                <div className="h-14" style={{ background: `linear-gradient(120deg, ${tone}, ${tone}99)` }} />
+              <article key={m.userId} className="overflow-hidden rounded-2xl border border-mist-200 bg-white transition">
+                <div className="h-14" style={{ backgroundColor: `${tone}14` }} />
                 <div className="-mt-8 px-4 pb-4">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl text-[17px] font-bold text-white ring-4 ring-white" style={{ background: `linear-gradient(135deg, ${tone}, #1B1F4B)` }}>{initials}</span>
+                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl text-[17px] font-bold text-white ring-4 ring-white" style={{ backgroundColor: tone }}>{initials}</span>
                   <div className="mt-2.5 flex items-center gap-2">
                     <h3 className="m-0 truncate text-[15px] font-bold text-navy">{m.fullName}</h3>
-                    {m.you && <span className="rounded-full bg-[#EEF7F8] px-2 py-0.5 text-[10.5px] font-bold text-[#0A7A82]">You</span>}
+                    {m.you && <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[10.5px] font-bold text-brand-700">You</span>}
                   </div>
                   <p className="m-0 text-[12.5px] font-semibold" style={{ color: tone }}>{roleLabel(m.role)}</p>
-                  <div className="mt-3 space-y-1.5 text-[12.5px] text-[#5E6485]">
-                    <a href={`mailto:${m.email}`} className="flex items-center gap-2 truncate no-underline hover:text-[#0A7A82]"><Icon name="mail" className="h-3.5 w-3.5 text-[#9AA3BF]" />{m.email}</a>
-                    {m.phone && <a href={`tel:${m.phone}`} className="flex items-center gap-2 no-underline hover:text-[#0A7A82]"><Icon name="phone" className="h-3.5 w-3.5 text-[#9AA3BF]" />{m.phone}</a>}
-                    <p className="m-0 flex items-center gap-2"><Icon name="calendar" className="h-3.5 w-3.5 text-[#9AA3BF]" />Joined {new Date(m.joinedAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</p>
+                  <div className="mt-3 space-y-1.5 text-[12.5px] text-mist-600">
+                    <a href={`mailto:${m.email}`} className="flex items-center gap-2 truncate no-underline hover:text-brand-700"><Icon name="mail" className="h-3.5 w-3.5 text-mist-500" />{m.email}</a>
+                    {m.phone && <a href={`tel:${m.phone}`} className="flex items-center gap-2 no-underline hover:text-brand-700"><Icon name="phone" className="h-3.5 w-3.5 text-mist-500" />{m.phone}</a>}
+                    <p className="m-0 flex items-center gap-2"><Icon name="calendar" className="h-3.5 w-3.5 text-mist-500" />Joined {new Date(m.joinedAt).toLocaleDateString([], { month: 'short', year: 'numeric' })}</p>
                   </div>
-                  <div className="mt-4 flex items-center justify-between rounded-xl bg-[#F8F9FC] px-3 py-2">
-                    <span className="text-[12px] text-[#687699]"><b className="text-navy">{m.openTasks}</b> open task{m.openTasks === 1 ? '' : 's'}</span>
-                    <button type="button" onClick={() => navigate(`/app/my-work?new=1&assignee=${m.userId}`)} className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#0A7A82] hover:underline">
+                  <div className="mt-4 flex items-center justify-between rounded-xl bg-mist-25 px-3 py-2">
+                    <span className="text-[12px] text-mist-500"><b className="text-navy">{m.openTasks}</b> open task{m.openTasks === 1 ? '' : 's'}</span>
+                    <button type="button" onClick={() => navigate(`/app/my-work?new=1&assignee=${m.userId}`)} className="inline-flex items-center gap-1 text-[12px] font-semibold text-brand-700 hover:underline">
                       <Icon name="plus" className="h-3.5 w-3.5" /> Assign task
                     </button>
                   </div>
@@ -75,7 +75,7 @@ export default function TeamPage() {
               </article>
             )
           })}
-          {!members.length && <p className="col-span-full py-10 text-center text-sm text-[#8A93B2]">No one matches that filter.</p>}
+          {!members.length && <p className="col-span-full py-10 text-center text-sm text-mist-500">No one matches that filter.</p>}
         </div>
       )}
     </div>

@@ -165,20 +165,20 @@ export default function CallDeskPage() {
   return (
     <div className="space-y-4">
       {(phase === 'live' || phase === 'ended') && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[12px] bg-[#0B4F4F] px-4 py-2.5 text-white">
-          <span className={`h-2.5 w-2.5 rounded-full ${phase === 'live' ? 'bg-[#4ADE80]' : 'bg-[#9AA3B5]'}`} aria-hidden="true" />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[12px] bg-brand-900 px-4 py-2.5 text-white">
+          <span className={`h-2.5 w-2.5 rounded-full ${phase === 'live' ? 'bg-success-500' : 'bg-mist-400'}`} aria-hidden="true" />
           <span className="text-[14px] font-semibold">
             {phase === 'live' ? (direction === 'INBOUND' ? 'On call' : 'Calling') : 'Call ended'} · {callerLabel}
           </span>
-          <span className="font-mono text-[13px] text-[#CFE8E8]">{formatPhone(number)}</span>
+          <span className="font-mono text-[13px] text-brand-100">{formatPhone(number)}</span>
           <span className="font-mono text-[17px]" aria-label="Call length">{timer}</span>
           <span className="ml-auto flex items-center gap-2">
             {phase === 'live' ? (
-              <button type="button" onClick={endCall} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[#B42318] px-3.5 text-[13px] font-semibold text-white hover:bg-[#9B1C12]">
+              <button type="button" onClick={endCall} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-danger-600 px-3.5 text-[13px] font-semibold text-white hover:bg-danger-700">
                 <Icon name="phone" className="h-4 w-4 rotate-[135deg]" /> End call
               </button>
             ) : (
-              <span className="text-[13px] text-[#CFE8E8]">Finish the documentation below.</span>
+              <span className="text-[13px] text-brand-100">Finish the documentation below.</span>
             )}
           </span>
         </div>
@@ -197,12 +197,12 @@ export default function CallDeskPage() {
                 <RingCard number={number} line={line} lookup={lookup} looking={looking} onAnswer={() => answer()} onVoicemail={sendToVoicemail} />
               ) : (
                 <Card bodyClassName="flex flex-wrap items-center gap-4 p-6">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#E6F4F4] text-[#0A7A82]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-700">
                     <Icon name="phone" className="h-6 w-6" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="m-0 text-[16px] font-semibold text-navy">Waiting for the next call</p>
-                    <p className="m-0 mt-0.5 text-[13px] text-[#5B6080]">
+                    <p className="m-0 mt-0.5 text-[13px] text-mist-600">
                       Type the caller’s number on the keypad and choose <b>Incoming</b>. When the phone system is connected, calls ring here automatically.
                     </p>
                   </div>
@@ -289,22 +289,22 @@ function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
   const p = match?.patient
   const next = match?.upcomingAppointments?.[0]
   return (
-    <section role="dialog" aria-labelledby="ring-h" className="rounded-[14px] border border-[#B9DEDE] bg-white p-5 shadow-[0_18px_50px_rgba(16,19,46,0.12)]">
+    <section role="dialog" aria-labelledby="ring-h" className="rounded-[14px] border border-brand-100 bg-white p-5 shadow-[0_18px_50px_rgba(16,19,46,0.12)]">
       <div className="flex items-center gap-4">
-        <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-[#0A7A82] text-white">
-          <span className="absolute inset-0 animate-ping rounded-full bg-[#0A7A82]/40" aria-hidden="true" />
+        <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white">
+          <span className="absolute inset-0 animate-ping rounded-full bg-brand-600/40" aria-hidden="true" />
           <Icon name="phoneIn" className="relative h-5 w-5" />
         </span>
         <div>
-          <h2 id="ring-h" className="m-0 text-[12px] font-bold uppercase tracking-[0.08em] text-[#0A7A82]">Incoming call</h2>
+          <h2 id="ring-h" className="m-0 text-[12px] font-semibold text-brand-700">Incoming call</h2>
           <p className="m-0 font-mono text-[22px] font-medium text-navy">{formatPhone(number)}</p>
-          <p className="m-0 text-[13px] text-[#5B6080]">{LINES.find((l) => l.value === line)?.label}</p>
+          <p className="m-0 text-[13px] text-mist-600">{LINES.find((l) => l.value === line)?.label}</p>
         </div>
       </div>
-      <div className="mt-4 rounded-[10px] bg-[#F4F5FA] p-4">
+      <div className="mt-4 rounded-[10px] bg-mist-50 p-4">
         {looking && (
           <p className="m-0 flex items-center gap-2 text-[14px] text-navy">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#DDEFEF] border-t-[#0A7A82]" />
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-50 border-t-brand-600" />
             Checking patients and leads for this number…
           </p>
         )}
@@ -315,7 +315,7 @@ function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
               {lookup.matches.length > 1 && <Pill tone="amber">{lookup.matches.length} people on this number</Pill>}
             </div>
             <p className="m-0 mt-2 text-[18px] font-bold text-navy">{p.fullName}</p>
-            <p className="m-0 mt-0.5 text-[13px] text-[#5B6080]">
+            <p className="m-0 mt-0.5 text-[13px] text-mist-600">
               {[p.dateOfBirth && `DOB ${fmtDate(p.dateOfBirth)}`, p.mrn && `MRN ${p.mrn}`, p.insurancePayer].filter(Boolean).join(' · ') || 'No demographics on file'}
             </p>
             <p className="m-0 mt-2 text-[13px] text-navy">Next visit: {next ? `${fmtDateTime(next.startsAt)} · ${next.providerName || next.title}` : 'none booked'}</p>
@@ -344,12 +344,12 @@ function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
 function Keypad({ number, setNumber, line, setLine, disabled, onIncoming, onOutgoing }) {
   const ready = number.replace(/\D/g, '').length >= 7
   return (
-    <aside aria-label="Phone" className="rounded-[14px] border border-[#E4E6EF] bg-white p-4">
+    <aside aria-label="Phone" className="rounded-[14px] border border-mist-200 bg-white p-4">
       <div className="mb-3 flex items-center justify-between">
         <strong className="text-[16px] text-navy">Phone</strong>
-        <Link to="/app/crm/integrations" className="text-[12px] font-semibold text-[#0A7A82]">Phone system settings</Link>
+        <Link to="/app/crm/integrations" className="text-[12px] font-semibold text-brand-700">Phone system settings</Link>
       </div>
-      <label className="block text-[12px] font-bold text-[#3B3F5D]" htmlFor="kp">Number</label>
+      <label className="block text-[12px] font-bold text-mist-800" htmlFor="kp">Number</label>
       <input
         id="kp"
         type="tel"
@@ -358,7 +358,7 @@ function Keypad({ number, setNumber, line, setLine, disabled, onIncoming, onOutg
         onChange={(e) => setNumber(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && ready && onIncoming()}
         placeholder="Type or tap a number"
-        className="mt-1 h-[52px] w-full rounded-lg border border-[#CDD0E3] bg-white px-3 text-center font-mono text-[20px] text-navy outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15"
+        className="mt-1 h-[52px] w-full rounded-lg border border-mist-300 bg-white px-3 text-center font-mono text-[20px] text-navy outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15"
       />
       <div className="mt-3 grid grid-cols-3 gap-2">
         {KEYS.map(([d, l]) => (
@@ -367,23 +367,23 @@ function Keypad({ number, setNumber, line, setLine, disabled, onIncoming, onOutg
             type="button"
             aria-label={`Digit ${d}`}
             onClick={() => setNumber((n) => n + d)}
-            className="flex min-h-[54px] flex-col items-center justify-center rounded-[12px] border border-[#E1E3F0] bg-white text-navy transition hover:bg-[#F4F5FA]"
+            className="flex min-h-[54px] flex-col items-center justify-center rounded-[12px] border border-mist-200 bg-white text-navy transition hover:bg-mist-50"
           >
             <span className="text-[20px] font-semibold leading-none">{d}</span>
-            <span className="mt-0.5 min-h-[12px] text-[9.5px] tracking-[0.12em] text-[#5B6080]">{l}</span>
+            <span className="mt-0.5 min-h-[12px] text-[9.5px] tracking-[0.12em] text-mist-600">{l}</span>
           </button>
         ))}
       </div>
       <div className="mt-3 grid grid-cols-[1fr_1fr_44px] gap-2">
         <Button onClick={onOutgoing} disabled={!ready || disabled}><Icon name="phoneOut" /> Call</Button>
         <Button variant="secondary" onClick={onIncoming} disabled={!ready || disabled}><Icon name="phoneIn" /> Incoming</Button>
-        <button type="button" aria-label="Delete last digit" onClick={() => setNumber((n) => n.slice(0, -1))} className="flex items-center justify-center rounded-lg text-[#5B6080] hover:bg-[#F4F5FA]">
+        <button type="button" aria-label="Delete last digit" onClick={() => setNumber((n) => n.slice(0, -1))} className="flex items-center justify-center rounded-lg text-mist-600 hover:bg-mist-50">
           <Icon name="backspace" className="h-5 w-5" />
         </button>
       </div>
-      <label className="mt-3 block text-[12px] font-bold text-[#3B3F5D]" htmlFor="line">
+      <label className="mt-3 block text-[12px] font-bold text-mist-800" htmlFor="line">
         Line
-        <select id="line" value={line} onChange={(e) => setLine(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-[#CDD0E3] bg-white px-3 text-[13px] font-normal text-navy">
+        <select id="line" value={line} onChange={(e) => setLine(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-mist-300 bg-white px-3 text-[13px] font-normal text-navy">
           {LINES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
         </select>
       </label>
@@ -397,33 +397,33 @@ function RecentCalls({ state, onCall }) {
   return (
     <Card title="Recent calls" actions={<Button size="sm" variant="ghost" onClick={state.reload}><Icon name="refresh" /> Refresh</Button>} bodyClassName="p-0">
       {state.loading ? <div className="px-4"><Loading /></div> : !state.data?.length ? (
-        <p className="m-0 px-4 py-6 text-sm text-[#5B6080]">No calls logged yet.</p>
+        <p className="m-0 px-4 py-6 text-sm text-mist-600">No calls logged yet.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px] border-collapse text-left text-[13.5px]">
             <thead>
-              <tr className="text-[11.5px] uppercase tracking-[0.05em] text-[#5B6080]">
-                {['Caller', 'Number', 'When', 'Outcome', 'Handled by', ''].map((h) => <th key={h} className="border-b border-[#EDEEF5] px-4 py-2.5 font-semibold">{h}</th>)}
+              <tr className="text-[12px] text-mist-600">
+                {['Caller', 'Number', 'When', 'Outcome', 'Handled by', ''].map((h) => <th key={h} className="border-b border-mist-200 px-4 py-2.5 font-semibold">{h}</th>)}
               </tr>
             </thead>
             <tbody>
               {state.data.map((c) => (
-                <tr key={c.id} className="hover:bg-[#F7F8FB]">
-                  <td className="border-b border-[#EDEEF5] px-4 py-2.5">
+                <tr key={c.id} className="hover:bg-mist-25">
+                  <td className="border-b border-mist-200 px-4 py-2.5">
                     <span className="flex items-center gap-2">
-                      <span className={`flex h-7 w-7 items-center justify-center rounded-full ${c.callOutcome === 'Missed' ? 'bg-[#FCE4E2] text-[#9B1C12]' : c.type === 'CALL_INBOUND' ? 'bg-[#E6F4F4] text-[#0B4F4F]' : 'bg-[#EEF0FA] text-[#2A2F63]'}`}>
+                      <span className={`flex h-7 w-7 items-center justify-center rounded-full ${c.callOutcome === 'Missed' ? 'bg-danger-100 text-danger-700' : c.type === 'CALL_INBOUND' ? 'bg-brand-50 text-brand-900' : 'bg-mist-100 text-ink-700'}`}>
                         <Icon name={c.callOutcome === 'Missed' ? 'phoneMissed' : c.type === 'CALL_INBOUND' ? 'phoneIn' : 'phoneOut'} className="h-3.5 w-3.5" />
                       </span>
-                      {c.patientId ? <Link to={`/app/crm/patients/${c.patientId}`} className="font-semibold text-navy hover:text-[#0A7A82]">{c.patientName}</Link> : <span className="font-semibold">{c.callerName || 'Unknown'}</span>}
+                      {c.patientId ? <Link to={`/app/crm/patients/${c.patientId}`} className="font-semibold text-navy hover:text-brand-700">{c.patientName}</Link> : <span className="font-semibold">{c.callerName || 'Unknown'}</span>}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap border-b border-[#EDEEF5] px-4 py-2.5 font-mono">{formatPhone(c.phone)}</td>
-                  <td className="whitespace-nowrap border-b border-[#EDEEF5] px-4 py-2.5 text-[#5B6080]">{fmtRelative(c.occurredAt)}</td>
-                  <td className="border-b border-[#EDEEF5] px-4 py-2.5"><Pill tone={outcomeTone(c.callOutcome)}>{c.callOutcome || c.callReason || 'Logged'}</Pill></td>
-                  <td className="border-b border-[#EDEEF5] px-4 py-2.5">{c.actorName}</td>
-                  <td className="border-b border-[#EDEEF5] px-4 py-2.5 text-right">
+                  <td className="whitespace-nowrap border-b border-mist-200 px-4 py-2.5 font-mono">{formatPhone(c.phone)}</td>
+                  <td className="whitespace-nowrap border-b border-mist-200 px-4 py-2.5 text-mist-600">{fmtRelative(c.occurredAt)}</td>
+                  <td className="border-b border-mist-200 px-4 py-2.5"><Pill tone={outcomeTone(c.callOutcome)}>{c.callOutcome || c.callReason || 'Logged'}</Pill></td>
+                  <td className="border-b border-mist-200 px-4 py-2.5">{c.actorName}</td>
+                  <td className="border-b border-mist-200 px-4 py-2.5 text-right">
                     {c.phone && (
-                      <button type="button" aria-label={`Call ${formatPhone(c.phone)}`} onClick={() => onCall(c)} className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#0A7A82] hover:bg-[#E6F4F4]">
+                      <button type="button" aria-label={`Call ${formatPhone(c.phone)}`} onClick={() => onCall(c)} className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-brand-700 hover:bg-brand-50">
                         <Icon name="phone" />
                       </button>
                     )}
@@ -445,11 +445,11 @@ function ChooseCaller({ matches, onPick, onNew }) {
       <ul className="m-0 list-none space-y-2 p-0">
         {matches.map((m) => (
           <li key={m.patient.id}>
-            <button type="button" onClick={() => onPick(m.patient.id)} className="flex w-full items-center gap-3 rounded-[10px] border border-[#E1E3F0] px-3 py-2.5 text-left hover:border-[#0A7A82] hover:bg-[#F3FAFA]">
+            <button type="button" onClick={() => onPick(m.patient.id)} className="flex w-full items-center gap-3 rounded-[10px] border border-mist-200 px-3 py-2.5 text-left hover:border-brand-600 hover:bg-brand-50">
               <Avatar name={m.patient.fullName} size="sm" />
               <span className="min-w-0 flex-1">
                 <span className="block font-semibold text-navy">{m.patient.fullName}</span>
-                <span className="block text-[12.5px] text-[#5B6080]">{m.patient.dateOfBirth ? `DOB ${fmtDate(m.patient.dateOfBirth)}` : 'DOB not on file'}{m.patient.mrn ? ` · MRN ${m.patient.mrn}` : ''}</span>
+                <span className="block text-[12.5px] text-mist-600">{m.patient.dateOfBirth ? `DOB ${fmtDate(m.patient.dateOfBirth)}` : 'DOB not on file'}{m.patient.mrn ? ` · MRN ${m.patient.mrn}` : ''}</span>
               </span>
               <Pill tone={m.patient.lifecycleStage === 'PATIENT' ? 'green' : 'blue'}>{m.patient.lifecycleStage === 'PATIENT' ? 'Patient' : 'Lead'}</Pill>
             </button>
@@ -503,13 +503,13 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
   return (
     <div className="space-y-4">
       {linkedNote && (
-        <div role="status" className="flex items-center gap-2 rounded-[12px] border border-[#B9DEDE] bg-[#E6F4F4] px-4 py-3 text-[13.5px] text-[#0B4F4F]">
+        <div role="status" className="flex items-center gap-2 rounded-[12px] border border-brand-100 bg-brand-50 px-4 py-3 text-[13.5px] text-brand-900">
           <Icon name="link" />
           <span>Linked <b className="font-mono">{linkedNote.phone}</b> to {linkedNote.name}’s profile as a second phone number. The number on file{linkedNote.oldPhone ? <>, <b className="font-mono">{linkedNote.oldPhone}</b>,</> : ''} is kept.</span>
         </div>
       )}
-      <section className="flex flex-wrap items-center gap-4 rounded-[14px] border border-[#E4E6EF] bg-white p-5">
-        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#1B1F4B] text-[20px] font-bold text-white">
+      <section className="flex flex-wrap items-center gap-4 rounded-[14px] border border-mist-200 bg-white p-5">
+        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-ink-900 text-[20px] font-bold text-white">
           {p.fullName.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
         </span>
         <div className="min-w-0 flex-1">
@@ -519,7 +519,7 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
             {p.insurancePayer && <Pill tone="ink">{p.insurancePayer}</Pill>}
             {p.doNotContact && <Pill tone="red">Do not contact</Pill>}
           </div>
-          <p className="m-0 mt-1 text-[13.5px] text-[#5B6080]">
+          <p className="m-0 mt-1 text-[13.5px] text-mist-600">
             {[p.dateOfBirth && `DOB ${fmtDate(p.dateOfBirth)}${age != null ? ` (${age})` : ''}`, p.mrn && `MRN ${p.mrn}`, p.phone && formatPhone(p.phone), p.preferredProvider].filter(Boolean).join(' · ') || 'No demographics on file'}
           </p>
         </div>
@@ -534,12 +534,12 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
           <Card title="Appointments">
             <dl className="m-0 grid gap-3 text-[13.5px] sm:grid-cols-2">
               <div>
-                <dt className="text-[12px] text-[#5B6080]">Next</dt>
+                <dt className="text-[12px] text-mist-600">Next</dt>
                 <dd className="m-0 font-semibold text-navy">{next ? `${fmtDateTime(next.startsAt)}` : 'None booked'}</dd>
-                {next && <dd className="m-0 text-[12.5px] text-[#5B6080]">{next.title}{next.providerName ? ` · ${next.providerName}` : ''} <EnumPill list={APPT_STATUSES} value={next.status} dot={false} /></dd>}
+                {next && <dd className="m-0 text-[12.5px] text-mist-600">{next.title}{next.providerName ? ` · ${next.providerName}` : ''} <EnumPill list={APPT_STATUSES} value={next.status} dot={false} /></dd>}
               </div>
               <div>
-                <dt className="text-[12px] text-[#5B6080]">Last contact</dt>
+                <dt className="text-[12px] text-mist-600">Last contact</dt>
                 <dd className="m-0 text-navy">{p.lastContactAt ? `${fmtRelative(p.lastContactAt)}${p.callOutcome ? ` · ${p.callOutcome}` : ''}` : 'Never'}</dd>
               </div>
             </dl>
@@ -557,12 +557,12 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
                 {match.openTasks.map((t) => (
                   <li key={t.id} className="flex items-center justify-between gap-2">
                     <span>{t.title}</span>
-                    <span className={`whitespace-nowrap text-[12.5px] ${t.overdue ? 'font-semibold text-[#B42318]' : 'text-[#5B6080]'}`}>{fmtDateTime(t.dueAt)}</span>
+                    <span className={`whitespace-nowrap text-[12.5px] ${t.overdue ? 'font-semibold text-danger-600' : 'text-mist-600'}`}>{fmtDateTime(t.dueAt)}</span>
                   </li>
                 ))}
                 {match.openOpportunities.map((o) => (
                   <li key={o.id} className="flex items-center justify-between gap-2">
-                    <Link to={`/app/crm/opportunities/${o.id}`} className="text-navy hover:text-[#0A7A82]">{o.name}</Link>
+                    <Link to={`/app/crm/opportunities/${o.id}`} className="text-navy hover:text-brand-700">{o.name}</Link>
                     <EnumPill list={OPP_STAGES} value={o.stage} dot={false} />
                   </li>
                 ))}
@@ -577,15 +577,15 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
           )}
 
           <Card title="Call history">
-            {history.loading ? <Loading /> : calls.length === 0 ? <p className="m-0 text-sm text-[#5B6080]">No earlier calls.</p> : (
+            {history.loading ? <Loading /> : calls.length === 0 ? <p className="m-0 text-sm text-mist-600">No earlier calls.</p> : (
               <ul className="m-0 list-none p-0">
                 {calls.map((c) => (
-                  <li key={c.id} className="border-t border-[#EDEEF5] py-2.5 first:border-0 first:pt-0">
-                    <p className="m-0 text-[12.5px] text-[#5B6080]">
+                  <li key={c.id} className="border-t border-mist-200 py-2.5 first:border-0 first:pt-0">
+                    <p className="m-0 text-[12.5px] text-mist-600">
                       <b className="text-navy">{fmtDateTime(c.occurredAt)}</b> · {c.type === 'CALL_INBOUND' ? 'Inbound' : 'Outbound'} · {c.actorName}
                     </p>
                     <p className="m-0 mt-0.5 text-[13.5px] text-navy">{c.callReason || c.subject}{c.callOutcome ? ` — ${c.callOutcome}` : ''}</p>
-                    {c.body && <p className="m-0 mt-0.5 text-[13px] text-[#43476A]">{c.body}</p>}
+                    {c.body && <p className="m-0 mt-0.5 text-[13px] text-mist-700">{c.body}</p>}
                   </li>
                 ))}
               </ul>
@@ -607,7 +607,7 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
             </>
           ) : (
             <>
-              <p className="m-0 mb-1.5 text-[12px] font-bold text-[#3B3F5D]">Reason for the call</p>
+              <p className="m-0 mb-1.5 text-[12px] font-bold text-mist-800">Reason for the call</p>
               <div className="grid grid-cols-2 gap-2">
                 {CALL_REASONS.map((r) => (
                   <button
@@ -615,7 +615,7 @@ function ExistingCaller({ match, number, direction, line, elapsed, linkedNote, e
                     type="button"
                     aria-pressed={reason === r}
                     onClick={() => setReason(r)}
-                    className={`min-h-11 rounded-lg border px-3 text-left text-[13px] font-semibold transition ${reason === r ? 'border-[#0A7A82] bg-[#E6F4F4] text-[#0B4F4F] shadow-[inset_0_0_0_1px_#0A7A82]' : 'border-[#CDD0E3] bg-white text-navy hover:border-[#8D91B3]'}`}
+                    className={`min-h-11 rounded-lg border px-3 text-left text-[13px] font-semibold transition ${reason === r ? 'border-brand-600 bg-brand-50 text-brand-900 shadow-[inset_0_0_0_1px_#1E8E94]' : 'border-mist-300 bg-white text-navy hover:border-mist-400'}`}
                   >
                     {r}
                   </button>
@@ -703,12 +703,12 @@ function NewCaller({ number, line, callNotes, setCallNotes, elapsed, timer, onLi
   }
 
   const noMatch = Array.isArray(found) && found.length === 0
-  const input = 'mt-1 h-11 w-full rounded-lg border border-[#CDD0E3] bg-white px-3 text-[14px] text-navy outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15'
+  const input = 'mt-1 h-11 w-full rounded-lg border border-mist-300 bg-white px-3 text-[14px] text-navy outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15'
 
   return (
     <div className="space-y-4">
-      <section className="flex flex-wrap items-center gap-4 rounded-[14px] border border-[#E4E6EF] bg-white p-5">
-        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#FDF0DC] text-[#7E4305]">
+      <section className="flex flex-wrap items-center gap-4 rounded-[14px] border border-mist-200 bg-white p-5">
+        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-sun-50 text-sun-700">
           <Icon name="user" className="h-7 w-7" />
         </span>
         <div className="min-w-0 flex-1">
@@ -716,7 +716,7 @@ function NewCaller({ number, line, callNotes, setCallNotes, elapsed, timer, onLi
             <h1 className="m-0 text-[24px] font-bold text-navy">{leadSaved ? leadSaved.patient.fullName : 'New caller'}</h1>
             <Pill tone={leadSaved ? 'blue' : 'amber'}>{leadSaved ? 'Patient lead' : 'New number'}</Pill>
           </div>
-          <p className="m-0 mt-1 font-mono text-[13.5px] text-[#5B6080]">{formatPhone(number)} · {LINES.find((l) => l.value === line)?.label}</p>
+          <p className="m-0 mt-1 font-mono text-[13.5px] text-mist-600">{formatPhone(number)} · {LINES.find((l) => l.value === line)?.label}</p>
         </div>
         <Button variant="ghost" onClick={onOther}><Icon name="building" /> Not a patient</Button>
       </section>
@@ -725,23 +725,23 @@ function NewCaller({ number, line, callNotes, setCallNotes, elapsed, timer, onLi
         <div className="space-y-4">
           <Card title="1 · Is this an existing patient on another phone?" subtitle="Ask for their name and date of birth.">
             <div className="grid gap-3 sm:grid-cols-3">
-              <label className="text-[12px] font-bold text-[#3B3F5D]">First name *<input className={input} value={q.first} onChange={(e) => setQ({ ...q, first: e.target.value })} /></label>
-              <label className="text-[12px] font-bold text-[#3B3F5D]">Last name *<input className={input} value={q.last} onChange={(e) => setQ({ ...q, last: e.target.value })} /></label>
-              <label className="text-[12px] font-bold text-[#3B3F5D]">Date of birth *<input className={input} type="date" max={today} value={q.dob} onChange={(e) => setQ({ ...q, dob: e.target.value })} /></label>
+              <label className="text-[12px] font-bold text-mist-800">First name *<input className={input} value={q.first} onChange={(e) => setQ({ ...q, first: e.target.value })} /></label>
+              <label className="text-[12px] font-bold text-mist-800">Last name *<input className={input} value={q.last} onChange={(e) => setQ({ ...q, last: e.target.value })} /></label>
+              <label className="text-[12px] font-bold text-mist-800">Date of birth *<input className={input} type="date" max={today} value={q.dob} onChange={(e) => setQ({ ...q, dob: e.target.value })} /></label>
             </div>
             {searchErr && <p role="alert" className="m-0 mt-2 text-[13px] font-semibold text-warn">{searchErr}</p>}
             <Button variant="secondary" className="mt-3" onClick={search} disabled={searching}><Icon name="search" /> {searching ? 'Searching…' : 'Search patients'}</Button>
             {found?.length > 0 && found.map((p) => (
-              <div key={p.id} className="mt-3 flex flex-wrap items-center gap-3 rounded-[10px] border border-[#B9DEDE] bg-[#F2FAFA] p-3.5">
+              <div key={p.id} className="mt-3 flex flex-wrap items-center gap-3 rounded-[10px] border border-brand-100 bg-brand-50 p-3.5">
                 <div className="min-w-0 flex-1">
                   <p className="m-0 font-semibold text-navy">{p.fullName}</p>
-                  <p className="m-0 text-[12.5px] text-[#5B6080]">DOB {fmtDate(p.dateOfBirth)}{p.mrn ? ` · MRN ${p.mrn}` : ''} · on file <span className="font-mono">{p.phone ? formatPhone(p.phone) : '—'}</span></p>
+                  <p className="m-0 text-[12.5px] text-mist-600">DOB {fmtDate(p.dateOfBirth)}{p.mrn ? ` · MRN ${p.mrn}` : ''} · on file <span className="font-mono">{p.phone ? formatPhone(p.phone) : '—'}</span></p>
                 </div>
                 <Button onClick={() => link(p)}><Icon name="link" /> That’s the caller: link this number</Button>
               </div>
             ))}
             {noMatch && (
-              <p className="m-0 mt-3 rounded-[10px] bg-[#F4F5FA] px-3.5 py-3 text-[13.5px] text-navy">No match in Utessa. Treat this caller as a new patient.</p>
+              <p className="m-0 mt-3 rounded-[10px] bg-mist-50 px-3.5 py-3 text-[13.5px] text-navy">No match in Utessa. Treat this caller as a new patient.</p>
             )}
           </Card>
 
@@ -749,7 +749,7 @@ function NewCaller({ number, line, callNotes, setCallNotes, elapsed, timer, onLi
             <Card title="2 · Does the caller want to book an appointment?">
               {leadSaved ? (
                 <div className="space-y-3">
-                  <p role="status" className="m-0 text-[13.5px] font-semibold text-[#155E62]">
+                  <p role="status" className="m-0 text-[13.5px] font-semibold text-brand-800">
                     Saved to Patient leads with the call notes. {leadFu ? `A follow-up task was created for ${fmtDate(leadFu)}.` : ''}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -783,7 +783,7 @@ function NewCaller({ number, line, callNotes, setCallNotes, elapsed, timer, onLi
             value={callNotes}
             onChange={(e) => setCallNotes(e.target.value)}
             placeholder="e.g. Referred by Dr. Patel for palpitations. Prefers mornings."
-            className="min-h-[240px] w-full rounded-lg border border-[#CDD0E3] bg-white px-3 py-2.5 text-[14px] leading-relaxed text-navy outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15"
+            className="min-h-[240px] w-full rounded-lg border border-mist-300 bg-white px-3 py-2.5 text-[14px] leading-relaxed text-navy outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15"
           />
         </Card>
       </div>
@@ -836,7 +836,7 @@ function OtherCaller({ number, line, elapsed, notes, setNotes, onBack, onDone })
       {error && <p role="alert" className="m-0 mt-2 text-[13px] font-semibold text-warn">{error}</p>}
       {saved ? (
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <p role="status" className="m-0 text-[13.5px] font-semibold text-[#155E62]">Saved to the call log.</p>
+          <p role="status" className="m-0 text-[13.5px] font-semibold text-brand-800">Saved to the call log.</p>
           <Button variant="secondary" onClick={onDone}>Done, back to calls</Button>
         </div>
       ) : (
@@ -857,8 +857,8 @@ function CreatedPatient({ result, timer, onDone }) {
   const message = `${p.fullName} was created and the appointment is booked. Records are queued for the EHR.`
   return (
     <div className="space-y-4">
-      <div role="status" className="flex items-center gap-2 rounded-[12px] border border-[#B9DEDE] bg-[#E6F4F4] px-4 py-3 text-[13.5px] text-[#0B4F4F]"><Icon name="check" /> {message}</div>
-      <section className="flex flex-wrap items-center gap-4 rounded-[14px] border border-[#E4E6EF] bg-white p-5">
+      <div role="status" className="flex items-center gap-2 rounded-[12px] border border-brand-100 bg-brand-50 px-4 py-3 text-[13.5px] text-brand-900"><Icon name="check" /> {message}</div>
+      <section className="flex flex-wrap items-center gap-4 rounded-[14px] border border-mist-200 bg-white p-5">
         <Avatar name={p.fullName} size="lg" tone="ink" />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -866,7 +866,7 @@ function CreatedPatient({ result, timer, onDone }) {
             <Pill tone="ink">New patient</Pill>
             <Pill tone="amber" dot>EHR: queued</Pill>
           </div>
-          <p className="m-0 mt-1 text-[13.5px] text-[#5B6080]">
+          <p className="m-0 mt-1 text-[13.5px] text-mist-600">
             DOB {fmtDate(p.dateOfBirth)} · <span className="font-mono">{formatPhone(p.phone)}</span> · {p.coverageType === 'SELF_PAY' ? 'Self-pay' : p.insurancePayer}
           </p>
         </div>
@@ -878,15 +878,15 @@ function CreatedPatient({ result, timer, onDone }) {
             <>
               <p className="m-0 text-[15px] font-semibold text-navy">{fmtDateTime(a.startsAt)}</p>
               <p className="m-0 mt-1 text-[13.5px] text-navy">{a.title} · {a.durationMinutes} min{a.providerName ? ` · ${a.providerName}` : ''}{a.location ? ` · ${a.location}` : ''}</p>
-              <p className="m-0 mt-2 text-[13px] text-[#5B6080]">Reason: {p.reasonForVisit || '—'}</p>
-              <p className="m-0 mt-1 text-[13px] text-[#5B6080]">{p.smsReminders ? 'Reminders & intake forms by text once the phone system is connected' : 'No texts — caller did not agree'}</p>
+              <p className="m-0 mt-2 text-[13px] text-mist-600">Reason: {p.reasonForVisit || '—'}</p>
+              <p className="m-0 mt-1 text-[13px] text-mist-600">{p.smsReminders ? 'Reminders & intake forms by text once the phone system is connected' : 'No texts — caller did not agree'}</p>
             </>
-          ) : <p className="m-0 text-sm text-[#5B6080]">No appointment.</p>}
+          ) : <p className="m-0 text-sm text-mist-600">No appointment.</p>}
         </Card>
         <Card title="Call documentation">
-          <p className="m-0 text-[12.5px] text-[#5B6080]"><b className="text-navy">Today · Inbound</b> · {timer} · {call.actorName}</p>
+          <p className="m-0 text-[12.5px] text-mist-600"><b className="text-navy">Today · Inbound</b> · {timer} · {call.actorName}</p>
           <p className="m-0 mt-1 whitespace-pre-line text-[13.5px] text-navy">{call.body || 'No notes'}</p>
-          <p className="m-0 mt-1 text-[13px] text-[#5B6080]">Outcome: new patient appointment booked</p>
+          <p className="m-0 mt-1 text-[13px] text-mist-600">Outcome: new patient appointment booked</p>
         </Card>
         <Card title="Sent to the EHR">
           <SyncList steps={result.steps} />

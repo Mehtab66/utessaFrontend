@@ -8,7 +8,7 @@ export default function LandingPage() {
         className="pointer-events-none absolute inset-0 opacity-90"
         style={{
           background:
-            'radial-gradient(ellipse 80% 60% at 70% 20%, rgba(92,225,230,0.28), transparent 55%), radial-gradient(ellipse 50% 40% at 10% 80%, rgba(255,210,63,0.18), transparent 50%), linear-gradient(160deg, #12153a 0%, #1b1f4b 45%, #1a3a4a 100%)',
+            'radial-gradient(ellipse 80% 60% at 70% 20%, rgba(92,225,230,0.28), transparent 55%), radial-gradient(ellipse 50% 40% at 10% 80%, rgba(255,210,63,0.18), transparent 50%), linear-gradient(160deg, #11143A 0%, #1B1F4B 45%, #0A2E32 100%)',
         }}
       />
 
@@ -26,7 +26,7 @@ export default function LandingPage() {
 
       <main className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:pt-16">
         <section className="animate-rise">
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.18em] text-lcyan">
+          <p className="mb-5 text-sm font-semibold text-lcyan">
             Healthcare practice OS
           </p>
           <h1 className="max-w-[14ch] text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">

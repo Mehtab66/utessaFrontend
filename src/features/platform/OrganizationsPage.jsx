@@ -30,7 +30,7 @@ export default function OrganizationsPage() {
       />
 
       {error && (
-        <p className="mb-4 rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-sm font-semibold text-[#B4472F]">
+        <p className="mb-4 rounded-xl border border-danger-200 bg-danger-50 px-3.5 py-3 text-sm font-semibold text-danger-700">
           {error}
         </p>
       )}
@@ -42,20 +42,20 @@ export default function OrganizationsPage() {
         <Kpi label="Showing" value={rows.length} sub="After filters" />
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-3 rounded-[14px] border border-[#DCDFEE] bg-white p-3.5">
-        <label className="flex min-w-[200px] flex-1 flex-col gap-1 text-[12px] font-semibold text-[#4A4E7A]">
+      <div className="mb-4 flex flex-wrap gap-3 rounded-[14px] border border-mist-200 bg-white p-3.5">
+        <label className="flex min-w-[200px] flex-1 flex-col gap-1 text-[12px] font-semibold text-mist-700">
           Search
           <input
-            className="min-h-[42px] rounded-[10px] border border-[#DCDFEE] bg-[#F6F7FB] px-3 text-sm font-normal text-[#1B1F4B]"
+            className="min-h-[42px] rounded-[10px] border border-mist-200 bg-mist-50 px-3 text-sm font-normal text-ink-900"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Organization, slug or type"
           />
         </label>
-        <label className="flex min-w-[160px] flex-col gap-1 text-[12px] font-semibold text-[#4A4E7A]">
+        <label className="flex min-w-[160px] flex-col gap-1 text-[12px] font-semibold text-mist-700">
           Status
           <select
-            className="min-h-[42px] rounded-[10px] border border-[#DCDFEE] bg-[#F6F7FB] px-3 text-sm font-normal text-[#1B1F4B]"
+            className="min-h-[42px] rounded-[10px] border border-mist-200 bg-mist-50 px-3 text-sm font-normal text-ink-900"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
@@ -76,8 +76,8 @@ export default function OrganizationsPage() {
             label: 'Organization',
             render: (r) => (
               <div>
-                <b className="text-[#075E66] underline-offset-2 group-hover:underline">{r.name}</b>
-                <div className="text-[13px] text-[#4A4E7A]">{r.orgType} · {r.slug}</div>
+                <b className="text-brand-800 underline-offset-2 group-hover:underline">{r.name}</b>
+                <div className="text-[13px] text-mist-700">{r.orgType} · {r.slug}</div>
               </div>
             ),
           },

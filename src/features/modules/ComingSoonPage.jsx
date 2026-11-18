@@ -120,7 +120,7 @@ function ModuleStub({ title, color, copy }) {
         <span className={`h-3 w-3 rounded-sm ${color}`} />
         <h1 className="m-0 text-[28px] font-bold text-navy">{title}</h1>
       </div>
-      <p className="text-sm text-[#43476A]">{copy}</p>
+      <p className="text-sm text-mist-700">{copy}</p>
     </div>
   )
 }

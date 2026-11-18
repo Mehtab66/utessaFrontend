@@ -19,7 +19,7 @@ export default function TasksPage() {
           ['Sales', 'Early access follow-ups and trial conversions'],
         ].map(([t, d]) => (
           <Panel key={t} title={t}>
-            <p className="m-0 text-sm text-[#4A4E7A]">{d}</p>
+            <p className="m-0 text-sm text-mist-700">{d}</p>
           </Panel>
         ))}
       </div>
@@ -30,13 +30,13 @@ export default function TasksPage() {
         ) : (
           <ul className="m-0 list-none space-y-3 p-0">
             {attention.map((item) => (
-              <li key={`${item.priority}-${item.title}`} className="rounded-[12px] border border-[#DCDFEE] bg-[#F8F9FD] px-4 py-3">
+              <li key={`${item.priority}-${item.title}`} className="rounded-[12px] border border-mist-200 bg-mist-25 px-4 py-3">
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <StatusPill tone="info">{item.priority}</StatusPill>
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[#4A4E7A]">Open</span>
+                  <span className="text-[12px] font-semibold text-mist-700">Open</span>
                 </div>
-                <p className="m-0 text-sm font-semibold text-[#1B1F4B]">{item.title}</p>
-                <p className="m-0 mt-0.5 text-[13px] text-[#4A4E7A]">{item.detail}</p>
+                <p className="m-0 text-sm font-semibold text-ink-900">{item.title}</p>
+                <p className="m-0 mt-0.5 text-[13px] text-mist-700">{item.detail}</p>
               </li>
             ))}
           </ul>

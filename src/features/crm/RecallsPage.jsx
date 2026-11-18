@@ -52,19 +52,19 @@ export default function RecallsPage() {
 
       <div className="mb-4 grid gap-3 lg:grid-cols-2">
         <Card bodyClassName="flex items-start gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EEF0FA] text-[#2A2F63]"><Icon name="refresh" className="h-5 w-5" /></span>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-mist-100 text-ink-700"><Icon name="refresh" className="h-5 w-5" /></span>
           <div className="min-w-0 flex-1">
             <p className="m-0 text-[14px] font-semibold text-navy">From the EHR</p>
-            <p className="m-0 mt-0.5 text-[13px] text-[#5B6080]">
-              Once your <Link to="/app/crm/integrations" className="font-semibold text-[#0A7A82]">EHR is connected</Link>, no-shows and cancellations are pulled every weekday morning. Visits you mark as no-show or cancelled in Utessa are added automatically today.
+            <p className="m-0 mt-0.5 text-[13px] text-mist-600">
+              Once your <Link to="/app/crm/integrations" className="font-semibold text-brand-700">EHR is connected</Link>, no-shows and cancellations are pulled every weekday morning. Visits you mark as no-show or cancelled in Utessa are added automatically today.
             </p>
           </div>
         </Card>
         <Card bodyClassName="flex items-start gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#E6F4F4] text-[#0A7A82]"><Icon name="upload" className="h-5 w-5" /></span>
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><Icon name="upload" className="h-5 w-5" /></span>
           <div className="min-w-0 flex-1">
             <p className="m-0 text-[14px] font-semibold text-navy">Upload a file (.csv)</p>
-            <p className="m-0 mt-0.5 text-[13px] text-[#5B6080]">Export your appointment status report (No Show and Cancelled) and upload it. Each row is matched to the patient by MRN, name + date of birth, or phone.</p>
+            <p className="m-0 mt-0.5 text-[13px] text-mist-600">Export your appointment status report (No Show and Cancelled) and upload it. Each row is matched to the patient by MRN, name + date of birth, or phone.</p>
           </div>
           <Button size="sm" variant="secondary" onClick={() => setImporting(true)}>Choose file</Button>
         </Card>
@@ -94,8 +94,8 @@ export default function RecallsPage() {
             label: 'Patient',
             render: (r) => (
               <div>
-                <Link to={`/app/crm/patients/${r.patientId}`} className="font-semibold text-navy hover:text-[#0A7A82]">{r.patientName}</Link>
-                <p className="m-0 text-[12px] text-[#5B6080]">{r.patientDob ? `DOB ${fmtDate(r.patientDob)}` : 'DOB not on file'}{r.mrn ? ` · ${r.mrn}` : ''}</p>
+                <Link to={`/app/crm/patients/${r.patientId}`} className="font-semibold text-navy hover:text-brand-700">{r.patientName}</Link>
+                <p className="m-0 text-[12px] text-mist-600">{r.patientDob ? `DOB ${fmtDate(r.patientDob)}` : 'DOB not on file'}{r.mrn ? ` · ${r.mrn}` : ''}</p>
               </div>
             ),
           },
@@ -107,7 +107,7 @@ export default function RecallsPage() {
             render: (r) => (
               <div>
                 <p className="m-0">{fmtDateTime(r.missedAt)}</p>
-                <p className="m-0 text-[12px] text-[#5B6080]">{[r.visitType, r.providerName].filter(Boolean).join(' · ') || '—'}</p>
+                <p className="m-0 text-[12px] text-mist-600">{[r.visitType, r.providerName].filter(Boolean).join(' · ') || '—'}</p>
               </div>
             ),
           },
@@ -117,7 +117,7 @@ export default function RecallsPage() {
             render: (r) => (
               <div className="space-y-1">
                 <Pill tone={r.missType === 'NO_SHOW' ? 'red' : 'amber'}>{r.missType === 'NO_SHOW' ? 'No-show' : 'Cancelled'}</Pill>
-                <p className="m-0 text-[11.5px] text-[#8A8DA8]">{SOURCE_LABEL[r.source]}</p>
+                <p className="m-0 text-[11.5px] text-mist-500">{SOURCE_LABEL[r.source]}</p>
               </div>
             ),
           },
@@ -129,9 +129,9 @@ export default function RecallsPage() {
             render: (r) => (
               <div>
                 <p className="m-0">{r.lastOutcome || '—'}</p>
-                {r.status === 'NOT_REACHED' && r.nextAttemptOn && <p className="m-0 text-[12px] text-[#5B6080]">Try again {fmtDate(r.nextAttemptOn)}</p>}
-                {r.status === 'REBOOKED' && r.rebookedAt && <p className="m-0 text-[12px] text-[#155E62]">New visit {fmtDateTime(r.rebookedAt)}</p>}
-                {r.lastAttemptAt && <p className="m-0 text-[11.5px] text-[#8A8DA8]">{fmtRelative(r.lastAttemptAt)}</p>}
+                {r.status === 'NOT_REACHED' && r.nextAttemptOn && <p className="m-0 text-[12px] text-mist-600">Try again {fmtDate(r.nextAttemptOn)}</p>}
+                {r.status === 'REBOOKED' && r.rebookedAt && <p className="m-0 text-[12px] text-brand-800">New visit {fmtDateTime(r.rebookedAt)}</p>}
+                {r.lastAttemptAt && <p className="m-0 text-[11.5px] text-mist-500">{fmtRelative(r.lastAttemptAt)}</p>}
               </div>
             ),
           },
@@ -221,7 +221,7 @@ function RecallCallModal({ recall, onClose, onSaved }) {
     }
   }
 
-  const choice = (on) => `min-h-10 rounded-lg border px-3 text-[13px] font-semibold transition ${on ? 'border-[#0A7A82] bg-[#E6F4F4] text-[#0B4F4F] shadow-[inset_0_0_0_1px_#0A7A82]' : 'border-[#CDD0E3] bg-white text-navy hover:border-[#8D91B3]'}`
+  const choice = (on) => `min-h-10 rounded-lg border px-3 text-[13px] font-semibold transition ${on ? 'border-brand-600 bg-brand-50 text-brand-900 shadow-[inset_0_0_0_1px_#1E8E94]' : 'border-mist-300 bg-white text-navy hover:border-mist-400'}`
   const OUTCOMES = [['REBOOKED', 'Rebooked'], ['NOT_REACHED', 'No answer'], ['LEFT_VOICEMAIL', 'Left voicemail'], ['CLOSED', 'Won’t rebook']]
 
   return (
@@ -239,11 +239,11 @@ function RecallCallModal({ recall, onClose, onSaved }) {
         </>
       }
     >
-      <div className="mb-4 rounded-[10px] bg-[#F4F5FA] px-3.5 py-3 text-[13.5px] text-navy">
+      <div className="mb-4 rounded-[10px] bg-mist-50 px-3.5 py-3 text-[13.5px] text-navy">
         {recall.missType === 'NO_SHOW' ? 'Missed' : 'Cancelled'} {recall.visitType || 'visit'} on <b>{fmtDateTime(recall.missedAt)}</b>
         {recall.providerName ? ` with ${recall.providerName}` : ''}. {recall.attempts ? `${recall.attempts} earlier attempt${recall.attempts === 1 ? '' : 's'}${recall.lastOutcome ? ` · last: ${recall.lastOutcome}` : ''}.` : 'First attempt.'}
       </div>
-      <p className="m-0 mb-1.5 text-[12px] font-bold text-[#3B3F5D]">Outcome *</p>
+      <p className="m-0 mb-1.5 text-[12px] font-bold text-mist-800">Outcome *</p>
       <div className="flex flex-wrap gap-2">
         {OUTCOMES.map(([v, l]) => (
           <button key={v} type="button" aria-pressed={outcome === v} className={choice(outcome === v)} onClick={() => {
@@ -265,11 +265,11 @@ function RecallCallModal({ recall, onClose, onSaved }) {
           </div>
           <Button size="sm" variant="ghost" onClick={() => loadOpenings(provider || recall.providerName, date)}><Icon name="refresh" /> Refresh openings</Button>
           {openings === null ? <Loading label="Finding openings…" /> : openings.length === 0 ? (
-            <p className="m-0 text-[13px] text-[#5B6080]">No openings found. Try another date or provider.</p>
+            <p className="m-0 text-[13px] text-mist-600">No openings found. Try another date or provider.</p>
           ) : (
             <div className="grid gap-2 sm:grid-cols-3">
               {openings.map((d) => (
-                <div key={d.date} className="rounded-[10px] border border-[#E1E3F0] p-2.5">
+                <div key={d.date} className="rounded-[10px] border border-mist-200 p-2.5">
                   <p className="m-0 mb-1.5 text-[12.5px] font-bold text-navy">{new Date(`${d.date}T00:00:00`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
                   <div className="flex flex-wrap gap-1">
                     {d.slots.slice(0, 8).map((s) => (
@@ -297,7 +297,7 @@ function RecallCallModal({ recall, onClose, onSaved }) {
       <div className="mt-4">
         <Field field={{ name: 'notes', label: 'Notes', type: 'textarea' }} value={notes} onChange={setNotes} />
       </div>
-      <p className="m-0 mt-2 text-[12px] text-[#8A8DA8]">The call is logged to {recall.patientName}’s timeline. Rebooked visits are queued for the EHR when that integration is enabled.</p>
+      <p className="m-0 mt-2 text-[12px] text-mist-500">The call is logged to {recall.patientName}’s timeline. Rebooked visits are queued for the EHR when that integration is enabled.</p>
     </Modal>
   )
 }
@@ -468,41 +468,41 @@ function ImportModal({ open, onClose, onDone }) {
       }
     >
       <ol className="m-0 mb-4 flex list-none flex-wrap gap-x-5 gap-y-1 p-0 text-[12.5px] font-semibold">
-        {stepLabels.map((s, i) => <li key={s} className={i === step ? 'text-navy' : i < step ? 'text-[#0A7A82]' : 'text-[#8A8DA8]'}>{i + 1} · {s}</li>)}
+        {stepLabels.map((s, i) => <li key={s} className={i === step ? 'text-navy' : i < step ? 'text-brand-700' : 'text-mist-500'}>{i + 1} · {s}</li>)}
       </ol>
 
       {step === 0 && (
-        <label className="flex cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-[#CDD0E3] bg-[#FBFBFD] px-6 py-10 text-center hover:border-[#0A7A82]">
-          <Icon name="upload" className="h-7 w-7 text-[#0A7A82]" />
+        <label className="flex cursor-pointer flex-col items-center justify-center rounded-[12px] border-2 border-dashed border-mist-300 bg-mist-25 px-6 py-10 text-center hover:border-brand-600">
+          <Icon name="upload" className="h-7 w-7 text-brand-700" />
           <span className="mt-2 text-[14px] font-semibold text-navy">Choose a .csv file</span>
-          <span className="mt-1 max-w-lg text-[12.5px] text-[#5B6080]">Up to 5,000 rows, one row per missed or cancelled visit. Columns we look for: first name, last name, date of birth, phone, appointment date, visit type, status, provider, MRN. Other columns are ignored.</span>
+          <span className="mt-1 max-w-lg text-[12.5px] text-mist-600">Up to 5,000 rows, one row per missed or cancelled visit. Columns we look for: first name, last name, date of birth, phone, appointment date, visit type, status, provider, MRN. Other columns are ignored.</span>
           <input type="file" accept=".csv,text/csv" className="sr-only" onChange={(e) => pick(e.target.files?.[0])} />
         </label>
       )}
 
       {step === 1 && (
         <div>
-          <p className="m-0 mb-3 text-[13.5px] text-[#43476A]">We found <b>{data.length}</b> rows. We filled in the columns we recognised — check them and change any that are wrong. Nothing is saved yet.</p>
-          <div className="overflow-hidden rounded-[12px] border border-[#E1E3F0]">
+          <p className="m-0 mb-3 text-[13.5px] text-mist-700">We found <b>{data.length}</b> rows. We filled in the columns we recognised — check them and change any that are wrong. Nothing is saved yet.</p>
+          <div className="overflow-hidden rounded-[12px] border border-mist-200">
             <table className="w-full border-collapse text-left text-[13px]">
-              <thead className="bg-[#F8F9FC] text-[11.5px] uppercase tracking-[0.05em] text-[#5B6080]">
+              <thead className="bg-mist-25 text-[12px] text-mist-600">
                 <tr><th className="px-3 py-2">Information</th><th className="px-3 py-2">Column in your file</th><th className="px-3 py-2">First row</th></tr>
               </thead>
               <tbody>
                 {COLUMNS.map((c) => (
-                  <tr key={c.key} className="border-t border-[#EDEEF5]">
-                    <td className="px-3 py-2 font-semibold text-navy">{c.label}{c.req && <span className="text-[#B42318]"> *</span>}</td>
+                  <tr key={c.key} className="border-t border-mist-200">
+                    <td className="px-3 py-2 font-semibold text-navy">{c.label}{c.req && <span className="text-danger-600"> *</span>}</td>
                     <td className="px-3 py-2">
                       <select
                         value={map[c.key] ?? ''}
                         onChange={(e) => setMap((m) => ({ ...m, [c.key]: e.target.value === '' ? '' : Number(e.target.value) }))}
-                        className="h-9 w-full max-w-xs rounded-lg border border-[#CDD0E3] bg-white px-2 text-[13px]"
+                        className="h-9 w-full max-w-xs rounded-lg border border-mist-300 bg-white px-2 text-[13px]"
                       >
                         <option value="">My file doesn’t have this</option>
                         {headers.map((h, i) => <option key={`${h}-${i}`} value={i}>{h || `Column ${i + 1}`}</option>)}
                       </select>
                     </td>
-                    <td className="px-3 py-2 font-mono text-[12.5px] text-[#5B6080]">{map[c.key] === undefined || map[c.key] === '' ? '—' : data[0]?.[map[c.key]] || '—'}</td>
+                    <td className="px-3 py-2 font-mono text-[12.5px] text-mist-600">{map[c.key] === undefined || map[c.key] === '' ? '—' : data[0]?.[map[c.key]] || '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -519,32 +519,32 @@ function ImportModal({ open, onClose, onDone }) {
             <Pill tone="red">{mapped.length - ready.length} need fixing in the file</Pill>
             <Pill tone="amber">{mapped.filter((m) => m.warn).length} with a warning</Pill>
           </div>
-          <p className="m-0 mb-2 text-[12.5px] text-[#5B6080]">Utessa links each row to an existing patient (MRN, name + date of birth, or phone) or creates the patient. Visits already on the list aren’t added twice.</p>
-          <div className="max-h-[420px] overflow-auto rounded-[12px] border border-[#E1E3F0]">
+          <p className="m-0 mb-2 text-[12.5px] text-mist-600">Utessa links each row to an existing patient (MRN, name + date of birth, or phone) or creates the patient. Visits already on the list aren’t added twice.</p>
+          <div className="max-h-[420px] overflow-auto rounded-[12px] border border-mist-200">
             <table className="w-full min-w-[720px] border-collapse text-left text-[12.5px]">
-              <thead className="sticky top-0 bg-[#F8F9FC] text-[11px] uppercase tracking-[0.05em] text-[#5B6080]">
+              <thead className="sticky top-0 bg-mist-25 text-[12px] text-mist-600">
                 <tr>{['Row', 'Patient', 'DOB', 'Phone', 'Missed visit', 'Status', 'Flags'].map((h) => <th key={h} className="px-3 py-2">{h}</th>)}</tr>
               </thead>
               <tbody>
                 {mapped.slice(0, 500).map((m) => (
-                  <tr key={m.n} className={`border-t border-[#EDEEF5] ${m.problems.length ? 'bg-[#FFF5F4]' : ''}`}>
-                    <td className="px-3 py-2 font-mono text-[#8A8DA8]">{m.n}</td>
+                  <tr key={m.n} className={`border-t border-mist-200 ${m.problems.length ? 'bg-danger-50' : ''}`}>
+                    <td className="px-3 py-2 font-mono text-mist-500">{m.n}</td>
                     <td className="px-3 py-2 font-semibold text-navy">{`${m.row.firstName} ${m.row.lastName}`.trim() || '—'}</td>
                     <td className="px-3 py-2">{m.row.dateOfBirth ? fmtDate(m.row.dateOfBirth) : '—'}</td>
                     <td className="px-3 py-2 font-mono">{m.row.phone || '—'}</td>
                     <td className="px-3 py-2">{m.row.missedAt ? fmtDateTime(m.row.missedAt) : '—'}{m.row.visitType ? ` · ${m.row.visitType}` : ''}</td>
                     <td className="px-3 py-2">{m.row.status || '—'}</td>
                     <td className="px-3 py-2">
-                      {m.problems.map((p) => <span key={p} className="mr-1 inline-block text-[#9B1C12]">{p}</span>)}
-                      {m.warn && <span className="text-[#7E4305]">{m.warn}</span>}
-                      {!m.problems.length && !m.warn && <span className="text-[#155E62]">OK</span>}
+                      {m.problems.map((p) => <span key={p} className="mr-1 inline-block text-danger-700">{p}</span>)}
+                      {m.warn && <span className="text-sun-700">{m.warn}</span>}
+                      {!m.problems.length && !m.warn && <span className="text-brand-800">OK</span>}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {mapped.length > 500 && <p className="m-0 mt-2 text-[12px] text-[#5B6080]">Showing the first 500 rows; all {ready.length} ready rows will be added.</p>}
+          {mapped.length > 500 && <p className="m-0 mt-2 text-[12px] text-mist-600">Showing the first 500 rows; all {ready.length} ready rows will be added.</p>}
         </div>
       )}
 
@@ -557,7 +557,7 @@ function ImportModal({ open, onClose, onDone }) {
             <Kpi label="Already on list" value={result.skippedDuplicates} tone="gray" />
           </div>
           {result.messages.length > 0 && (
-            <ul className="m-0 list-disc pl-5 text-[12.5px] text-[#7E4305]">{result.messages.map((m) => <li key={m}>{m}</li>)}</ul>
+            <ul className="m-0 list-disc pl-5 text-[12.5px] text-sun-700">{result.messages.map((m) => <li key={m}>{m}</li>)}</ul>
           )}
         </div>
       )}

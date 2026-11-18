@@ -156,7 +156,7 @@ export default function VerifyPage() {
           justify-content: space-between;
           gap: 12px;
           font-size: 14px;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-topbar a {
           color: #1B1F4B;
@@ -187,7 +187,7 @@ export default function VerifyPage() {
           margin: 0 0 30px;
           font-size: 15.5px;
           line-height: 1.55;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-subtitle b {
           color: #1B1F4B;
@@ -207,7 +207,7 @@ export default function VerifyPage() {
           font-family: var(--font-sans);
           font-size: 15px;
           line-height: 1.5;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .verify-email-line b {
           color: #1B1F4B;
@@ -216,8 +216,8 @@ export default function VerifyPage() {
         .verify-dev-note {
           margin-top: 0;
           border-radius: 12px;
-          border: 1px solid #B7F0F2;
-          background: #E9FBFB;
+          border: 1px solid #A6E9ED;
+          background: #EDFBFC;
           padding: 12px 14px;
           color: #1B1F4B;
           font-size: 14px;
@@ -225,7 +225,7 @@ export default function VerifyPage() {
         }
         .verify-info {
           margin: 16px 0 0;
-          color: #0A8A63;
+          color: #12805C;
           font-size: 13.5px;
           font-weight: 600;
         }
@@ -241,10 +241,10 @@ export default function VerifyPage() {
           width: 100%;
           max-width: none;
           height: 60px;
-          border: 1.5px solid #DCE4F5;
+          border: 1.5px solid #DCE8FA;
           border-radius: 12px;
-          background: #EAF0FB;
-          color: #181C42;
+          background: #EEF4FD;
+          color: #11143A;
           text-align: center;
           font-family: var(--font-sans);
           font-size: 2rem;
@@ -260,7 +260,7 @@ export default function VerifyPage() {
         .verify-error {
           min-height: 18px;
           margin: 0 0 10px;
-          color: #B42318;
+          color: #C4321F;
           font-family: var(--font-sans);
           font-size: 13.5px;
           font-weight: 400;
@@ -306,7 +306,7 @@ export default function VerifyPage() {
           cursor: pointer;
         }
         .auth-primary-btn:hover {
-          background: #262B66;
+          background: #22265A;
         }
         .auth-primary-btn:disabled {
           opacity: 0.6;
@@ -317,7 +317,7 @@ export default function VerifyPage() {
           box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(27,31,75,.55);
         }
         .verify-btn-error:hover {
-          background: #262B66;
+          background: #22265A;
         }
         .auth-visual {
           position: relative;
@@ -327,7 +327,7 @@ export default function VerifyPage() {
           overflow: hidden;
           border-radius: 24px;
           min-height: 560px;
-          background: #17242F;
+          background: #11143A;
           box-shadow:
             inset 0 80px 90px -50px rgba(3,10,17,0.82),
             inset 0 -120px 150px rgba(2,8,14,0.82),
@@ -395,7 +395,7 @@ export default function VerifyPage() {
           height: 48px;
           border-radius: 50%;
           border: 2px solid rgba(255,255,255,0.9);
-          background: radial-gradient(circle at 30% 30%, #f4f5f7, #9bb7be 35%, #587b80 100%);
+          background: radial-gradient(circle at 30% 30%, #F4F5FA, #C6CADF 35%, #187279 100%);
           box-shadow: 0 6px 14px rgba(0,0,0,0.25);
         }
         .auth-visual-image {

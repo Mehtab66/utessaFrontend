@@ -120,19 +120,19 @@ function IntegrationCard({ integration, canEdit, title, icon, description, provi
 
   return (
     <Card
-      title={<span className="flex items-center gap-2"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#DDEFEF] text-[#0A7A82]"><Icon name={icon} /></span>{title}</span>}
+      title={<span className="flex items-center gap-2"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><Icon name={icon} /></span>{title}</span>}
       actions={<Pill tone={tone} dot>{label}</Pill>}
     >
-      <p className="m-0 text-[13px] text-[#43476A]">{description}</p>
+      <p className="m-0 text-[13px] text-mist-700">{description}</p>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {capabilities.map((c) => <Pill key={c} tone="ink">{c}</Pill>)}
       </div>
       {stats && (
         <div className="mt-4 grid grid-cols-3 gap-2">
           {stats.map(([l, v]) => (
-            <div key={l} className="rounded-lg bg-[#F7F8FB] px-3 py-2">
+            <div key={l} className="rounded-lg bg-mist-25 px-3 py-2">
               <p className="m-0 font-mono text-[18px] font-semibold text-navy">{v}</p>
-              <p className="m-0 text-[11.5px] text-[#687699]">{l}</p>
+              <p className="m-0 text-[11.5px] text-mist-500">{l}</p>
             </div>
           ))}
         </div>
@@ -147,7 +147,7 @@ function IntegrationCard({ integration, canEdit, title, icon, description, provi
       </fieldset>
       {error && <p className="m-0 mt-2 text-[13px] font-semibold text-warn">{error}</p>}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[12px] text-[#8A8DA8]">{integration?.updatedAt ? `Last updated ${fmtDateTime(integration.updatedAt)}` : 'Not configured yet'}</span>
+        <span className="text-[12px] text-mist-500">{integration?.updatedAt ? `Last updated ${fmtDateTime(integration.updatedAt)}` : 'Not configured yet'}</span>
         {canEdit && (
           <div className="flex gap-2">
             {integration?.status && integration.status !== 'NOT_CONNECTED' && integration.status !== 'DISABLED' && (

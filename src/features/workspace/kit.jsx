@@ -5,7 +5,7 @@ import { workspace } from './workspaceApi'
 
 /* Shared building blocks for the always-on workspace pages. */
 
-const INPUT = 'mt-1 w-full rounded-lg border border-[#D5D8E4] bg-white px-3 py-2 text-sm text-navy outline-none transition focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15'
+const INPUT = 'mt-1 w-full rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm text-navy outline-none transition focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15'
 
 export function TextField({ label, value, onChange, type = 'text', placeholder, autoFocus, className = '' }) {
   return (
@@ -39,33 +39,33 @@ export function SelectField({ label, value, onChange, options, className = '', e
 
 export function Toggle({ checked, onChange, label, hint }) {
   return (
-    <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-[#E6E9F2] px-3 py-2.5 text-left transition hover:bg-[#F8F9FC]">
+    <button type="button" onClick={() => onChange(!checked)} className="flex w-full items-center justify-between gap-3 rounded-xl border border-mist-200 px-3 py-2.5 text-left transition hover:bg-mist-25">
       <span>
         <span className="block text-[13px] font-semibold text-navy">{label}</span>
-        {hint && <span className="block text-[11.5px] text-[#687699]">{hint}</span>}
+        {hint && <span className="block text-[11.5px] text-mist-500">{hint}</span>}
       </span>
-      <span className={`relative h-5 w-9 shrink-0 rounded-full transition ${checked ? 'bg-[#0A7A82]' : 'bg-[#D5D8E4]'}`}>
+      <span className={`relative h-5 w-9 shrink-0 rounded-full transition ${checked ? 'bg-brand-600' : 'bg-mist-200'}`}>
         <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${checked ? 'left-[18px]' : 'left-0.5'}`} />
       </span>
     </button>
   )
 }
 
-/** Colored gradient hero used at the top of each workspace page. */
-export function Hero({ icon, eyebrow = 'Workspace', title, subtitle, actions, accent = '#0A7A82' }) {
+/** Page header used at the top of each workspace page. */
+export function Hero({ icon, eyebrow = 'Workspace', title, subtitle, actions, accent = '#1E8E94' }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="flex min-w-0 items-center gap-4">
         <span
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-[0_10px_24px_-10px_rgba(10,122,130,0.8)]"
-          style={{ background: `linear-gradient(135deg, ${accent}, #1B1F4B)` }}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border"
+          style={{ backgroundColor: `${accent}12`, borderColor: `${accent}33`, color: accent }}
         >
           <Icon name={icon} className="h-6 w-6" />
         </span>
         <div className="min-w-0">
-          <p className="m-0 text-[11px] font-bold uppercase tracking-[0.16em] text-[#8A93B2]">{eyebrow}</p>
+          <p className="m-0 text-[12px] font-semibold text-mist-500">{eyebrow}</p>
           <h1 className="m-0 text-[26px] font-bold tracking-[-0.02em] text-navy">{title}</h1>
-          {subtitle && <p className="m-0 mt-0.5 max-w-2xl text-[13.5px] text-[#5E6485]">{subtitle}</p>}
+          {subtitle && <p className="m-0 mt-0.5 max-w-2xl text-[13.5px] text-mist-600">{subtitle}</p>}
         </div>
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -73,14 +73,14 @@ export function Hero({ icon, eyebrow = 'Workspace', title, subtitle, actions, ac
   )
 }
 
-export function StatTile({ label, value, icon, tone = '#0A7A82', hint, onClick, active }) {
+export function StatTile({ label, value, icon, tone = '#1E8E94', hint, onClick, active }) {
   const Tag = onClick ? 'button' : 'div'
   return (
     <Tag
       type={onClick ? 'button' : undefined}
       onClick={onClick}
-      className={`flex items-center gap-3 rounded-2xl border bg-white p-4 text-left shadow-[0_1px_2px_rgba(24,28,66,0.04)] transition ${
-        active ? 'border-[#0A7A82] ring-2 ring-[#0A7A82]/10' : 'border-[#E6E9F2]'
+      className={`flex items-center gap-3 rounded-2xl border bg-white p-4 text-left transition ${
+        active ? 'border-brand-600 ring-2 ring-brand-600/10' : 'border-mist-200'
       } ${onClick ? 'hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(17,24,52,0.25)]' : ''}`}
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ backgroundColor: `${tone}1A`, color: tone }}>
@@ -88,8 +88,8 @@ export function StatTile({ label, value, icon, tone = '#0A7A82', hint, onClick, 
       </span>
       <span className="min-w-0">
         <span className="block font-mono text-[22px] font-semibold leading-none tracking-[-0.03em] text-navy">{value ?? '—'}</span>
-        <span className="mt-1 block text-[12px] font-medium text-[#687699]">{label}</span>
-        {hint && <span className="block text-[11px] text-[#9AA3BF]">{hint}</span>}
+        <span className="mt-1 block text-[12px] font-medium text-mist-500">{label}</span>
+        {hint && <span className="block text-[11px] text-mist-500">{hint}</span>}
       </span>
     </Tag>
   )
@@ -101,11 +101,11 @@ export function Chip({ active, onClick, children, count }) {
       type="button"
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
-        active ? 'border-[#171d39] bg-[#171d39] text-white' : 'border-[#E1E4EE] bg-white text-[#4C5678] hover:border-[#C8CDDD]'
+        active ? 'border-ink-950 bg-ink-950 text-white' : 'border-mist-200 bg-white text-mist-600 hover:border-mist-300'
       }`}
     >
       {children}
-      {count != null && <span className={`rounded-full px-1.5 text-[11px] ${active ? 'bg-white/20' : 'bg-[#F1F3F9]'}`}>{count}</span>}
+      {count != null && <span className={`rounded-full px-1.5 text-[11px] ${active ? 'bg-white/20' : 'bg-mist-50'}`}>{count}</span>}
     </button>
   )
 }

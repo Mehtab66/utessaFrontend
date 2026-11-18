@@ -69,22 +69,22 @@ export const PRIORITIES = [
 ]
 
 export const EVENT_CATEGORIES = [
-  { value: 'MEETING', label: 'Meeting', color: '#2E8FD0' },
-  { value: 'HUDDLE', label: 'Team huddle', color: '#0A7A82' },
-  { value: 'TRAINING', label: 'Training', color: '#7C6CF0' },
-  { value: 'TIME_OFF', label: 'Time off', color: '#F5A524' },
+  { value: 'MEETING', label: 'Meeting', color: '#2E7FD9' },
+  { value: 'HUDDLE', label: 'Team huddle', color: '#1E8E94' },
+  { value: 'TRAINING', label: 'Training', color: '#6D74C9' },
+  { value: 'TIME_OFF', label: 'Time off', color: '#D69508' },
   { value: 'REMINDER', label: 'Reminder', color: '#E5484D' },
-  { value: 'OTHER', label: 'Other', color: '#64748B' },
+  { value: 'OTHER', label: 'Other', color: '#727799' },
 ]
 export const APPOINTMENT_COLOR = '#3BC4CA'
 
 export const NOTE_COLORS = {
-  yellow: { bg: '#FFF6CC', border: '#F5DE7A', label: 'Sunshine' },
-  mint: { bg: '#DDF7EC', border: '#9BDFC2', label: 'Mint' },
-  sky: { bg: '#DCEEFF', border: '#9CC8F2', label: 'Sky' },
-  lavender: { bg: '#ECE8FF', border: '#C4B9F5', label: 'Lavender' },
-  rose: { bg: '#FFE4E8', border: '#F3AEBA', label: 'Rose' },
-  white: { bg: '#FFFFFF', border: '#E1E4EE', label: 'Paper' },
+  yellow: { bg: '#FFF2C6', border: '#FFE58C', label: 'Sunshine' },
+  mint: { bg: '#D3F3E3', border: '#A9E6C8', label: 'Mint' },
+  sky: { bg: '#DCE8FA', border: '#B9D1F4', label: 'Sky' },
+  lavender: { bg: '#EAECFC', border: '#ABB1EA', label: 'Lavender' },
+  rose: { bg: '#FDE2DF', border: '#F9C4BE', label: 'Rose' },
+  white: { bg: '#FFFFFF', border: '#DEE1EE', label: 'Paper' },
 }
 
 export const POST_CATEGORIES = [

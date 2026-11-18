@@ -112,7 +112,7 @@ export default function WelcomePage() {
                     onClick={() => toggle(s.id)}
                     className={`welcome-service-card ${on ? 'is-active' : ''}`}
                   >
-                    <span className={`welcome-service-icon ${on ? s.chip : 'bg-soft border-dashed'}`} />
+                    <span className={`welcome-service-icon${on ? s.chip : 'bg-soft border-dashed'}`} />
                     {on && <span className="welcome-added">✓ Added</span>}
                     <span className="welcome-service-name">{s.name}</span>
                     <span className="welcome-service-desc">{s.desc}</span>
@@ -191,7 +191,7 @@ export default function WelcomePage() {
           justify-content: space-between;
           gap: 12px;
           font-size: 14px;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-topbar a {
           color: #1B1F4B;
@@ -230,12 +230,12 @@ export default function WelcomePage() {
           color: #1B1F4B;
         }
         .welcome-header h1 span {
-          color: #17A7B5;
+          color: #22A8AF;
         }
         .welcome-subtitle {
           margin: 0;
           max-width: 520px;
-          color: #5E6485;
+          color: #5A5F85;
           font-size: 15px;
           line-height: 1.6;
         }
@@ -259,14 +259,14 @@ export default function WelcomePage() {
           font-weight: 500;
         }
         .welcome-field label span {
-          color: #5E6485;
+          color: #5A5F85;
           font-weight: 400;
         }
         .field {
           width: 100%;
           height: 52px;
           padding: 12px 14px;
-          border: 1.5px solid #DCE4F5;
+          border: 1.5px solid #DCE8FA;
           border-radius: 12px;
           background: #ffffff;
           color: #1B1F4B;
@@ -285,7 +285,7 @@ export default function WelcomePage() {
           font-weight: 600;
         }
         .welcome-options-label span {
-          color: #5E6485;
+          color: #5A5F85;
           font-weight: 400;
         }
         .welcome-service-grid {
@@ -298,7 +298,7 @@ export default function WelcomePage() {
           display: block;
           width: 100%;
           min-height: 112px;
-          border: 1.5px solid #E2E7F1;
+          border: 1.5px solid #DEE1EE;
           border-radius: 14px;
           background: #ffffff;
           padding: 14px 14px 12px 16px;
@@ -308,7 +308,7 @@ export default function WelcomePage() {
           transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
         }
         .welcome-service-card:hover {
-          border-color: #B9C7E5;
+          border-color: #B9D1F4;
           transform: translateY(-1px);
         }
         .welcome-service-card.is-active {
@@ -323,17 +323,17 @@ export default function WelcomePage() {
           width: 24px;
           height: 24px;
           border-radius: 8px;
-          border: 1.5px solid #C8D4F0;
-          background: #F1F3FB;
+          border: 1.5px solid #C6CADF;
+          background: #F5F6FE;
         }
         .welcome-service-card.is-active .welcome-service-icon {
           border-color: transparent;
         }
-        .bg-cyan { background: #CFF9FB; }
-        .bg-lavender { background: #EEE8FF; }
-        .bg-yellow { background: #FFF2C7; }
-        .bg-teal { background: #DFFAF2; }
-        .bg-soft { background: #F5F7FB; }
+        .bg-cyan { background: #D2F4F6; }
+        .bg-lavender { background: #EAECFC; }
+        .bg-yellow { background: #FFF2C6; }
+        .bg-teal { background: #ECFAF3; }
+        .bg-soft { background: #F4F5FA; }
         .border-dashed { border-style: dashed; }
         .welcome-added {
           position: absolute;
@@ -355,17 +355,17 @@ export default function WelcomePage() {
           display: block;
           margin-top: 6px;
           margin-left: 0;
-          color: #5E6485;
+          color: #5A5F85;
           font-size: 13px;
           line-height: 1.5;
         }
         .welcome-error {
           margin: 4px 0 0;
-          border: 1px solid #F3C1BC;
+          border: 1px solid #F9C4BE;
           border-radius: 12px;
-          background: #FFF5F4;
+          background: #FFF2F1;
           padding: 12px 14px;
-          color: #B42318;
+          color: #C4321F;
           font-size: 13.5px;
           font-weight: 600;
         }
@@ -395,8 +395,8 @@ export default function WelcomePage() {
           transition: color 0.15s ease, text-decoration-color 0.15s ease;
         }
         .welcome-link-btn:hover {
-          color: #262B66;
-          text-decoration-color: #262B66;
+          color: #22265A;
+          text-decoration-color: #22265A;
         }
         .welcome-link-btn:disabled {
           opacity: 0.6;
@@ -426,7 +426,7 @@ export default function WelcomePage() {
         }
         .welcome-actions .welcome-submit:hover,
         .auth-primary-btn.welcome-submit:hover {
-          background: #262B66;
+          background: #22265A;
         }
         .welcome-actions .welcome-submit:disabled,
         .auth-primary-btn.welcome-submit:disabled {
@@ -447,7 +447,7 @@ export default function WelcomePage() {
           cursor: pointer;
         }
         .auth-primary-btn:hover {
-          background: #262B66;
+          background: #22265A;
         }
         .auth-primary-btn:disabled {
           opacity: 0.6;
@@ -461,7 +461,7 @@ export default function WelcomePage() {
           overflow: hidden;
           border-radius: 24px;
           min-height: 560px;
-          background: #17242F;
+          background: #11143A;
           box-shadow:
             inset 0 80px 90px -50px rgba(3,10,17,0.82),
             inset 0 -120px 150px rgba(2,8,14,0.82),
@@ -529,7 +529,7 @@ export default function WelcomePage() {
           height: 48px;
           border-radius: 50%;
           border: 2px solid rgba(255,255,255,0.9);
-          background: radial-gradient(circle at 30% 30%, #f4f5f7, #9bb7be 35%, #587b80 100%);
+          background: radial-gradient(circle at 30% 30%, #F4F5FA, #C6CADF 35%, #187279 100%);
           box-shadow: 0 6px 14px rgba(0,0,0,0.25);
         }
         .auth-visual-image {

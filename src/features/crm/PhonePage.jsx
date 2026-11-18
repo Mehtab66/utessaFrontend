@@ -22,7 +22,7 @@ const SECTIONS = [
   { id: 'handling', label: 'Call handling', icon: 'swap' },
   { id: 'system', label: 'Phone system', icon: 'link' },
 ]
-const PRESENCE_DOT = { AVAILABLE: 'bg-[#12805C]', BUSY: 'bg-[#C97A12]', DND: 'bg-[#C4321F]', AWAY: 'bg-[#8A8DA8]' }
+const PRESENCE_DOT = { AVAILABLE: 'bg-success-600', BUSY: 'bg-sun-600', DND: 'bg-danger-600', AWAY: 'bg-mist-400' }
 const mmss = (s) => (s == null ? '—' : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`)
 
 export default function PhonePage() {
@@ -51,7 +51,7 @@ export default function PhonePage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 rounded-[14px] border border-[#E4E6EF] bg-white px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 rounded-[14px] border border-mist-200 bg-white px-4 py-3">
         <div className="flex items-center gap-3">
           <span className="relative">
             <Avatar name={user?.fullName} />
@@ -59,25 +59,25 @@ export default function PhonePage() {
           </span>
           <div>
             <p className="m-0 text-[14px] font-semibold text-navy">{user?.fullName}</p>
-            <p className="m-0 text-[12px] text-[#5B6080]">{roleLabel(user?.role)}{o?.myPrefs?.extension ? ` · ext. ${o.myPrefs.extension}` : ''}</p>
+            <p className="m-0 text-[12px] text-mist-600">{roleLabel(user?.role)}{o?.myPrefs?.extension ? ` · ext. ${o.myPrefs.extension}` : ''}</p>
           </div>
         </div>
         {o && (
           <>
-            <label className="text-[12px] font-semibold text-[#3B3F5D]">
+            <label className="text-[12px] font-semibold text-mist-800">
               Status
-              <select value={o.myPrefs.presence} onChange={(e) => savePrefs({ presence: e.target.value })} className="ml-2 h-9 rounded-lg border border-[#D9DAE1] bg-white px-2 text-[13px] font-normal">
+              <select value={o.myPrefs.presence} onChange={(e) => savePrefs({ presence: e.target.value })} className="ml-2 h-9 rounded-lg border border-mist-200 bg-white px-2 text-[13px] font-normal">
                 {PRESENCE.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
             </label>
-            <label className="text-[12px] font-semibold text-[#3B3F5D]">
+            <label className="text-[12px] font-semibold text-mist-800">
               Calling from
-              <select value={o.myPrefs.line} onChange={(e) => savePrefs({ line: e.target.value })} className="ml-2 h-9 rounded-lg border border-[#D9DAE1] bg-white px-2 text-[13px] font-normal">
+              <select value={o.myPrefs.line} onChange={(e) => savePrefs({ line: e.target.value })} className="ml-2 h-9 rounded-lg border border-mist-200 bg-white px-2 text-[13px] font-normal">
                 {lines.map((l) => <option key={l.id} value={l.id}>{l.label}{l.number ? ` · ${l.number}` : ''}</option>)}
               </select>
             </label>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[12px] font-semibold text-[#3B3F5D]">Taking calls from</span>
+              <span className="text-[12px] font-semibold text-mist-800">Taking calls from</span>
               {queues.map((q) => {
                 const on = myQueues.includes(q)
                 return (
@@ -86,7 +86,7 @@ export default function PhonePage() {
                     type="button"
                     aria-pressed={on}
                     onClick={() => savePrefs({ queues: on ? myQueues.filter((x) => x !== q) : [...myQueues, q] })}
-                    className={`min-h-8 rounded-full border px-3 text-[12.5px] font-medium transition ${on ? 'border-[#171d39] bg-[#171d39] text-white' : 'border-[#CDD0E3] bg-white text-navy hover:border-[#8D91B3]'}`}
+                    className={`min-h-8 rounded-full border px-3 text-[12.5px] font-medium transition ${on ? 'border-ink-950 bg-ink-950 text-white' : 'border-mist-300 bg-white text-navy hover:border-mist-400'}`}
                   >
                     {q}
                   </button>
@@ -107,7 +107,7 @@ export default function PhonePage() {
       <Alert>{overview.error}</Alert>
 
       <div className="grid gap-4 lg:grid-cols-[200px_minmax(0,1fr)]">
-        <nav aria-label="Phone sections" className="flex gap-1 overflow-x-auto rounded-[14px] border border-[#E4E6EF] bg-white p-2 lg:flex-col lg:self-start">
+        <nav aria-label="Phone sections" className="flex gap-1 overflow-x-auto rounded-[14px] border border-mist-200 bg-white p-2 lg:flex-col lg:self-start">
           {SECTIONS.map((s) => {
             const n = s.badge ? o?.[s.badge] : 0
             const active = s.id === section
@@ -116,11 +116,11 @@ export default function PhonePage() {
                 key={s.id}
                 type="button"
                 onClick={() => { setCtx(null); go(s.id) }}
-                className={`flex min-h-10 shrink-0 items-center gap-2.5 rounded-lg px-3 text-left text-[13.5px] transition ${active ? 'bg-[#E6F4F4] font-semibold text-[#0B4F4F]' : 'text-[#3B3F5D] hover:bg-[#F4F5FA]'}`}
+                className={`flex min-h-10 shrink-0 items-center gap-2.5 rounded-lg px-3 text-left text-[13.5px] transition ${active ? 'bg-brand-50 font-semibold text-brand-900' : 'text-mist-800 hover:bg-mist-50'}`}
               >
                 <Icon name={s.icon} />
                 <span className="flex-1 whitespace-nowrap">{s.label}</span>
-                {n > 0 && <span className="min-w-5 rounded-full bg-[#B42318] px-1.5 text-center text-[11px] font-semibold text-white">{n}</span>}
+                {n > 0 && <span className="min-w-5 rounded-full bg-danger-600 px-1.5 text-center text-[11px] font-semibold text-white">{n}</span>}
               </button>
             )
           })}
@@ -165,19 +165,19 @@ function CallButton({ phone, small = true }) {
 
 function DetailsPanel({ item, onClose, onText }) {
   return (
-    <aside className="self-start rounded-[14px] border border-[#E4E6EF] bg-white p-4">
+    <aside className="self-start rounded-[14px] border border-mist-200 bg-white p-4">
       <div className="flex items-start gap-3">
         <Avatar name={item.name || formatPhone(item.phone)} />
         <div className="min-w-0 flex-1">
           <p className="m-0 truncate text-[15px] font-semibold text-navy">{item.name || 'Unknown caller'}</p>
           {item.tag && <Pill tone={item.tone || 'gray'}>{item.tag}</Pill>}
         </div>
-        <button type="button" onClick={onClose} aria-label="Close details" className="rounded-lg p-1 text-[#5B6080] hover:bg-[#F4F5FA]"><Icon name="x" /></button>
+        <button type="button" onClick={onClose} aria-label="Close details" className="rounded-lg p-1 text-mist-600 hover:bg-mist-50"><Icon name="x" /></button>
       </div>
       <dl className="m-0 mt-4 space-y-2.5 text-[13px]">
         {(item.rows || []).filter(([, v]) => v).map(([k, v]) => (
           <div key={k}>
-            <dt className="text-[11.5px] text-[#8A8DA8]">{k}</dt>
+            <dt className="text-[11.5px] text-mist-500">{k}</dt>
             <dd className="m-0 text-navy">{v}</dd>
           </div>
         ))}
@@ -220,19 +220,19 @@ function CallsSection({ onDetails, onText }) {
           inputMode="tel"
           aria-label="Number to dial"
           placeholder="Type or tap a number"
-          className="h-12 w-full rounded-lg border border-[#CDD0E3] px-3 text-center font-mono text-[20px] text-navy outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15"
+          className="h-12 w-full rounded-lg border border-mist-300 px-3 text-center font-mono text-[20px] text-navy outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15"
         />
         <div className="mt-3 grid grid-cols-3 gap-2">
           {KEYS.map(([d, l]) => (
-            <button key={d} type="button" aria-label={`Digit ${d}`} onClick={() => setDial((v) => v + d)} className="flex min-h-[52px] flex-col items-center justify-center rounded-[12px] border border-[#E1E3F0] bg-white hover:bg-[#F4F5FA]">
+            <button key={d} type="button" aria-label={`Digit ${d}`} onClick={() => setDial((v) => v + d)} className="flex min-h-[52px] flex-col items-center justify-center rounded-[12px] border border-mist-200 bg-white hover:bg-mist-50">
               <span className="text-[19px] font-semibold leading-none text-navy">{d}</span>
-              <span className="mt-0.5 min-h-[11px] text-[9.5px] tracking-[0.12em] text-[#5B6080]">{l}</span>
+              <span className="mt-0.5 min-h-[11px] text-[9.5px] tracking-[0.12em] text-mist-600">{l}</span>
             </button>
           ))}
         </div>
         <div className="mt-3 grid grid-cols-[1fr_44px] gap-2">
           <Button disabled={!ready} onClick={() => navigate(`/app/crm/call-desk?phone=${encodeURIComponent(dial)}&direction=OUTBOUND`)}><Icon name="phone" /> Call</Button>
-          <button type="button" aria-label="Delete last digit" onClick={() => setDial((v) => v.slice(0, -1))} className="flex items-center justify-center rounded-lg text-[#5B6080] hover:bg-[#F4F5FA]"><Icon name="backspace" className="h-5 w-5" /></button>
+          <button type="button" aria-label="Delete last digit" onClick={() => setDial((v) => v.slice(0, -1))} className="flex items-center justify-center rounded-lg text-mist-600 hover:bg-mist-50"><Icon name="backspace" className="h-5 w-5" /></button>
         </div>
       </Card>
       <Card
@@ -240,25 +240,25 @@ function CallsSection({ onDetails, onText }) {
         actions={<SearchInput value={q} onChange={setQ} placeholder="Name or number" className="sm:max-w-[220px]" />}
         bodyClassName="p-0"
       >
-        <div className="flex gap-1.5 border-b border-[#F0F1F7] px-4 py-2.5">
+        <div className="flex gap-1.5 border-b border-mist-100 px-4 py-2.5">
           <Segmented value={filter} onChange={setFilter} options={[{ value: 'ALL', label: 'All' }, { value: 'MISSED', label: 'Missed' }, { value: 'IN', label: 'Incoming' }, { value: 'OUT', label: 'Outgoing' }]} />
         </div>
-        {calls.loading ? <div className="px-4"><Loading /></div> : rows.length === 0 ? <p className="m-0 px-4 py-6 text-sm text-[#5B6080]">No calls match.</p> : (
+        {calls.loading ? <div className="px-4"><Loading /></div> : rows.length === 0 ? <p className="m-0 px-4 py-6 text-sm text-mist-600">No calls match.</p> : (
           <ul className="m-0 list-none p-0">
             {rows.map((c) => {
               const missed = c.callOutcome === 'Missed'
               const name = c.patientName || c.callerName || formatPhone(c.phone)
               return (
-                <li key={c.id} className="flex flex-wrap items-center gap-3 border-b border-[#F0F1F7] px-4 py-3 last:border-0">
-                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${missed ? 'bg-[#FCE4E2] text-[#9B1C12]' : c.type === 'CALL_INBOUND' ? 'bg-[#E6F4F4] text-[#0B4F4F]' : 'bg-[#EEF0FA] text-[#2A2F63]'}`}>
+                <li key={c.id} className="flex flex-wrap items-center gap-3 border-b border-mist-100 px-4 py-3 last:border-0">
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${missed ? 'bg-danger-100 text-danger-700' : c.type === 'CALL_INBOUND' ? 'bg-brand-50 text-brand-900' : 'bg-mist-100 text-ink-700'}`}>
                     <Icon name={missed ? 'phoneMissed' : c.type === 'CALL_INBOUND' ? 'phoneIn' : 'phoneOut'} className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className={`m-0 text-[14px] ${missed ? 'font-semibold text-[#9B1C12]' : 'font-semibold text-navy'}`}>{name}</p>
-                    <p className="m-0 text-[12.5px] text-[#5B6080]">
+                    <p className={`m-0 text-[14px] ${missed ? 'font-semibold text-danger-700' : 'font-semibold text-navy'}`}>{name}</p>
+                    <p className="m-0 text-[12.5px] text-mist-600">
                       {missed ? 'Missed' : c.type === 'CALL_INBOUND' ? 'Incoming' : 'Outgoing'} · {fmtRelative(c.occurredAt)} · {mmss(c.durationSeconds)}{c.callReason ? ` · ${c.callReason}` : ''}
                     </p>
-                    {c.body && <p className="m-0 mt-0.5 truncate text-[12.5px] text-[#43476A]">{c.body}</p>}
+                    {c.body && <p className="m-0 mt-0.5 truncate text-[12.5px] text-mist-700">{c.body}</p>}
                   </div>
                   <div className="flex gap-1.5">
                     <CallButton phone={c.phone} />
@@ -346,31 +346,31 @@ function TextsSection({ overview, params, toast, onChanged, onDetails }) {
     <div className="grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)]">
       <Card title="Texts" actions={<Button size="sm" onClick={() => { setNewOpen((v) => !v); setNewErr('') }}><Icon name="plus" /> New text</Button>} bodyClassName="p-0">
         {newOpen && (
-          <div className="border-b border-[#F0F1F7] p-3">
-            <label className="text-[12px] font-semibold text-[#3B3F5D]" htmlFor="newto">To (name or mobile number)</label>
+          <div className="border-b border-mist-100 p-3">
+            <label className="text-[12px] font-semibold text-mist-800" htmlFor="newto">To (name or mobile number)</label>
             <div className="mt-1 flex gap-2">
-              <input id="newto" value={newTo} onChange={(e) => setNewTo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && start()} placeholder="e.g. Sofia Ramirez" className="h-10 min-w-0 flex-1 rounded-lg border border-[#CDD0E3] px-3 text-[14px]" />
+              <input id="newto" value={newTo} onChange={(e) => setNewTo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && start()} placeholder="e.g. Sofia Ramirez" className="h-10 min-w-0 flex-1 rounded-lg border border-mist-300 px-3 text-[14px]" />
               <Button onClick={start}>Start</Button>
             </div>
             {newErr && <p className="m-0 mt-1.5 text-[12.5px] font-semibold text-warn">{newErr}</p>}
           </div>
         )}
         {threads.loading ? <div className="px-4"><Loading /></div> : list.length === 0 ? (
-          <p className="m-0 px-4 py-6 text-sm text-[#5B6080]">No conversations yet.</p>
+          <p className="m-0 px-4 py-6 text-sm text-mist-600">No conversations yet.</p>
         ) : (
           <ul className="m-0 list-none p-0">
             {list.map((c) => (
               <li key={c.phoneNormalized}>
-                <button type="button" onClick={() => setActive(c.phoneNormalized)} className={`flex w-full items-start gap-3 border-b border-[#F0F1F7] px-4 py-3 text-left ${active === c.phoneNormalized ? 'bg-[#E6F4F4]' : 'hover:bg-[#F7F8FB]'}`}>
+                <button type="button" onClick={() => setActive(c.phoneNormalized)} className={`flex w-full items-start gap-3 border-b border-mist-100 px-4 py-3 text-left ${active === c.phoneNormalized ? 'bg-brand-50' : 'hover:bg-mist-25'}`}>
                   <Avatar name={c.name || formatPhone(c.phone)} size="sm" />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline justify-between gap-2">
                       <span className={`truncate text-[13.5px] ${c.unread ? 'font-bold' : 'font-semibold'} text-navy`}>{c.name || formatPhone(c.phone)}</span>
-                      <span className="shrink-0 text-[11.5px] text-[#8A8DA8]">{fmtRelative(c.lastAt)}</span>
+                      <span className="shrink-0 text-[11.5px] text-mist-500">{fmtRelative(c.lastAt)}</span>
                     </span>
-                    <span className="block truncate text-[12.5px] text-[#5B6080]">{c.lastDirection === 'OUT' ? 'You: ' : ''}{c.lastBody}</span>
+                    <span className="block truncate text-[12.5px] text-mist-600">{c.lastDirection === 'OUT' ? 'You: ' : ''}{c.lastBody}</span>
                   </span>
-                  {c.unread > 0 && <span className="mt-1.5 h-2 w-2 rounded-full bg-[#2a78d6]" />}
+                  {c.unread > 0 && <span className="mt-1.5 h-2 w-2 rounded-full bg-info-500" />}
                 </button>
               </li>
             ))}
@@ -381,28 +381,28 @@ function TextsSection({ overview, params, toast, onChanged, onDetails }) {
       <Card bodyClassName="flex min-h-[460px] flex-col p-0">
         {!active ? (
           <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
-            <Icon name="message" className="h-8 w-8 text-[#9aaac8]" />
+            <Icon name="message" className="h-8 w-8 text-mist-500" />
             <p className="m-0 mt-2 text-[14px] font-semibold text-navy">Pick a conversation or start a new text</p>
-            <p className="m-0 mt-1 max-w-sm text-[13px] text-[#5B6080]">Patients can only be texted when SMS consent is on their profile.</p>
+            <p className="m-0 mt-1 max-w-sm text-[13px] text-mist-600">Patients can only be texted when SMS consent is on their profile.</p>
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-3 border-b border-[#F0F1F7] px-4 py-3">
+            <div className="flex items-center gap-3 border-b border-mist-100 px-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="m-0 text-[15px] font-semibold text-navy">{name} {t?.patientType && <Pill tone={t.patientType === 'PATIENT' ? 'green' : 'blue'}>{t.patientType === 'PATIENT' ? 'Patient' : 'Lead'}</Pill>}</p>
-                <p className="m-0 font-mono text-[12.5px] text-[#5B6080]">{formatPhone(active)}</p>
+                <p className="m-0 font-mono text-[12.5px] text-mist-600">{formatPhone(active)}</p>
               </div>
               <CallButton phone={active} />
               <Button size="sm" variant="ghost" onClick={() => onDetails({ name, phone: active, tag: t?.patientType === 'PATIENT' ? 'Patient' : t?.patientType === 'LEAD' ? 'Lead' : 'Contact', tone: t?.patientId ? 'green' : 'gray', link: t?.patientId ? `/app/crm/patients/${t.patientId}` : null, rows: [['Mobile', formatPhone(active)], ['Texting', t?.blockedReason || 'Allowed']] })}>Details</Button>
             </div>
-            <div className="flex-1 space-y-2 overflow-y-auto bg-[#FBFBFD] px-4 py-4">
+            <div className="flex-1 space-y-2 overflow-y-auto bg-mist-25 px-4 py-4">
               {thread.loading && <Loading />}
-              {!thread.loading && !thread.data?.messages?.length && <p className="m-0 text-center text-[13px] text-[#8A8DA8]">No messages yet.</p>}
+              {!thread.loading && !thread.data?.messages?.length && <p className="m-0 text-center text-[13px] text-mist-500">No messages yet.</p>}
               {(thread.data?.messages || []).map((m) => (
                 <div key={m.id} className={`flex ${m.direction === 'OUT' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[75%] rounded-[14px] px-3.5 py-2 text-[14px] ${m.direction === 'OUT' ? 'rounded-br-[4px] bg-[#0A7A82] text-white' : 'rounded-bl-[4px] border border-[#E4E6EF] bg-white text-navy'}`}>
+                  <div className={`max-w-[75%] rounded-[14px] px-3.5 py-2 text-[14px] ${m.direction === 'OUT' ? 'rounded-br-[4px] bg-brand-600 text-white' : 'rounded-bl-[4px] border border-mist-200 bg-white text-navy'}`}>
                     <p className="m-0 whitespace-pre-line">{m.body}</p>
-                    <p className={`m-0 mt-1 text-[11px] ${m.direction === 'OUT' ? 'text-[#CFE8E8]' : 'text-[#8A8DA8]'}`}>
+                    <p className={`m-0 mt-1 text-[11px] ${m.direction === 'OUT' ? 'text-brand-100' : 'text-mist-500'}`}>
                       {fmtDateTime(m.createdAt)}{m.direction === 'OUT' ? ` · ${m.sentByName} · ${m.status === 'QUEUED' ? 'Queued' : m.status.toLowerCase()}` : ''}
                     </p>
                   </div>
@@ -410,24 +410,24 @@ function TextsSection({ overview, params, toast, onChanged, onDetails }) {
               ))}
             </div>
             {t?.blockedReason ? (
-              <div className="border-t border-[#F3C1BC] bg-[#FFF5F4] px-4 py-3 text-[13px] font-semibold text-[#9B1C12]">{t.blockedReason}</div>
+              <div className="border-t border-danger-200 bg-danger-50 px-4 py-3 text-[13px] font-semibold text-danger-700">{t.blockedReason}</div>
             ) : (
-              <div className="border-t border-[#F0F1F7] p-3">
+              <div className="border-t border-mist-100 p-3">
                 <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                  <span className="text-[12px] text-[#5B6080]">Quick replies:</span>
+                  <span className="text-[12px] text-mist-600">Quick replies:</span>
                   {QUICK_REPLIES.map(([label, text]) => (
-                    <button key={label} type="button" onClick={() => setDraft(text.replace('{first}', first))} className="min-h-7 rounded-full border border-[#CDD0E3] px-2.5 text-[12px] text-navy hover:border-[#0A7A82]">{label}</button>
+                    <button key={label} type="button" onClick={() => setDraft(text.replace('{first}', first))} className="min-h-7 rounded-full border border-mist-300 px-2.5 text-[12px] text-navy hover:border-brand-600">{label}</button>
                   ))}
                 </div>
                 <div className="flex gap-2">
-                  <textarea value={draft} onChange={(e) => setDraft(e.target.value)} rows={2} maxLength={640} placeholder="Write a text. No test results or diagnoses." className="min-w-0 flex-1 resize-none rounded-lg border border-[#CDD0E3] px-3 py-2 text-[14px] outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15" />
+                  <textarea value={draft} onChange={(e) => setDraft(e.target.value)} rows={2} maxLength={640} placeholder="Write a text. No test results or diagnoses." className="min-w-0 flex-1 resize-none rounded-lg border border-mist-300 px-3 py-2 text-[14px] outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15" />
                   <Button onClick={send} disabled={sending || !draft.trim()} className="self-end">{sending ? 'Sending…' : 'Send'}</Button>
                 </div>
-                <div className="mt-1.5 flex justify-between text-[11.5px] text-[#8A8DA8]">
+                <div className="mt-1.5 flex justify-between text-[11.5px] text-mist-500">
                   <span>From {labelOf((overview.practice.lines || []).map((l) => ({ value: l.id, label: l.label })), overview.myPrefs.line)} · “Reply STOP to opt out” is added to the first text{overview.phoneStatus !== 'CONNECTED' ? ' · queued until the phone system is connected' : ''}</span>
                   <span>{draft.length}/640</span>
                 </div>
-                {phi && <p className="m-0 mt-1.5 text-[12.5px] font-semibold text-[#7E4305]">This mentions a test or medical detail. Texts aren’t private — ask the patient to call instead.</p>}
+                {phi && <p className="m-0 mt-1.5 text-[12.5px] font-semibold text-sun-700">This mentions a test or medical detail. Texts aren’t private — ask the patient to call instead.</p>}
                 {error && <p className="m-0 mt-1.5 text-[12.5px] font-semibold text-warn">{error}</p>}
               </div>
             )}
@@ -465,20 +465,20 @@ function VoicemailSection({ toast, onChanged, onText }) {
         actions={<Button size="sm" variant="secondary" onClick={() => setLogOpen(true)}><Icon name="plus" /> Log voicemail</Button>}
         bodyClassName="p-0"
       >
-        <div className="border-b border-[#F0F1F7] px-4 py-2.5">
+        <div className="border-b border-mist-100 px-4 py-2.5">
           <Segmented value={show} onChange={setShow} options={[{ value: 'OPEN', label: 'To handle' }, { value: 'ALL', label: 'All' }]} />
         </div>
         {vms.loading ? <div className="px-4"><Loading /></div> : list.length === 0 ? (
-          <p className="m-0 px-4 py-6 text-sm text-[#5B6080]">No voicemail to handle.</p>
+          <p className="m-0 px-4 py-6 text-sm text-mist-600">No voicemail to handle.</p>
         ) : (
           <ul className="m-0 list-none p-0">
             {list.map((v) => (
               <li key={v.id}>
-                <button type="button" onClick={() => { setSelId(v.id); if (v.status === 'NEW') crm.voicemailStatus(v.id, 'HEARD').then(() => vms.reload()).catch(() => {}) }} className={`flex w-full items-center gap-3 border-b border-[#F0F1F7] px-4 py-3 text-left ${sel?.id === v.id ? 'bg-[#E6F4F4]' : 'hover:bg-[#F7F8FB]'}`}>
-                  <span className={`h-2 w-2 shrink-0 rounded-full ${v.status === 'NEW' ? 'bg-[#2a78d6]' : 'bg-transparent'}`} />
+                <button type="button" onClick={() => { setSelId(v.id); if (v.status === 'NEW') crm.voicemailStatus(v.id, 'HEARD').then(() => vms.reload()).catch(() => {}) }} className={`flex w-full items-center gap-3 border-b border-mist-100 px-4 py-3 text-left ${sel?.id === v.id ? 'bg-brand-50' : 'hover:bg-mist-25'}`}>
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${v.status === 'NEW' ? 'bg-info-500' : 'bg-transparent'}`} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[13.5px] font-semibold text-navy">{v.patientName || v.callerName || formatPhone(v.fromPhone)}</span>
-                    <span className="block text-[12px] text-[#5B6080]">{fmtRelative(v.receivedAt)} · {mmss(v.durationSeconds)} · {v.mailbox}</span>
+                    <span className="block text-[12px] text-mist-600">{fmtRelative(v.receivedAt)} · {mmss(v.durationSeconds)} · {v.mailbox}</span>
                   </span>
                   {v.status === 'HANDLED' ? <Pill tone="green">Handled</Pill> : v.patientType ? <Pill tone={v.patientType === 'PATIENT' ? 'green' : 'blue'}>{v.patientType === 'PATIENT' ? 'Patient' : 'Lead'}</Pill> : <Pill tone="amber">New number</Pill>}
                 </button>
@@ -489,27 +489,27 @@ function VoicemailSection({ toast, onChanged, onText }) {
       </Card>
 
       <Card>
-        {!sel ? <p className="m-0 py-6 text-center text-sm text-[#5B6080]">No voicemail. Nice work.</p> : (
+        {!sel ? <p className="m-0 py-6 text-center text-sm text-mist-600">No voicemail. Nice work.</p> : (
           <div>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="m-0 text-[17px] font-semibold text-navy">{sel.patientName || sel.callerName || 'Unknown caller'}</h3>
-              <span className="font-mono text-[13px] text-[#5B6080]">{formatPhone(sel.fromPhone)}</span>
+              <span className="font-mono text-[13px] text-mist-600">{formatPhone(sel.fromPhone)}</span>
             </div>
-            <p className="m-0 mt-0.5 text-[12.5px] text-[#5B6080]">{fmtDateTime(sel.receivedAt)} · left in {sel.mailbox} · {mmss(sel.durationSeconds)}</p>
-            <div className="mt-4 rounded-[10px] bg-[#F4F5FA] p-3.5">
+            <p className="m-0 mt-0.5 text-[12.5px] text-mist-600">{fmtDateTime(sel.receivedAt)} · left in {sel.mailbox} · {mmss(sel.durationSeconds)}</p>
+            <div className="mt-4 rounded-[10px] bg-mist-50 p-3.5">
               {sel.recordingUrl ? (
                 // eslint-disable-next-line jsx-a11y/media-has-caption
                 <audio controls src={sel.recordingUrl} className="w-full" />
               ) : (
-                <p className="m-0 text-[12.5px] text-[#5B6080]">Audio plays here when voicemail comes from the connected phone system.</p>
+                <p className="m-0 text-[12.5px] text-mist-600">Audio plays here when voicemail comes from the connected phone system.</p>
               )}
-              <p className="m-0 mt-3 text-[11.5px] font-semibold uppercase tracking-[0.05em] text-[#5B6080]">Transcript</p>
+              <p className="m-0 mt-3 text-[12px] font-semibold text-mist-600">Transcript</p>
               <p className="m-0 mt-1 text-[14px] leading-relaxed text-navy">{sel.transcript || 'No transcript.'}</p>
-              <p className="m-0 mt-2 text-[12.5px] text-[#5B6080]">
-                {sel.patientId ? <>Matched to <Link to={`/app/crm/patients/${sel.patientId}`} className="font-semibold text-[#0A7A82]">{sel.patientName}</Link> by phone number.</> : 'This number isn’t on any patient or lead.'}
+              <p className="m-0 mt-2 text-[12.5px] text-mist-600">
+                {sel.patientId ? <>Matched to <Link to={`/app/crm/patients/${sel.patientId}`} className="font-semibold text-brand-700">{sel.patientName}</Link> by phone number.</> : 'This number isn’t on any patient or lead.'}
               </p>
             </div>
-            {sel.status === 'HANDLED' && <p className="m-0 mt-3 text-[12.5px] text-[#155E62]">Handled by {sel.handledByName} · {fmtRelative(sel.handledAt)}</p>}
+            {sel.status === 'HANDLED' && <p className="m-0 mt-3 text-[12.5px] text-brand-800">Handled by {sel.handledByName} · {fmtRelative(sel.handledAt)}</p>}
             <div className="mt-4 flex flex-wrap gap-2">
               <CallButton phone={sel.fromPhone} small={false} />
               <Button variant="secondary" onClick={() => onText(sel.fromPhone, sel.patientName || sel.callerName)}><Icon name="message" /> Reply by text</Button>
@@ -591,22 +591,22 @@ function FaxSection({ overview, toast, onChanged }) {
   return (
     <div className="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
       <Card title="Fax" actions={<Button size="sm" onClick={() => setSendOpen(true)}><Icon name="plus" /> Send a fax</Button>} bodyClassName="p-0">
-        <div className="flex items-center justify-between gap-2 border-b border-[#F0F1F7] px-4 py-2.5">
+        <div className="flex items-center justify-between gap-2 border-b border-mist-100 px-4 py-2.5">
           <Segmented value={tab} onChange={setTab} options={[{ value: 'IN', label: 'Received' }, { value: 'OUT', label: 'Sent' }, { value: 'ALL', label: 'All' }]} />
-          <button type="button" className="text-[12.5px] font-semibold text-[#0A7A82]" onClick={() => setReceiveOpen(true)}>Add scanned</button>
+          <button type="button" className="text-[12.5px] font-semibold text-brand-700" onClick={() => setReceiveOpen(true)}>Add scanned</button>
         </div>
-        <p className="m-0 border-b border-[#F0F1F7] px-4 py-2 text-[12px] text-[#5B6080]">{faxNumber ? `Fax number ${faxNumber}` : 'Set the practice fax number under Call handling.'}</p>
-        {faxes.loading ? <div className="px-4"><Loading /></div> : list.length === 0 ? <p className="m-0 px-4 py-6 text-sm text-[#5B6080]">No faxes here.</p> : (
+        <p className="m-0 border-b border-mist-100 px-4 py-2 text-[12px] text-mist-600">{faxNumber ? `Fax number ${faxNumber}` : 'Set the practice fax number under Call handling.'}</p>
+        {faxes.loading ? <div className="px-4"><Loading /></div> : list.length === 0 ? <p className="m-0 px-4 py-6 text-sm text-mist-600">No faxes here.</p> : (
           <ul className="m-0 list-none p-0">
             {list.map((f) => {
               const [tone, label] = FAX_STATUS[f.status] || FAX_STATUS.RECEIVED
               return (
                 <li key={f.id}>
-                  <button type="button" onClick={() => setSelId(f.id)} className={`flex w-full items-center gap-3 border-b border-[#F0F1F7] px-4 py-3 text-left ${sel?.id === f.id ? 'bg-[#E6F4F4]' : 'hover:bg-[#F7F8FB]'}`}>
-                    <Icon name={f.direction === 'IN' ? 'download' : 'upload'} className="h-4 w-4 text-[#5B6080]" />
+                  <button type="button" onClick={() => setSelId(f.id)} className={`flex w-full items-center gap-3 border-b border-mist-100 px-4 py-3 text-left ${sel?.id === f.id ? 'bg-brand-50' : 'hover:bg-mist-25'}`}>
+                    <Icon name={f.direction === 'IN' ? 'download' : 'upload'} className="h-4 w-4 text-mist-600" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[13.5px] font-semibold text-navy">{f.partyName || formatPhone(f.faxNumber)}</span>
-                      <span className="block truncate text-[12px] text-[#5B6080]">{fmtRelative(f.createdAt)} · {f.pages || 1} page{f.pages === 1 ? '' : 's'}{f.subject ? ` · ${f.subject}` : ''}</span>
+                      <span className="block truncate text-[12px] text-mist-600">{fmtRelative(f.createdAt)} · {f.pages || 1} page{f.pages === 1 ? '' : 's'}{f.subject ? ` · ${f.subject}` : ''}</span>
                     </span>
                     <Pill tone={tone}>{label}</Pill>
                   </button>
@@ -618,7 +618,7 @@ function FaxSection({ overview, toast, onChanged }) {
       </Card>
 
       <Card>
-        {!sel ? <p className="m-0 py-6 text-center text-sm text-[#5B6080]">Select a fax.</p> : <FaxDetail fax={sel} toast={toast} onChanged={refresh} />}
+        {!sel ? <p className="m-0 py-6 text-center text-sm text-mist-600">Select a fax.</p> : <FaxDetail fax={sel} toast={toast} onChanged={refresh} />}
       </Card>
 
       <SendFaxModal open={sendOpen} direction="OUT" initialTo={params.get('to') || ''} initialName={params.get('name') || ''} onClose={() => setSendOpen(false)} onSaved={async (f) => { setSendOpen(false); toast(overview.phoneStatus === 'CONNECTED' ? 'Fax sent' : 'Fax queued — it sends once the phone system is connected'); setTab('OUT'); setSelId(f.id); await refresh() }} />
@@ -663,11 +663,11 @@ function FaxDetail({ fax, toast, onChanged }) {
         <h3 className="m-0 flex-1 text-[17px] font-semibold text-navy">{fax.subject || (fax.direction === 'IN' ? 'Received fax' : 'Sent fax')}</h3>
         <Pill tone={tone} dot>{label}</Pill>
       </div>
-      <p className="m-0 mt-0.5 text-[12.5px] text-[#5B6080]">
+      <p className="m-0 mt-0.5 text-[12.5px] text-mist-600">
         {fax.direction === 'IN' ? 'From' : 'To'} {fax.partyName || 'unknown'} · <span className="font-mono">{formatPhone(fax.faxNumber)}</span> · {fmtDateTime(fax.createdAt)} · {fax.pages || 1} page{fax.pages === 1 ? '' : 's'}
         {fax.coverPage ? ' · with cover page' : ''}
       </p>
-      <div className="mt-3 overflow-hidden rounded-[10px] border border-[#E1E3F0] bg-[#F4F5FA]">
+      <div className="mt-3 overflow-hidden rounded-[10px] border border-mist-200 bg-mist-50">
         {!url ? (
           <div className="p-6"><Loading label="Loading document…" /></div>
         ) : isImage ? (
@@ -675,18 +675,18 @@ function FaxDetail({ fax, toast, onChanged }) {
         ) : fax.contentType === 'application/pdf' ? (
           <iframe title="Fax document" src={url} className="h-[420px] w-full bg-white" />
         ) : (
-          <p className="m-0 p-6 text-center text-[13px] text-[#5B6080]">Preview isn’t available for TIFF files — download it below.</p>
+          <p className="m-0 p-6 text-center text-[13px] text-mist-600">Preview isn’t available for TIFF files — download it below.</p>
         )}
       </div>
-      <a href={url || undefined} download={fax.fileName || 'fax'} className="mt-1.5 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#0A7A82]"><Icon name="download" className="h-3.5 w-3.5" /> {fax.fileName || 'Open document'}</a>
+      <a href={url || undefined} download={fax.fileName || 'fax'} className="mt-1.5 inline-flex items-center gap-1 text-[12.5px] font-semibold text-brand-700"><Icon name="download" className="h-3.5 w-3.5" /> {fax.fileName || 'Open document'}</a>
 
       {fax.direction === 'IN' && (
         fax.status === 'FILED' ? (
-          <p className="m-0 mt-3 rounded-[10px] bg-[#E6F4F4] px-3.5 py-2.5 text-[13px] text-[#0B4F4F]">
+          <p className="m-0 mt-3 rounded-[10px] bg-brand-50 px-3.5 py-2.5 text-[13px] text-brand-900">
             Filed to <Link className="font-semibold" to={`/app/crm/patients/${fax.patientId}`}>{fax.patientName}</Link> as {fax.documentType || 'a document'} by {fax.filedByName} · {fmtRelative(fax.filedAt)}
           </p>
         ) : (
-          <div className="mt-4 grid gap-3 rounded-[10px] border border-[#E1E3F0] p-3.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] sm:items-end">
+          <div className="mt-4 grid gap-3 rounded-[10px] border border-mist-200 p-3.5 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] sm:items-end">
             <label className="block text-[12.5px] font-semibold text-navy">File to patient<PatientPicker value={patientId} onChange={setPatientId} /></label>
             <Field field={{ name: 'dt', label: 'Document type', type: 'select', options: FAX_DOC_TYPES, noEmpty: true }} value={docType} onChange={setDocType} />
             <Button disabled={!patientId} onClick={async () => {
@@ -706,10 +706,10 @@ function FaxDetail({ fax, toast, onChanged }) {
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <Button variant="secondary" onClick={() => setFwdOpen((v) => !v)}><Icon name="arrowRight" /> Forward</Button>
         <CallButton phone={fax.faxNumber} small={false} />
-        <span className="text-[12px] text-[#8A8DA8]">{fax.createdByName ? `Added by ${fax.createdByName}` : ''}</span>
+        <span className="text-[12px] text-mist-500">{fax.createdByName ? `Added by ${fax.createdByName}` : ''}</span>
       </div>
       {fwdOpen && (
-        <div className="mt-3 grid gap-3 rounded-[10px] border border-[#E1E3F0] p-3.5 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <div className="mt-3 grid gap-3 rounded-[10px] border border-mist-200 p-3.5 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <Field field={{ name: 'fn', label: 'Fax number *', type: 'tel' }} value={fwd.faxNumber} onChange={(v) => setFwd((p) => ({ ...p, faxNumber: v }))} />
           <Field field={{ name: 'pn', label: 'Recipient' }} value={fwd.partyName} onChange={(v) => setFwd((p) => ({ ...p, partyName: v }))} />
           <Button onClick={async () => {
@@ -783,8 +783,8 @@ function SendFaxModal({ open, direction, initialTo = '', initialName = '', onClo
         <Field field={{ name: 's', label: 'Subject' }} value={f.subject} onChange={set('subject')} />
         <Field field={{ name: 'dt', label: 'Document type', type: 'select', options: FAX_DOC_TYPES, noEmpty: true }} value={f.documentType} onChange={set('documentType')} />
         <label className="block text-[12.5px] font-semibold text-navy sm:col-span-2">
-          Document * <span className="font-normal text-[#5B6080]">PDF, TIFF, JPG or PNG · up to 10 MB</span>
-          <input type="file" accept=".pdf,.tif,.tiff,.jpg,.jpeg,.png,application/pdf,image/tiff,image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] || null)} className="mt-1 block w-full text-[13px] file:mr-3 file:rounded-lg file:border file:border-[#CDD0E3] file:bg-white file:px-3 file:py-2 file:text-[13px] file:font-semibold" />
+          Document * <span className="font-normal text-mist-600">PDF, TIFF, JPG or PNG · up to 10 MB</span>
+          <input type="file" accept=".pdf,.tif,.tiff,.jpg,.jpeg,.png,application/pdf,image/tiff,image/jpeg,image/png" onChange={(e) => setFile(e.target.files?.[0] || null)} className="mt-1 block w-full text-[13px] file:mr-3 file:rounded-lg file:border file:border-mist-300 file:bg-white file:px-3 file:py-2 file:text-[13px] file:font-semibold" />
         </label>
         {out && <Field field={{ name: 'cp', label: 'Add a cover page with the confidentiality notice', type: 'checkbox' }} value={f.coverPage} onChange={set('coverPage')} />}
         {out && f.coverPage && <Field field={{ name: 'cn', label: 'Cover page note', type: 'textarea', placeholder: 'e.g. Records request for upcoming visit' }} value={f.coverNote} onChange={set('coverNote')} />}
@@ -798,10 +798,10 @@ function RecordingsSection({ overview }) {
   const days = overview.practice.recordingRetentionDays || 90
   return (
     <Card title="Call recordings" subtitle={`Kept for ${days} days, then deleted automatically · only owners and managers can download`}>
-      <div className="flex flex-col items-center justify-center rounded-[12px] border border-dashed border-[#D6DEE1] bg-[#FBFBFD] px-4 py-10 text-center">
-        <Icon name="play" className="h-7 w-7 text-[#9aaac8]" />
+      <div className="flex flex-col items-center justify-center rounded-[12px] border border-dashed border-mist-200 bg-mist-25 px-4 py-10 text-center">
+        <Icon name="play" className="h-7 w-7 text-mist-500" />
         <p className="m-0 mt-2 text-[14px] font-semibold text-navy">No recordings yet</p>
-        <p className="m-0 mt-1 max-w-md text-[13px] text-[#5B6080]">
+        <p className="m-0 mt-1 max-w-md text-[13px] text-mist-600">
           {overview.practice.recordAll
             ? 'Recording is turned on. Recordings attach to each call once the phone system is connected.'
             : 'Turn on recording under Call handling → Recording. Recordings attach to each call once the phone system is connected.'}
@@ -821,19 +821,19 @@ function ContactsSection({ onDetails, onText, onFax }) {
   const list = useAsync(() => crm.phoneContacts({ q: needle || undefined, group }), [needle, group])
   return (
     <Card title="Contacts" actions={<SearchInput value={q} onChange={setQ} placeholder="Name or number" className="sm:max-w-[240px]" />} bodyClassName="p-0">
-      <div className="border-b border-[#F0F1F7] px-4 py-2.5">
+      <div className="border-b border-mist-100 px-4 py-2.5">
         <Segmented value={group} onChange={setGroup} options={[{ value: 'ALL', label: 'All' }, { value: 'PATIENTS', label: 'Patients' }, { value: 'REFERRING', label: 'Referring offices' }, { value: 'STAFF', label: 'Staff' }]} />
       </div>
-      {list.loading ? <div className="px-4"><Loading /></div> : !list.data?.length ? <p className="m-0 px-4 py-6 text-sm text-[#5B6080]">No contacts match.</p> : (
+      {list.loading ? <div className="px-4"><Loading /></div> : !list.data?.length ? <p className="m-0 px-4 py-6 text-sm text-mist-600">No contacts match.</p> : (
         <ul className="m-0 list-none p-0">
           {list.data.map((c) => {
             const [tone, tag] = CONTACT_TAG[c.type] || ['gray', c.type]
             return (
-              <li key={`${c.type}-${c.id}`} className="flex flex-wrap items-center gap-3 border-b border-[#F0F1F7] px-4 py-3 last:border-0">
+              <li key={`${c.type}-${c.id}`} className="flex flex-wrap items-center gap-3 border-b border-mist-100 px-4 py-3 last:border-0">
                 <Avatar name={c.name} size="sm" tone={c.type === 'STAFF' ? 'ink' : 'teal'} />
                 <div className="min-w-0 flex-1">
                   <p className="m-0 text-[14px] font-semibold text-navy">{c.name} <Pill tone={tone}>{tag}</Pill></p>
-                  <p className="m-0 text-[12.5px] text-[#5B6080]">{c.subtitle}{c.phone ? <> · <span className="font-mono">{formatPhone(c.phone)}</span></> : ''}</p>
+                  <p className="m-0 text-[12.5px] text-mist-600">{c.subtitle}{c.phone ? <> · <span className="font-mono">{formatPhone(c.phone)}</span></> : ''}</p>
                 </div>
                 <div className="flex gap-1.5">
                   <CallButton phone={c.phone} />
@@ -906,7 +906,7 @@ function HandlingSection({ overview, toast, onSaved }) {
   const queueNames = (p.queues || []).map((q) => q.name)
   const destOptions = [...queueNames, 'Practice voicemail', 'Answering service', 'On-call provider']
   const setP2 = (k, v) => setP((prev) => ({ ...prev, [k]: v }))
-  const input = 'h-9 rounded-lg border border-[#CDD0E3] bg-white px-2.5 text-[13px] text-navy disabled:bg-[#F4F5FA] disabled:text-[#8A8DA8]'
+  const input = 'h-9 rounded-lg border border-mist-300 bg-white px-2.5 text-[13px] text-navy disabled:bg-mist-50 disabled:text-mist-500'
 
   async function save() {
     setSaving(true)
@@ -928,11 +928,11 @@ function HandlingSection({ overview, toast, onSaved }) {
       title="Call handling"
       subtitle={tab === 'mine' ? 'How calls reach you' : overview.canEditPractice ? 'Practice-wide settings for the main line' : 'Owners, admins and office managers can change these'}
     >
-      <div className="mb-4 flex flex-wrap gap-1 border-b border-[#EAEBF4]">
+      <div className="mb-4 flex flex-wrap gap-1 border-b border-mist-200">
         {HANDLING_TABS.map((t) => (
-          <button key={t.value} type="button" onClick={() => setTab(t.value)} className={`relative px-3 pb-2.5 pt-1.5 text-[13px] font-medium ${tab === t.value ? 'text-navy' : 'text-[#8A8DA8] hover:text-[#4C5076]'}`}>
+          <button key={t.value} type="button" onClick={() => setTab(t.value)} className={`relative px-3 pb-2.5 pt-1.5 text-[13px] font-medium ${tab === t.value ? 'text-navy' : 'text-mist-500 hover:text-mist-700'}`}>
             {t.label}
-            {tab === t.value && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full bg-[#0A7A82]" />}
+            {tab === t.value && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full bg-brand-600" />}
           </button>
         ))}
       </div>
@@ -941,10 +941,10 @@ function HandlingSection({ overview, toast, onSaved }) {
         {tab === 'hours' && (
           <div className="space-y-4">
             <table className="w-full max-w-xl border-collapse text-[13px]">
-              <thead><tr className="text-left text-[11.5px] uppercase tracking-[0.05em] text-[#5B6080]"><th className="py-1.5">Day</th><th>Open</th><th>From</th><th>To</th></tr></thead>
+              <thead><tr className="text-left text-[12px] text-mist-600"><th className="py-1.5">Day</th><th>Open</th><th>From</th><th>To</th></tr></thead>
               <tbody>
                 {(p.hours || []).map((h, i) => (
-                  <tr key={h.day} className="border-t border-[#F0F1F7]">
+                  <tr key={h.day} className="border-t border-mist-100">
                     <td className="py-2 font-medium text-navy">{h.day}</td>
                     <td><input type="checkbox" aria-label={`${h.day} open`} checked={Boolean(h.open)} onChange={(e) => setP2('hours', p.hours.map((x, j) => (j === i ? { ...x, open: e.target.checked } : x)))} /></td>
                     <td><input type="time" className={input} value={h.from} disabled={!h.open} onChange={(e) => setP2('hours', p.hours.map((x, j) => (j === i ? { ...x, from: e.target.value } : x)))} /></td>
@@ -966,10 +966,10 @@ function HandlingSection({ overview, toast, onSaved }) {
           <div className="space-y-3">
             <Field field={{ name: 'gr', label: 'What callers hear first', type: 'textarea' }} value={p.greeting} onChange={(v) => setP2('greeting', v)} />
             <table className="w-full border-collapse text-[13px]">
-              <thead><tr className="text-left text-[11.5px] uppercase tracking-[0.05em] text-[#5B6080]"><th className="w-16 py-1.5">Key</th><th>Caller hears</th><th>Sends the call to</th><th /></tr></thead>
+              <thead><tr className="text-left text-[12px] text-mist-600"><th className="w-16 py-1.5">Key</th><th>Caller hears</th><th>Sends the call to</th><th /></tr></thead>
               <tbody>
                 {(p.menu || []).map((m, i) => (
-                  <tr key={`${m.key}-${i}`} className="border-t border-[#F0F1F7]">
+                  <tr key={`${m.key}-${i}`} className="border-t border-mist-100">
                     <td className="py-2">
                       <select className={input} value={m.key} onChange={(e) => setP2('menu', p.menu.map((x, j) => (j === i ? { ...x, key: e.target.value } : x)))}>
                         {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].map((k) => <option key={k} value={k}>{k}</option>)}
@@ -1002,15 +1002,15 @@ function HandlingSection({ overview, toast, onSaved }) {
             {(p.queues || []).map((q, i) => {
               const upd = (k, v) => setP2('queues', p.queues.map((x, j) => (j === i ? { ...x, [k]: v } : x)))
               return (
-                <div key={i} className="rounded-[12px] border border-[#E1E3F0] p-3.5">
+                <div key={i} className="rounded-[12px] border border-mist-200 p-3.5">
                   <input className={`${input} mb-3 w-full font-semibold`} value={q.name} onChange={(e) => upd('name', e.target.value)} aria-label="Queue name" />
-                  <p className="m-0 mb-1 text-[12px] font-semibold text-[#3B3F5D]">Members</p>
+                  <p className="m-0 mb-1 text-[12px] font-semibold text-mist-800">Members</p>
                   <div className="mb-3 flex flex-wrap gap-1.5">
                     {team.map((m) => {
                       const on = (q.members || []).includes(m.userId)
                       return (
                         <button key={m.userId} type="button" aria-pressed={on} onClick={() => upd('members', on ? q.members.filter((x) => x !== m.userId) : [...(q.members || []), m.userId])}
-                          className={`min-h-8 rounded-full border px-3 text-[12.5px] ${on ? 'border-[#0A7A82] bg-[#E6F4F4] text-[#0B4F4F]' : 'border-[#CDD0E3] text-navy'}`}>
+                          className={`min-h-8 rounded-full border px-3 text-[12.5px] ${on ? 'border-brand-600 bg-brand-50 text-brand-900' : 'border-mist-300 text-navy'}`}>
                           {m.fullName}
                         </button>
                       )
@@ -1055,7 +1055,7 @@ function HandlingSection({ overview, toast, onSaved }) {
             <div className="max-w-xs">
               <Field field={{ name: 'rk', label: 'Keep recordings for', type: 'select', noEmpty: true, options: [{ value: 30, label: '30 days' }, { value: 90, label: '90 days' }, { value: 365, label: '1 year' }] }} value={p.recordingRetentionDays} onChange={(v) => setP2('recordingRetentionDays', Number(v))} />
             </div>
-            <p className="m-0 rounded-[10px] bg-[#F4F5FA] px-3.5 py-3 text-[12.5px] text-[#3B3F5D]">Some states require every party’s consent to record. The notice covers callers from two-party-consent states — check with your compliance officer.</p>
+            <p className="m-0 rounded-[10px] bg-mist-50 px-3.5 py-3 text-[12.5px] text-mist-800">Some states require every party’s consent to record. The notice covers callers from two-party-consent states — check with your compliance officer.</p>
           </div>
         )}
 
@@ -1072,10 +1072,10 @@ function HandlingSection({ overview, toast, onSaved }) {
         )}
       </fieldset>
 
-      <div className="mt-5 flex items-center gap-3 border-t border-[#F0F1F7] pt-4">
-        {canEdit ? <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</Button> : <span className="text-[13px] text-[#5B6080]">View only</span>}
+      <div className="mt-5 flex items-center gap-3 border-t border-mist-100 pt-4">
+        {canEdit ? <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save changes'}</Button> : <span className="text-[13px] text-mist-600">View only</span>}
         {error && <span className="text-[13px] font-semibold text-warn">{error}</span>}
-        <span className="ml-auto text-[12px] text-[#8A8DA8]">Routing takes effect in the phone system once it is connected.</span>
+        <span className="ml-auto text-[12px] text-mist-500">Routing takes effect in the phone system once it is connected.</span>
       </div>
     </Card>
   )
@@ -1086,7 +1086,7 @@ function SystemSection({ overview }) {
   const status = overview.phoneStatus
   return (
     <Card title={`Phone system${overview.phoneProvider ? ` · ${overview.phoneProvider}` : ''}`} actions={<Pill tone={toneOf([{ value: 'CONNECTED', tone: 'green' }, { value: 'PENDING', tone: 'amber' }], status)} dot>{status === 'CONNECTED' ? 'Connected' : status === 'PENDING' ? 'Connection requested' : 'Not connected'}</Pill>}>
-      <p className="m-0 max-w-2xl text-[14px] leading-relaxed text-[#3B3F5D]">
+      <p className="m-0 max-w-2xl text-[14px] leading-relaxed text-mist-800">
         Connect the practice’s phone provider so every extension, call queue and phone menu shows up in Utessa with live status. An admin approves the connection once on the provider’s own website — Utessa never sees the password.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -1096,16 +1096,16 @@ function SystemSection({ overview }) {
           ['Voicemail to handle', overview.newVoicemails],
           ['Faxes to file', overview.unfiledFaxes],
         ].map(([l, v]) => (
-          <div key={l} className="rounded-[12px] bg-[#F4F5FA] px-3.5 py-3">
+          <div key={l} className="rounded-[12px] bg-mist-50 px-3.5 py-3">
             <p className="m-0 font-mono text-[20px] font-semibold text-navy">{v}</p>
-            <p className="m-0 text-[12.5px] text-[#5B6080]">{l}</p>
+            <p className="m-0 text-[12.5px] text-mist-600">{l}</p>
           </div>
         ))}
       </div>
       <p className="m-0 mt-4 text-[13px] font-semibold text-navy">What the connection turns on</p>
-      <ul className="m-0 mt-1.5 grid list-none gap-1.5 p-0 text-[13px] text-[#3B3F5D] sm:grid-cols-2">
+      <ul className="m-0 mt-1.5 grid list-none gap-1.5 p-0 text-[13px] text-mist-800 sm:grid-cols-2">
         {['Incoming calls ring here and open the caller’s record', 'Click-to-call from any record', 'Queued texts and faxes are sent', 'Voicemail audio and transcripts arrive automatically', 'Call recordings attach to each call', 'Extensions and live status for the whole team'].map((t) => (
-          <li key={t} className="flex items-start gap-2"><Icon name="check" className="mt-0.5 h-4 w-4 text-[#0A7A82]" strokeWidth={2.2} />{t}</li>
+          <li key={t} className="flex items-start gap-2"><Icon name="check" className="mt-0.5 h-4 w-4 text-brand-700" strokeWidth={2.2} />{t}</li>
         ))}
       </ul>
       <Link to="/app/crm/integrations" className="mt-4 inline-block"><Button>{status === 'NOT_CONNECTED' ? 'Connect a phone system' : 'Manage the connection'}</Button></Link>

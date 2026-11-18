@@ -91,39 +91,45 @@ export function ResourceWorkspace({
   return (
     <div>
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="m-0 text-[28px] font-bold tracking-[-0.02em] text-navy">{title}</h1>
-          <p className="mt-1 text-sm text-[#43476A]">{subtitle}</p>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="m-0 text-[24px] font-semibold tracking-[-0.02em] text-ink-950">{title}</h1>
+            {!loading && (
+              <span className="rounded-full bg-mist-100 px-2.5 py-0.5 text-[12.5px] font-medium text-mist-700">{rows.length}</span>
+            )}
+          </div>
+          <p className="mt-1 max-w-3xl text-[13.5px] text-mist-600">{subtitle}</p>
         </div>
         <button
           type="button"
           onClick={openCreate}
-          className="min-h-11 rounded-lg bg-[#0A7A82] px-4 text-sm font-semibold text-white hover:bg-[#075E66]"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-brand-700"
         >
-          {addLabel}
+          <span aria-hidden="true" className="text-[16px] leading-none">+</span>
+          {String(addLabel).replace(/^\+\s*/, '')}
         </button>
       </div>
 
       {error && (
-        <p className="mb-4 rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-sm font-semibold text-warn" role="alert">
+        <p className="mb-4 rounded-xl border border-danger-200 bg-danger-50 px-3.5 py-3 text-sm font-semibold text-warn" role="alert">
           {error}
         </p>
       )}
 
-      <div className="overflow-hidden rounded-[12px] border border-[#D9DAE1] bg-white">
+      <div className="overflow-hidden rounded-[12px] border border-mist-200 bg-white">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr>
+              <tr className="bg-mist-25">
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="border-b border-[#DFE0E6] px-3 py-2.5 text-[12px] font-semibold uppercase tracking-[0.04em] text-[#4C5077]"
+                    className="whitespace-nowrap border-b border-mist-200 px-3 py-2.5 text-[12px] font-semibold text-mist-600"
                   >
                     {col.label}
                   </th>
                 ))}
-                <th className="border-b border-[#DFE0E6] px-3 py-2.5 text-[12px] font-semibold uppercase tracking-[0.04em] text-[#4C5077]">
+                <th className="border-b border-mist-200 px-3 py-2.5 text-right text-[12px] font-semibold text-mist-600">
                   Actions
                 </th>
               </tr>
@@ -131,27 +137,30 @@ export function ResourceWorkspace({
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-3 py-8 text-sm text-[#4C5076]">Loading…</td>
+                  <td colSpan={columns.length + 1} className="px-3 py-8 text-sm text-mist-700">Loading…</td>
                 </tr>
               )}
               {!loading && rows.length === 0 && (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-3 py-10 text-center text-sm text-[#4C5076]">{empty}</td>
+                  <td colSpan={columns.length + 1} className="px-3 py-10 text-center text-sm text-mist-700">{empty}</td>
                 </tr>
               )}
               {!loading && rows.map((row) => (
-                <tr key={row.id} className="hover:bg-[#F7F8FB]">
+                <tr key={row.id} className="transition-colors hover:bg-mist-25">
                   {columns.map((col) => (
-                    <td key={col.key} className="border-b border-[#EBECF4] px-3 py-3 text-sm text-navy">
-                      {col.render ? col.render(row) : row[col.key] || '—'}
+                    <td key={col.key} className="border-b border-mist-100 px-3 py-3 text-[13.5px] text-ink-950">
+                      {(() => {
+                        const v = col.render ? col.render(row) : row[col.key]
+                        return v === null || v === undefined || v === '' || v === '—' ? <span className="text-mist-300">—</span> : v
+                      })()}
                     </td>
                   ))}
-                  <td className="border-b border-[#EBECF4] px-3 py-3 text-sm">
-                    <div className="flex flex-wrap gap-2">
-                      <button type="button" className="font-semibold text-[#0A7A82] underline" onClick={() => openEdit(row)}>Edit</button>
+                  <td className="border-b border-mist-100 px-3 py-3 text-sm">
+                    <div className="flex justify-end gap-1">
+                      <button type="button" className="rounded-md px-2 py-1 text-[12.5px] font-semibold text-brand-700 transition-colors hover:bg-brand-50" onClick={() => openEdit(row)}>Edit</button>
                       <button
                         type="button"
-                        className="font-semibold text-warn underline"
+                        className="rounded-md px-2 py-1 text-[12.5px] font-semibold text-danger-600 transition-colors hover:bg-danger-50"
                         onClick={async () => {
                           if (!window.confirm('Delete this record?')) return
                           await onDelete(row.id)
@@ -170,17 +179,17 @@ export function ResourceWorkspace({
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-[#151940]/45 px-3 py-4 sm:px-4 sm:py-6">
+        <div className="fixed inset-0 z-50 bg-ink-950/45 px-3 py-4 sm:px-4 sm:py-6">
           <form
             onSubmit={stepped && !isLast ? goNext : submit}
             className="flex h-full w-full flex-col overflow-hidden rounded-none bg-white shadow-xl sm:rounded-none"
           >
-            <div className="shrink-0 border-b border-[#EAEBF4] px-5 pt-4 pb-0">
+            <div className="shrink-0 border-b border-mist-200 px-5 pt-4 pb-0">
               <div className="flex items-start justify-between gap-3 pb-3">
                 <div>
                   <h2 className="m-0 text-xl font-bold text-navy">{editing ? 'Edit record' : addLabel}</h2>
                 </div>
-                <button type="button" className="text-sm font-semibold text-[#4C5076] hover:text-navy" onClick={() => setOpen(false)}>
+                <button type="button" className="text-sm font-semibold text-mist-700 hover:text-navy" onClick={() => setOpen(false)}>
                   Close
                 </button>
               </div>
@@ -212,28 +221,28 @@ export function ResourceWorkspace({
                         }}
                         className={`relative flex min-w-0 items-center justify-center gap-2 border-b-2 px-2 py-3 text-left transition sm:justify-start sm:px-3 ${
                           active
-                            ? 'border-[#0A7A82] bg-[#F3FAFA]'
+                            ? 'border-brand-600 bg-brand-50'
                             : done
-                              ? 'border-transparent hover:bg-[#F7F8FB]'
+                              ? 'border-transparent hover:bg-mist-25'
                               : 'border-transparent opacity-55'
                         } ${clickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
                       >
                         <span
                           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${
                             active
-                              ? 'bg-[#0A7A82] text-white'
+                              ? 'bg-brand-600 text-white'
                               : done
-                                ? 'bg-[#DDEFEF] text-[#075E66]'
-                                : 'bg-[#E8E9F3] text-[#717490]'
+                                ? 'bg-brand-50 text-brand-800'
+                                : 'bg-mist-100 text-mist-500'
                           }`}
                         >
                           {done ? '✓' : i + 1}
                         </span>
                         <span className="hidden min-w-0 sm:block">
-                          <span className={`block truncate text-[12px] font-semibold leading-tight ${active ? 'text-[#0A7A82]' : 'text-navy'}`}>
+                          <span className={`block truncate text-[12px] font-semibold leading-tight ${active ? 'text-brand-700' : 'text-navy'}`}>
                             {label}
                           </span>
-                          <span className="block text-[10px] font-medium uppercase tracking-[0.04em] text-[#8A8DA8]">
+                          <span className="block text-[12px] font-medium text-mist-500">
                             {done ? 'Done' : active ? 'Current' : 'Upcoming'}
                           </span>
                         </span>
@@ -246,11 +255,11 @@ export function ResourceWorkspace({
 
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
               <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-                <section className="flex min-h-full flex-col rounded-xl border border-[#EAEBF4] bg-[#FBFBFD] p-5">
+                <section className="flex min-h-full flex-col rounded-xl border border-mist-200 bg-mist-25 p-5">
                   {current.title && (
                     <h3 className="mb-1 text-[16px] font-bold text-navy">{current.title}</h3>
                   )}
-                  {current.hint && <p className="mb-4 text-[13px] text-[#4C5076]">{current.hint}</p>}
+                  {current.hint && <p className="mb-4 text-[13px] text-mist-700">{current.hint}</p>}
                   {!current.hint && current.title && <div className="mb-4" />}
                   <div className="grid flex-1 content-start gap-3 sm:grid-cols-2">
                     {(current.fields || []).map((field) => (
@@ -272,22 +281,22 @@ export function ResourceWorkspace({
               )}
             </div>
 
-            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-[#EAEBF4] bg-white px-5 py-4">
-              <button type="button" className="min-h-11 rounded-lg border border-[#C8C9D4] px-4 text-sm font-semibold" onClick={() => setOpen(false)}>
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-mist-200 bg-white px-5 py-4">
+              <button type="button" className="min-h-11 rounded-lg border border-mist-300 px-4 text-sm font-semibold" onClick={() => setOpen(false)}>
                 Cancel
               </button>
               <div className="flex flex-wrap gap-2">
                 {stepped && step > 0 && (
-                  <button type="button" className="min-h-11 rounded-lg border border-[#C8C9D4] px-4 text-sm font-semibold" onClick={goBack}>
+                  <button type="button" className="min-h-11 rounded-lg border border-mist-300 px-4 text-sm font-semibold" onClick={goBack}>
                     Back
                   </button>
                 )}
                 {stepped && !isLast ? (
-                  <button type="submit" className="min-h-11 rounded-lg bg-[#0A7A82] px-4 text-sm font-semibold text-white hover:bg-[#075E66]">
+                  <button type="submit" className="min-h-11 rounded-lg bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-800">
                     Continue
                   </button>
                 ) : (
-                  <button type="submit" disabled={saving} className="min-h-11 rounded-lg bg-[#0A7A82] px-4 text-sm font-semibold text-white hover:bg-[#075E66] disabled:opacity-60">
+                  <button type="submit" disabled={saving} className="min-h-11 rounded-lg bg-brand-600 px-4 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60">
                     {saving ? 'Saving…' : 'Save'}
                   </button>
                 )}
@@ -303,9 +312,9 @@ export function ResourceWorkspace({
 function Field({ field, value, onChange }) {
   if (field.type === 'heading') {
     return (
-      <div className="sm:col-span-2 mt-1 border-t border-[#E4E5EF] pt-4 first:mt-0 first:border-t-0 first:pt-0">
-        <h4 className="m-0 text-[13px] font-bold uppercase tracking-[0.05em] text-[#0A7A82]">{field.label}</h4>
-        {field.hint && <p className="mt-1 text-[12px] font-normal text-[#4C5076]">{field.hint}</p>}
+      <div className="sm:col-span-2 mt-1 border-t border-mist-200 pt-4 first:mt-0 first:border-t-0 first:pt-0">
+        <h4 className="m-0 text-[13px] font-semibold text-brand-700">{field.label}</h4>
+        {field.hint && <p className="mt-1 text-[12px] font-normal text-mist-700">{field.hint}</p>}
       </div>
     )
   }
@@ -317,7 +326,7 @@ function Field({ field, value, onChange }) {
       {field.label}
       {field.type === 'select' ? (
         <select
-          className="mt-1 w-full rounded-lg border border-[#CDCED8] bg-white px-3 py-2.5 text-sm font-normal"
+          className="mt-1 w-full rounded-lg border border-mist-300 bg-white px-3 py-2.5 text-sm font-normal"
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           required={field.required}
@@ -328,7 +337,7 @@ function Field({ field, value, onChange }) {
         </select>
       ) : field.type === 'textarea' ? (
         <textarea
-          className="mt-1 w-full rounded-lg border border-[#CDCED8] bg-white px-3 py-2.5 text-sm font-normal"
+          className="mt-1 w-full rounded-lg border border-mist-300 bg-white px-3 py-2.5 text-sm font-normal"
           rows={field.rows || 3}
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
@@ -344,7 +353,7 @@ function Field({ field, value, onChange }) {
         </span>
       ) : (
         <input
-          className="mt-1 w-full rounded-lg border border-[#CDCED8] bg-white px-3 py-2.5 text-sm font-normal"
+          className="mt-1 w-full rounded-lg border border-mist-300 bg-white px-3 py-2.5 text-sm font-normal"
           type={field.type || 'text'}
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
@@ -384,12 +393,12 @@ export function useResourceList(loader) {
 
 export function StatusPill({ children, tone = 'gray' }) {
   const tones = {
-    green: 'bg-[#DEF2F3] text-[#155E62]',
-    amber: 'bg-[#FDF0DC] text-[#7E4305]',
-    red: 'bg-[#FDE7E4] text-[#9B1C12]',
-    blue: 'bg-[#E2ECFA] text-[#1D4E9A]',
-    gray: 'bg-[#E8E9F3] text-[#3B3F5D]',
-    teal: 'bg-[#DDEFEF] text-[#0A7A82]',
+    green: 'bg-brand-50 text-brand-800',
+    amber: 'bg-sun-50 text-sun-700',
+    red: 'bg-danger-100 text-danger-700',
+    blue: 'bg-info-100 text-info-700',
+    gray: 'bg-mist-100 text-mist-800',
+    teal: 'bg-brand-50 text-brand-700',
   }
   return (
     <span className={`inline-flex rounded-full px-2.5 py-1 text-[12px] font-semibold ${tones[tone] || tones.gray}`}>

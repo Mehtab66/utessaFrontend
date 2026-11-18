@@ -128,25 +128,25 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-5 font-sans text-[#171d39]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-5 font-sans text-ink-950">
       <div
         className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header bar */}
-        <div className="flex items-center justify-between border-b border-[#e0e2e9] bg-[#f6f7fb] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-mist-200 bg-mist-50 px-6 py-4">
           <div className="flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#007f9b]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-5 w-5 text-brand-700" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 4h12l4 5.5L12 21 2 9.5 6 4z" />
               <path d="M2 9.5h20" />
               <path d="M10 4l-2.5 5.5L12 21l4.5-11.5L14 4" />
             </svg>
-            <h2 className="text-base font-bold text-[#1B1F4B]">Utessa Plans & Pricing</h2>
+            <h2 className="text-base font-bold text-ink-900">Utessa Plans & Pricing</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-[#687699] transition hover:bg-[#ebedf5] hover:text-[#171d39]"
+            className="rounded-lg p-1 text-mist-500 transition hover:bg-mist-100 hover:text-ink-950"
             aria-label="Close"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -161,15 +161,15 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
             {/* Left: configuration form */}
             <div className="space-y-4">
               <div>
-                <h3 className="text-base font-bold tracking-tight text-[#171d39]">Choose your plan</h3>
-                <p className="mt-0.5 text-xs text-[#687699]">
+                <h3 className="text-base font-bold tracking-tight text-ink-950">Choose your plan</h3>
+                <p className="mt-0.5 text-xs text-mist-500">
                   Select the services you need. Your practice setup, data, and users stay exactly as they are.
                 </p>
               </div>
 
               {/* Service tiles */}
               <div>
-                <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-[#687699]">Services</h4>
+                <h4 className="mb-2 text-xs font-semibold text-mist-500">Services</h4>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {SVCS.map((svc) => {
                     const isSelected = selectedSvcs.includes(svc.id)
@@ -180,8 +180,8 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                         onClick={() => toggleSvc(svc.id)}
                         className={`group relative flex items-start gap-3 rounded-xl border p-3.5 text-left transition ${
                           isSelected
-                            ? 'border-[#007f9b] bg-[#f0fafb] ring-1 ring-[#007f9b]'
-                            : 'border-[#dfe3ec] bg-white hover:border-[#b0b8cb]'
+                            ? 'border-brand-600 bg-brand-50 ring-1 ring-brand-600'
+                            : 'border-mist-200 bg-white hover:border-mist-300'
                         }`}
                       >
                         <span
@@ -190,16 +190,16 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                         />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-[13.5px] font-semibold text-[#171d39]">{svc.name}</span>
+                            <span className="text-[13.5px] font-semibold text-ink-950">{svc.name}</span>
                             <span
                               className={`flex h-4.5 w-4.5 items-center justify-center rounded-full text-[11px] font-bold ${
-                                isSelected ? 'bg-[#007f9b] text-white' : 'border border-[#d0d4de] text-transparent'
+                                isSelected ? 'bg-brand-600 text-white' : 'border border-mist-200 text-transparent'
                               }`}
                             >
                               ✓
                             </span>
                           </div>
-                          <p className="mt-0.5 text-[11.5px] leading-relaxed text-[#687699]">{svc.desc}</p>
+                          <p className="mt-0.5 text-[11.5px] leading-relaxed text-mist-500">{svc.desc}</p>
                         </div>
                       </button>
                     )
@@ -207,7 +207,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                 </div>
 
                 {selectedSvcs.length >= 2 && (
-                  <div className="mt-3 flex items-center gap-2 rounded-lg border border-[#b2e5ea] bg-[#eefafb] px-3 py-2 text-xs font-semibold text-[#007f9b]">
+                  <div className="mt-3 flex items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700">
                     <span>✓</span>
                     Bundle discount: {Math.round(quote.disc * 100)}% off for {selectedSvcs.length} services.
                   </div>
@@ -215,14 +215,14 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
               </div>
 
               {/* Size configuration */}
-              <div className="border-t border-[#edf0f6] pt-4">
-                <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-[#687699]">Practice Size</h4>
+              <div className="border-t border-mist-200 pt-4">
+                <h4 className="mb-2 text-xs font-semibold text-mist-500">Practice Size</h4>
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-[#4a567d]">Number of users</label>
+                  <label className="mb-1 block text-xs font-semibold text-mist-600">Number of users</label>
                   <select
                     value={sizeBand}
                     onChange={(e) => setSizeBand(Number(e.target.value))}
-                    className="h-9 w-full rounded-lg border border-[#d0d4de] bg-white px-3 text-sm font-semibold text-[#171d39] outline-none focus:border-[#007f9b] focus:ring-1 focus:ring-[#007f9b]"
+                    className="h-9 w-full rounded-lg border border-mist-200 bg-white px-3 text-sm font-semibold text-ink-950 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
                   >
                     {SIZE_OPTIONS.map((o) => (
                       <option key={o.value} value={o.value}>{o.label} users</option>
@@ -232,29 +232,29 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
 
                 {selectedSvcs.includes('tc') && (
                   <div className="mt-3 max-w-[220px]">
-                    <label className="mb-1 block text-xs font-semibold text-[#4a567d]">
-                      Staff who clock in <span className="font-normal text-[#9aaac8]">(Time Clock)</span>
+                    <label className="mb-1 block text-xs font-semibold text-mist-600">
+                      Staff who clock in <span className="font-normal text-mist-500">(Time Clock)</span>
                     </label>
                     <input
                       type="number"
                       min="1"
                       value={staff}
                       onChange={(e) => setStaff(Math.max(1, parseInt(e.target.value) || 0))}
-                      className="h-9 w-full rounded-lg border border-[#d0d4de] bg-white px-3 text-sm font-semibold text-[#171d39] outline-none focus:border-[#007f9b] focus:ring-1 focus:ring-[#007f9b]"
+                      className="h-9 w-full rounded-lg border border-mist-200 bg-white px-3 text-sm font-semibold text-ink-950 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
                     />
                   </div>
                 )}
               </div>
 
               {/* Billing Toggle */}
-              <div className="border-t border-[#edf0f6] pt-4">
-                <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-[#687699]">Billing Cycle</h4>
-                <div className="inline-flex rounded-xl border border-[#dfe3ec] bg-[#f4f6fa] p-1">
+              <div className="border-t border-mist-200 pt-4">
+                <h4 className="mb-2 text-xs font-semibold text-mist-500">Billing Cycle</h4>
+                <div className="inline-flex rounded-xl border border-mist-200 bg-mist-50 p-1">
                   <button
                     type="button"
                     onClick={() => setBilling('annual')}
                     className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
-                      billing === 'annual' ? 'bg-white text-[#171d39] shadow-sm' : 'text-[#687699] hover:text-[#171d39]'
+                      billing === 'annual' ? 'bg-white text-ink-950 shadow-sm' : 'text-mist-500 hover:text-ink-950'
                     }`}
                   >
                     Annual, save 13%
@@ -263,7 +263,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                     type="button"
                     onClick={() => setBilling('monthly')}
                     className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
-                      billing === 'monthly' ? 'bg-white text-[#171d39] shadow-sm' : 'text-[#687699] hover:text-[#171d39]'
+                      billing === 'monthly' ? 'bg-white text-ink-950 shadow-sm' : 'text-mist-500 hover:text-ink-950'
                     }`}
                   >
                     Monthly
@@ -271,46 +271,46 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                 </div>
 
                 {/* Breakdown line items */}
-                <div className="mt-4 overflow-hidden rounded-xl border border-[#dfe3ec]">
+                <div className="mt-4 overflow-hidden rounded-xl border border-mist-200">
                   {quote.isCustom ? (
-                    <div className="p-4 text-xs text-[#4a567d]">
+                    <div className="p-4 text-xs text-mist-600">
                       Organizations with more than 300 users receive custom volume pricing, dedicated onboarding, and enterprise SLA.
                     </div>
                   ) : !selectedSvcs.length ? (
-                    <div className="p-4 text-center text-xs text-[#9aaac8]">Please select at least one service above.</div>
+                    <div className="p-4 text-center text-xs text-mist-500">Please select at least one service above.</div>
                   ) : (
-                    <div className="divide-y divide-[#edf0f6] text-xs">
+                    <div className="divide-y divide-mist-200 text-xs">
                       {quote.lines.map((l) => (
                         <div key={l.key} className="flex items-center justify-between px-3.5 py-2.5">
-                          <span className="flex items-center gap-2 font-medium text-[#171d39]">
+                          <span className="flex items-center gap-2 font-medium text-ink-950">
                             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: l.color }} />
-                            {l.name} <span className="text-[#9aaac8]">· {l.note}</span>
+                            {l.name} <span className="text-mist-500">· {l.note}</span>
                           </span>
-                          <span className="font-semibold text-[#171d39]">{money(l.amount)}</span>
+                          <span className="font-semibold text-ink-950">{money(l.amount)}</span>
                         </div>
                       ))}
-                      <div className="flex justify-between bg-[#fbfcfd] px-3.5 py-2 text-[#687699]">
+                      <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-mist-500">
                         <span>Subtotal</span>
                         <span>{money(quote.list)}</span>
                       </div>
                       {quote.disc > 0 && (
-                        <div className="flex justify-between bg-[#fbfcfd] px-3.5 py-2 text-[#007f9b]">
+                        <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-brand-700">
                           <span>Bundle discount ({Math.round(quote.disc * 100)}%)</span>
                           <span>−{money(quote.list * quote.disc)}</span>
                         </div>
                       )}
                       {billing === 'monthly' && (
-                        <div className="flex justify-between bg-[#fbfcfd] px-3.5 py-2 text-[#687699]">
+                        <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-mist-500">
                           <span>Monthly billing (+15%)</span>
                           <span>+{money(quote.net - quote.list * (1 - quote.disc))}</span>
                         </div>
                       )}
-                      <div className="flex justify-between bg-[#f4f7fc] px-3.5 py-2.5 text-sm font-bold text-[#1B1F4B]">
+                      <div className="flex justify-between bg-mist-50 px-3.5 py-2.5 text-sm font-bold text-ink-900">
                         <span>Total per month</span>
                         <span>{money(quote.net)}</span>
                       </div>
                       {billing === 'annual' && (
-                        <div className="flex justify-between bg-[#fbfcfd] px-3.5 py-2 text-[11px] text-[#687699]">
+                        <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-[11px] text-mist-500">
                           <span>Billed annually</span>
                           <span>{money(quote.net * 12)} per year</span>
                         </div>
@@ -325,7 +325,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                     <button
                       type="button"
                       onClick={() => setShowPromo(true)}
-                      className="text-xs font-semibold text-[#007f9b] hover:underline"
+                      className="text-xs font-semibold text-brand-700 hover:underline"
                     >
                       Have a promo code?
                     </button>
@@ -336,12 +336,12 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                         placeholder="Enter promo code"
                         value={promoCode}
                         onChange={(e) => setPromoCode(e.target.value)}
-                        className="h-8 flex-1 rounded-lg border border-[#d0d4de] px-2.5 text-xs outline-none focus:border-[#007f9b]"
+                        className="h-8 flex-1 rounded-lg border border-mist-200 px-2.5 text-xs outline-none focus:border-brand-600"
                       />
                       <button
                         type="button"
                         onClick={() => alert('Promo code applied successfully!')}
-                        className="h-8 rounded-lg bg-[#007f9b] px-3 text-xs font-semibold text-white transition hover:bg-[#006e86]"
+                        className="h-8 rounded-lg bg-brand-600 px-3 text-xs font-semibold text-white transition hover:bg-brand-700"
                       >
                         Apply
                       </button>
@@ -352,13 +352,13 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
             </div>
 
             {/* Right: Estimate card */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 text-[#171d39] shadow-lg">
+            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 text-ink-950 shadow-lg">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-[#B9BDE0]">Your estimate</h4>
+                <h4 className="text-xs font-semibold text-iris-200">Your estimate</h4>
                 <div className="mt-2 text-4xl font-extrabold tracking-tight">
                   {quote.isCustom ? 'Custom' : money(quote.net)}
                 </div>
-                <div className="mt-1 text-xs text-[#B9BDE0]">
+                <div className="mt-1 text-xs text-iris-200">
                   {quote.isCustom
                     ? 'quote from our enterprise team'
                     : quote.net
@@ -368,7 +368,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
 
                 {/* Discount pill */}
                 <div className="mt-4">
-                  <span className="inline-block rounded-full bg-[#FFD23F] px-3 py-1 text-xs font-bold text-[#1B1F4B]">
+                  <span className="inline-block rounded-full bg-sun-300 px-3 py-1 text-xs font-bold text-ink-900">
                     {quote.disc > 0
                       ? `${Math.round(quote.disc * 100)}% bundle discount`
                       : selectedSvcs.length > 0
@@ -382,7 +382,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
 
                 {/* Mosaic tiles */}
                 <div>
-                  <p className="mb-2 text-[11px] font-semibold text-[#171d39]">Included services:</p>
+                  <p className="mb-2 text-[11px] font-semibold text-ink-950">Included services:</p>
                   <div className="flex gap-2">
                     {SVCS.map((s) => {
                       const active = selectedSvcs.includes(s.id)
@@ -403,7 +403,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
 
                 <div className="my-5 h-px bg-white/15" />
 
-                <p className="text-[11px] leading-relaxed text-[#171d39]">
+                <p className="text-[11px] leading-relaxed text-ink-950">
                   Prices are per location. Time Clock is $3 per staff member, $30 minimum. Bundles save 10% (2 services), 15% (3) or 20% (4). Over 300 users, our team prepares a custom quote.
                 </p>
               </div>
@@ -414,14 +414,14 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                   type="button"
                   onClick={() => setStep('checkout')}
                   disabled={!selectedSvcs.length || quote.isCustom}
-                  className="w-full rounded-xl bg-[#007f9b] py-2.5 text-center text-xs font-bold text-white shadow transition hover:bg-[#006e86] disabled:opacity-50"
+                  className="w-full rounded-xl bg-brand-600 py-2.5 text-center text-xs font-bold text-white shadow transition hover:bg-brand-700 disabled:opacity-50"
                 >
                   Continue to payment
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full text-center text-xs font-medium text-[#B9BDE0] hover:text-white"
+                  className="w-full text-center text-xs font-medium text-iris-200 hover:text-white"
                 >
                   Close
                 </button>
@@ -433,38 +433,38 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
         {/* Checkout step */}
         {step === 'checkout' && (
           <div className="p-6">
-            <h3 className="text-xl font-bold text-[#171d39]">Review and confirm</h3>
-            <p className="mt-1 text-xs text-[#687699]">
+            <h3 className="text-xl font-bold text-ink-950">Review and confirm</h3>
+            <p className="mt-1 text-xs text-mist-500">
               Confirm your subscription details. Your free trial remains active and you will not be charged until the trial ends.
             </p>
 
-            <div className="mt-5 space-y-4 rounded-xl border border-[#dfe3ec] bg-[#fbfcfd] p-5 text-sm">
-              <div className="flex justify-between border-b border-[#edf0f6] pb-3">
-                <span className="text-[#687699]">Plan</span>
-                <span className="font-semibold text-[#171d39]">
+            <div className="mt-5 space-y-4 rounded-xl border border-mist-200 bg-mist-25 p-5 text-sm">
+              <div className="flex justify-between border-b border-mist-200 pb-3">
+                <span className="text-mist-500">Plan</span>
+                <span className="font-semibold text-ink-950">
                   {selectedSvcs.map((s) => SVCS.find((x) => x.id === s)?.name).join(', ')} · {quote.b?.label}
                 </span>
               </div>
-              <div className="flex justify-between border-b border-[#edf0f6] pb-3">
-                <span className="text-[#687699]">First payment</span>
-                <span className="font-semibold text-[#171d39]">
+              <div className="flex justify-between border-b border-mist-200 pb-3">
+                <span className="text-mist-500">First payment</span>
+                <span className="font-semibold text-ink-950">
                   {money(billing === 'annual' ? quote.net * 12 : quote.net)} (when your 14-day trial ends)
                 </span>
               </div>
-              <div className="flex justify-between border-b border-[#edf0f6] pb-3">
-                <span className="text-[#687699]">Renewal schedule</span>
-                <span className="font-semibold text-[#171d39]">
+              <div className="flex justify-between border-b border-mist-200 pb-3">
+                <span className="text-mist-500">Renewal schedule</span>
+                <span className="font-semibold text-ink-950">
                   {money(billing === 'annual' ? quote.net * 12 : quote.net)} {billing === 'annual' ? 'every year' : 'every month'}
                 </span>
               </div>
             </div>
 
-            <label className="mt-5 flex cursor-pointer items-start gap-3 text-xs text-[#4a567d]">
+            <label className="mt-5 flex cursor-pointer items-start gap-3 text-xs text-mist-600">
               <input
                 type="checkbox"
                 checked={autoRenew}
                 onChange={(e) => setAutoRenew(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-[#d0d4de] text-[#007f9b] focus:ring-[#007f9b]"
+                className="mt-0.5 h-4 w-4 rounded border-mist-200 text-brand-700 focus:ring-brand-600"
               />
               <span>
                 I agree that my subscription renews automatically {billing === 'annual' ? 'every year' : 'every month'} at{' '}
@@ -472,11 +472,11 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
               </span>
             </label>
 
-            <div className="mt-6 flex items-center justify-between border-t border-[#edf0f6] pt-4">
+            <div className="mt-6 flex items-center justify-between border-t border-mist-200 pt-4">
               <button
                 type="button"
                 onClick={() => setStep('choose')}
-                className="text-xs font-semibold text-[#687699] hover:text-[#171d39]"
+                className="text-xs font-semibold text-mist-500 hover:text-ink-950"
               >
                 ← Back to plan
               </button>
@@ -484,7 +484,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                 type="button"
                 disabled={!autoRenew}
                 onClick={() => setStep('done')}
-                className="rounded-xl bg-[#007f9b] px-6 py-2.5 text-xs font-bold text-white transition hover:bg-[#006e86] disabled:opacity-50"
+                className="rounded-xl bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700 disabled:opacity-50"
               >
                 Start subscription
               </button>
@@ -495,18 +495,18 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
         {/* Done / Confirmation step */}
         {step === 'done' && (
           <div className="p-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#e3faf2] text-2xl text-[#10a37f]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success-50 text-2xl text-[#10a37f]">
               ✓
             </div>
-            <h3 className="mt-4 text-2xl font-bold text-[#171d39]">You&apos;re all set!</h3>
-            <p className="mx-auto mt-2 max-w-md text-sm text-[#687699]">
+            <h3 className="mt-4 text-2xl font-bold text-ink-950">You&apos;re all set!</h3>
+            <p className="mx-auto mt-2 max-w-md text-sm text-mist-500">
               Your subscription is confirmed. A receipt and confirmation with your plan details and billing schedule have been emailed to your practice account.
             </p>
             <div className="mt-6 flex justify-center gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-xl bg-[#007f9b] px-6 py-2.5 text-xs font-bold text-white transition hover:bg-[#006e86]"
+                className="rounded-xl bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700"
               >
                 Back to dashboard
               </button>

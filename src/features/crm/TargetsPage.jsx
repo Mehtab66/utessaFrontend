@@ -7,9 +7,9 @@ import { useCrmEditors } from './CrmEditors'
 import { Alert, Avatar, Button, ConfirmModal, Empty, FilterSelect, Loading, PageHeader, Pill, Toolbar, fmtDate, fmtMoney, useAsync, useToast } from './ui'
 
 const HEALTH = {
-  ACHIEVED: ['green', 'Achieved', '#155E62'],
-  ON_TRACK: ['teal', 'On track', '#0A7A82'],
-  AT_RISK: ['amber', 'At risk', '#C97A12'],
+  ACHIEVED: ['green', 'Achieved', '#155C62'],
+  ON_TRACK: ['teal', 'On track', '#1E8E94'],
+  AT_RISK: ['amber', 'At risk', '#AD7406'],
   BEHIND: ['red', 'Behind', '#C4321F'],
   UPCOMING: ['blue', 'Upcoming', '#1D4E9A'],
   MISSED: ['red', 'Missed', '#C4321F'],
@@ -51,27 +51,27 @@ export default function TargetsPage() {
           const [tone, label, color] = HEALTH[t.health] || HEALTH.ON_TRACK
           const money = t.metric === 'REVENUE_WON'
           return (
-            <div key={t.id} className="rounded-[14px] border border-[#E4E6EF] bg-white p-4">
+            <div key={t.id} className="rounded-[14px] border border-mist-200 bg-white p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <Avatar name={t.assigneeName} size="sm" tone={t.userId ? 'blue' : 'teal'} />
                   <div className="min-w-0">
                     <p className="m-0 truncate text-[13.5px] font-semibold text-navy">{t.assigneeName}</p>
-                    <p className="m-0 text-[12px] text-[#687699]">{t.periodLabel || `${fmtDate(t.periodStart)} – ${fmtDate(t.periodEnd)}`}</p>
+                    <p className="m-0 text-[12px] text-mist-500">{t.periodLabel || `${fmtDate(t.periodStart)} – ${fmtDate(t.periodEnd)}`}</p>
                   </div>
                 </div>
                 <Pill tone={tone} dot>{label}</Pill>
               </div>
-              <p className="m-0 mt-3 text-[11px] font-bold uppercase tracking-[0.1em] text-[#69789a]">{labelOf(TARGET_METRICS, t.metric)}</p>
+              <p className="m-0 mt-3 text-[12px] font-semibold text-mist-500">{labelOf(TARGET_METRICS, t.metric)}</p>
               <div className="mt-1 flex items-baseline justify-between">
                 <span className="font-mono text-[24px] font-semibold text-navy">{money ? fmtMoney(t.achieved) : Number(t.achieved)}</span>
-                <span className="text-[13px] text-[#687699]">of {money ? fmtMoney(t.targetValue) : Number(t.targetValue)} · <b className="text-navy">{t.percent}%</b></span>
+                <span className="text-[13px] text-mist-500">of {money ? fmtMoney(t.targetValue) : Number(t.targetValue)} · <b className="text-navy">{t.percent}%</b></span>
               </div>
-              <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#EEF1F6]">
+              <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-mist-50">
                 <i className="block h-full rounded-full transition-all" style={{ width: `${Math.min(100, t.percent)}%`, background: color }} />
               </div>
-              <p className="m-0 mt-2 text-[12px] text-[#8A8DA8]">{fmtDate(t.periodStart)} – {fmtDate(t.periodEnd)}</p>
-              {t.notes && <p className="m-0 mt-1 text-[12.5px] text-[#43476A]">{t.notes}</p>}
+              <p className="m-0 mt-2 text-[12px] text-mist-500">{fmtDate(t.periodStart)} – {fmtDate(t.periodEnd)}</p>
+              {t.notes && <p className="m-0 mt-1 text-[12.5px] text-mist-700">{t.notes}</p>}
               {canEdit && (
                 <div className="mt-3 flex gap-2">
                   <Button size="sm" variant="secondary" onClick={() => editors.open.target(t)}>Edit</Button>

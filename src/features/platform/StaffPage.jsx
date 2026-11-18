@@ -11,7 +11,7 @@ export default function StaffPage() {
         subtitle="Utessa platform operators. Superadmins can see every console area; team roles will add Support, Billing and Sales permissions next."
       />
       {error && (
-        <p className="mb-4 rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-sm font-semibold text-[#B4472F]">
+        <p className="mb-4 rounded-xl border border-danger-200 bg-danger-50 px-3.5 py-3 text-sm font-semibold text-danger-700">
           {error}
         </p>
       )}
@@ -24,7 +24,7 @@ export default function StaffPage() {
             render: (r) => (
               <div>
                 <b>{r.fullName}</b>
-                <div className="font-mono text-[13px] text-[#4A4E7A]">{r.email}</div>
+                <div className="font-mono text-[13px] text-mist-700">{r.email}</div>
               </div>
             ),
           },

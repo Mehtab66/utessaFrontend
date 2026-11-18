@@ -6,7 +6,7 @@ import { Chip, Hero, SelectField, StatTile, TextArea, TextField, relativeDay, us
 import { PRIORITIES, TASK_STATUSES, todayIso, workspace } from './workspaceApi'
 
 const PRIORITY = Object.fromEntries(PRIORITIES.map((p) => [p.value, p]))
-const COLUMN_ACCENT = { TODO: '#8A93B2', IN_PROGRESS: '#2E8FD0', DONE: '#34C38F' }
+const COLUMN_ACCENT = { TODO: '#9DA2C0', IN_PROGRESS: '#2E7FD9', DONE: '#1FA971' }
 const EMPTY = { title: '', notes: '', priority: 'MEDIUM', status: 'TODO', dueDate: '', assigneeUserId: '' }
 
 export default function MyWorkPage() {
@@ -98,19 +98,19 @@ export default function MyWorkPage() {
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile label="Open tasks" value={stats.open} icon="checkSquare" tone="#0A7A82" />
-        <StatTile label="Due today" value={stats.today} icon="calendar" tone="#2E8FD0" />
+        <StatTile label="Open tasks" value={stats.open} icon="checkSquare" tone="#1E8E94" />
+        <StatTile label="Due today" value={stats.today} icon="calendar" tone="#2E7FD9" />
         <StatTile label="Overdue" value={stats.overdue} icon="alert" tone="#E5484D" />
-        <StatTile label="Done this week" value={stats.doneWeek} icon="sparkles" tone="#34C38F" />
+        <StatTile label="Done this week" value={stats.doneWeek} icon="sparkles" tone="#1FA971" />
       </div>
 
-      <form onSubmit={quickAdd} className="mb-4 flex items-center gap-2 rounded-2xl border border-[#E6E9F2] bg-white p-2 pl-4 shadow-[0_1px_2px_rgba(24,28,66,0.04)] focus-within:border-[#0A7A82] focus-within:ring-2 focus-within:ring-[#0A7A82]/10">
-        <Icon name="plus" className="h-4 w-4 text-[#9AA3BF]" />
+      <form onSubmit={quickAdd} className="mb-4 flex items-center gap-2 rounded-2xl border border-mist-200 bg-white p-2 pl-4 focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-600/10">
+        <Icon name="plus" className="h-4 w-4 text-mist-500" />
         <input
           value={quick}
           onChange={(e) => setQuick(e.target.value)}
           placeholder="Quick add a task for yourself and press Enter…"
-          className="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-navy outline-none placeholder:text-[#9AA3BF]"
+          className="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-navy outline-none placeholder:text-mist-500"
         />
         <Button type="submit" size="sm" disabled={!quick.trim()}>Add</Button>
       </form>
@@ -123,12 +123,12 @@ export default function MyWorkPage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9AA3BF]" />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search tasks" className="h-9 w-52 rounded-lg border border-[#E1E4EE] bg-white pl-9 pr-3 text-[13px] outline-none focus:border-[#0A7A82]" />
+            <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist-500" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search tasks" className="h-9 w-52 rounded-lg border border-mist-200 bg-white pl-9 pr-3 text-[13px] outline-none focus:border-brand-600" />
           </div>
-          <div className="flex rounded-lg border border-[#E1E4EE] bg-white p-0.5">
+          <div className="flex rounded-lg border border-mist-200 bg-white p-0.5">
             {[['board', 'grid'], ['list', 'list']].map(([v, icon]) => (
-              <button key={v} type="button" onClick={() => setView(v)} className={`flex h-8 w-8 items-center justify-center rounded-md ${view === v ? 'bg-[#171d39] text-white' : 'text-[#687699] hover:bg-[#F4F6FB]'}`} aria-label={`${v} view`}>
+              <button key={v} type="button" onClick={() => setView(v)} className={`flex h-8 w-8 items-center justify-center rounded-md ${view === v ? 'bg-ink-950 text-white' : 'text-mist-500 hover:bg-mist-50'}`} aria-label={`${v} view`}>
                 <Icon name={icon} className="h-4 w-4" />
               </button>
             ))}
@@ -146,19 +146,19 @@ export default function MyWorkPage() {
                 key={col.value}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => { const t = tasks.find((x) => x.id === dragId); if (t) move(t, col.value); setDragId(null) }}
-                className={`flex min-h-[320px] flex-col rounded-2xl border bg-[#F8F9FC] p-3 transition ${dragId ? 'border-dashed border-[#B9C0D6]' : 'border-[#E9ECF4]'}`}
+                className={`flex min-h-[320px] flex-col rounded-2xl border bg-mist-25 p-3 transition ${dragId ? 'border-dashed border-mist-300' : 'border-mist-200'}`}
               >
                 <header className="mb-3 flex items-center gap-2 px-1">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLUMN_ACCENT[col.value] }} />
-                  <h2 className="m-0 text-[13px] font-bold uppercase tracking-[0.08em] text-[#4C5678]">{col.label}</h2>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-[#687699] ring-1 ring-[#E6E9F2]">{items.length}</span>
+                  <h2 className="m-0 text-[13px] font-semibold text-mist-600">{col.label}</h2>
+                  <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-mist-500 ring-1 ring-mist-100">{items.length}</span>
                 </header>
                 <div className="flex flex-1 flex-col gap-2.5">
                   {items.map((t) => (
                     <TaskCard key={t.id} task={t} today={today} onOpen={() => setEditing({ ...t, dueDate: t.dueDate || '', assigneeUserId: t.assigneeUserId || '' })} onToggle={() => move(t, t.status === 'DONE' ? 'TODO' : 'DONE')} onDragStart={() => setDragId(t.id)} />
                   ))}
                   {!items.length && (
-                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-[#DCE0EB] px-4 py-8 text-center text-[12.5px] text-[#9AA3BF]">
+                    <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-mist-200 px-4 py-8 text-center text-[12.5px] text-mist-500">
                       {col.value === 'DONE' ? 'Completed work lands here' : 'Drop a task here'}
                     </div>
                   )}
@@ -168,19 +168,19 @@ export default function MyWorkPage() {
           })}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-[#E6E9F2] bg-white">
+        <div className="overflow-hidden rounded-2xl border border-mist-200 bg-white">
           {scoped.length ? scoped.map((t) => (
-            <div key={t.id} className="flex items-center gap-3 border-b border-[#F0F1F7] px-4 py-3 last:border-0 hover:bg-[#FAFBFD]">
+            <div key={t.id} className="flex items-center gap-3 border-b border-mist-100 px-4 py-3 last:border-0 hover:bg-mist-25">
               <CheckCircle done={t.status === 'DONE'} onClick={() => move(t, t.status === 'DONE' ? 'TODO' : 'DONE')} />
               <button type="button" onClick={() => setEditing({ ...t, dueDate: t.dueDate || '', assigneeUserId: t.assigneeUserId || '' })} className="min-w-0 flex-1 text-left">
-                <span className={`block truncate text-[13.5px] font-semibold ${t.status === 'DONE' ? 'text-[#9AA3BF] line-through' : 'text-navy'}`}>{t.title}</span>
-                {t.notes && <span className="block truncate text-[12px] text-[#8A93B2]">{t.notes}</span>}
+                <span className={`block truncate text-[13.5px] font-semibold ${t.status === 'DONE' ? 'text-mist-500 line-through' : 'text-navy'}`}>{t.title}</span>
+                {t.notes && <span className="block truncate text-[12px] text-mist-500">{t.notes}</span>}
               </button>
               <Pill tone={PRIORITY[t.priority]?.tone}>{PRIORITY[t.priority]?.label}</Pill>
               <DueChip due={t.dueDate} today={today} done={t.status === 'DONE'} />
-              <span className="hidden w-36 items-center gap-2 truncate text-[12.5px] text-[#5E6485] md:flex"><Avatar name={t.assigneeName} size="sm" />{t.assigneeName}</span>
+              <span className="hidden w-36 items-center gap-2 truncate text-[12.5px] text-mist-600 md:flex"><Avatar name={t.assigneeName} size="sm" />{t.assigneeName}</span>
             </div>
-          )) : <p className="m-0 px-4 py-10 text-center text-sm text-[#8A93B2]">No tasks match this view.</p>}
+          )) : <p className="m-0 px-4 py-10 text-center text-sm text-mist-500">No tasks match this view.</p>}
         </div>
       )}
 
@@ -195,13 +195,13 @@ function TaskCard({ task: t, today, onOpen, onToggle, onDragStart }) {
     <article
       draggable
       onDragStart={onDragStart}
-      className="group cursor-grab rounded-xl border border-[#E6E9F2] bg-white p-3 shadow-[0_1px_2px_rgba(24,28,66,0.04)] transition hover:-translate-y-0.5 hover:border-[#C9D9E8] hover:shadow-[0_10px_20px_-12px_rgba(17,24,52,0.3)] active:cursor-grabbing"
+      className="group cursor-grab rounded-xl border border-mist-200 bg-white p-3 transition hover:border-mist-200 hover:shadow-[0_10px_20px_-12px_rgba(17,24,52,0.3)] active:cursor-grabbing"
     >
       <div className="flex items-start gap-2.5">
         <CheckCircle done={t.status === 'DONE'} onClick={onToggle} />
         <button type="button" onClick={onOpen} className="min-w-0 flex-1 text-left">
-          <p className={`m-0 text-[13.5px] font-semibold leading-snug ${t.status === 'DONE' ? 'text-[#9AA3BF] line-through' : 'text-navy'}`}>{t.title}</p>
-          {t.notes && <p className="m-0 mt-1 line-clamp-2 text-[12px] text-[#8A93B2]">{t.notes}</p>}
+          <p className={`m-0 text-[13.5px] font-semibold leading-snug ${t.status === 'DONE' ? 'text-mist-500 line-through' : 'text-navy'}`}>{t.title}</p>
+          {t.notes && <p className="m-0 mt-1 line-clamp-2 text-[12px] text-mist-500">{t.notes}</p>}
         </button>
       </div>
       <div className="mt-3 flex items-center gap-2">
@@ -219,7 +219,7 @@ function CheckCircle({ done, onClick }) {
       type="button"
       onClick={onClick}
       aria-label={done ? 'Mark as not done' : 'Mark as done'}
-      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition ${done ? 'border-[#34C38F] bg-[#34C38F] text-white' : 'border-[#C8CDDD] text-transparent hover:border-[#34C38F] hover:text-[#34C38F]'}`}
+      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition ${done ? 'border-success-500 bg-success-500 text-white' : 'border-mist-300 text-transparent hover:border-success-500 hover:text-success-500'}`}
     >
       <Icon name="check" className="h-3 w-3" strokeWidth={3} />
     </button>
@@ -231,7 +231,7 @@ function DueChip({ due, today, done }) {
   const overdue = !done && due < today
   const isToday = due === today
   return (
-    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${overdue ? 'bg-[#FDECEC] text-[#C4321F]' : isToday ? 'bg-[#E6F1FB] text-[#1D4E9A]' : 'bg-[#F1F3F9] text-[#5E6485]'}`}>
+    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-semibold ${overdue ? 'bg-danger-50 text-danger-600' : isToday ? 'bg-info-50 text-info-700' : 'bg-mist-50 text-mist-600'}`}>
       <Icon name="calendar" className="h-3 w-3" />
       {relativeDay(due)}
     </span>

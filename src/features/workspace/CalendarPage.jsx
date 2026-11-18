@@ -48,7 +48,7 @@ export default function CalendarPage() {
         crmOn ? crm.appointments({ from, to }).catch(() => []) : Promise.resolve([]),
       ])
       const mapped = [
-        ...events.map((e) => ({ ...e, start: new Date(e.startsAt), end: new Date(e.endsAt), color: CATEGORY[e.category]?.color || '#64748B' })),
+        ...events.map((e) => ({ ...e, start: new Date(e.startsAt), end: new Date(e.endsAt), color: CATEGORY[e.category]?.color || '#727799' })),
         ...(appts || []).filter((a) => a.status !== 'CANCELLED').map((a) => {
           const start = new Date(a.startsAt)
           return {
@@ -144,17 +144,17 @@ export default function CalendarPage() {
       <Alert>{error}</Alert>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="overflow-hidden rounded-2xl border border-[#E6E9F2] bg-white shadow-[0_1px_2px_rgba(24,28,66,0.04)]">
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#F0F1F7] px-4 py-3">
+        <section className="overflow-hidden rounded-2xl border border-mist-200 bg-white">
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-mist-100 px-4 py-3">
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => shift(-1)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E1E4EE] text-[#4C5678] hover:bg-[#F4F6FB]" aria-label="Previous month"><Icon name="chevronLeft" className="h-4 w-4" /></button>
-              <button type="button" onClick={() => shift(1)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E1E4EE] text-[#4C5678] hover:bg-[#F4F6FB]" aria-label="Next month"><Icon name="chevronRight" className="h-4 w-4" /></button>
+              <button type="button" onClick={() => shift(-1)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-200 text-mist-600 hover:bg-mist-50" aria-label="Previous month"><Icon name="chevronLeft" className="h-4 w-4" /></button>
+              <button type="button" onClick={() => shift(1)} className="flex h-8 w-8 items-center justify-center rounded-lg border border-mist-200 text-mist-600 hover:bg-mist-50" aria-label="Next month"><Icon name="chevronRight" className="h-4 w-4" /></button>
               <h2 className="m-0 ml-1 text-[17px] font-bold text-navy">{monthLabel}</h2>
             </div>
             <Button variant="secondary" size="sm" onClick={() => { const d = new Date(); d.setDate(1); d.setHours(0, 0, 0, 0); setCursor(d); setSelectedDay(todayKey) }}>Today</Button>
           </header>
-          <div className="grid grid-cols-7 border-b border-[#F0F1F7] bg-[#FAFBFD]">
-            {WEEKDAYS.map((w) => <div key={w} className="px-2 py-2 text-center text-[11px] font-bold uppercase tracking-[0.1em] text-[#9AA3BF]">{w}</div>)}
+          <div className="grid grid-cols-7 border-b border-mist-100 bg-mist-25">
+            {WEEKDAYS.map((w) => <div key={w} className="px-2 py-2 text-center text-[12px] font-semibold text-mist-500">{w}</div>)}
           </div>
           <div className="grid grid-cols-7">
             {grid.map((d) => {
@@ -169,16 +169,16 @@ export default function CalendarPage() {
                   type="button"
                   onClick={() => setSelectedDay(key)}
                   onDoubleClick={() => newEvent(key)}
-                  className={`group relative flex min-h-[104px] flex-col border-b border-r border-[#F0F1F7] p-1.5 text-left align-top transition [&:nth-child(7n)]:border-r-0 ${inMonth ? 'bg-white' : 'bg-[#FAFBFD]'} ${isSel ? 'ring-2 ring-inset ring-[#0A7A82]/40' : 'hover:bg-[#F7FAFC]'}`}
+                  className={`group relative flex min-h-[104px] flex-col border-b border-r border-mist-100 p-1.5 text-left align-top transition [&:nth-child(7n)]:border-r-0 ${inMonth ? 'bg-white' : 'bg-mist-25'} ${isSel ? 'ring-2 ring-inset ring-brand-600/40' : 'hover:bg-mist-25'}`}
                 >
-                  <span className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[12px] font-semibold ${isToday ? 'bg-[#0A7A82] text-white' : inMonth ? 'text-navy' : 'text-[#B9C0D6]'}`}>{d.getDate()}</span>
+                  <span className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-[12px] font-semibold ${isToday ? 'bg-brand-600 text-white' : inMonth ? 'text-navy' : 'text-mist-500'}`}>{d.getDate()}</span>
                   <span className="flex flex-col gap-0.5">
                     {list.slice(0, 3).map((it) => (
                       <span key={`${key}-${it.id}`} className="truncate rounded-md px-1.5 py-0.5 text-[11px] font-semibold" style={{ backgroundColor: `${it.color}1F`, color: it.color }}>
                         {!it.allDay && <span className="font-normal opacity-80">{fmtTime(it.start)} </span>}{it.title}
                       </span>
                     ))}
-                    {list.length > 3 && <span className="px-1.5 text-[11px] font-semibold text-[#8A93B2]">+{list.length - 3} more</span>}
+                    {list.length > 3 && <span className="px-1.5 text-[11px] font-semibold text-mist-500">+{list.length - 3} more</span>}
                   </span>
                 </button>
               )
@@ -187,43 +187,43 @@ export default function CalendarPage() {
         </section>
 
         <aside className="space-y-4">
-          <section className="rounded-2xl border border-[#E6E9F2] bg-white p-4">
+          <section className="rounded-2xl border border-mist-200 bg-white p-4">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="m-0 text-[15px] font-bold text-navy">
                 {new Date(`${selectedDay}T00:00`).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
               </h3>
-              <button type="button" onClick={() => newEvent(selectedDay)} className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#EEF7F8] text-[#0A7A82] hover:bg-[#DDF0F1]" aria-label="Add event on this day"><Icon name="plus" className="h-4 w-4" /></button>
+              <button type="button" onClick={() => newEvent(selectedDay)} className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-50 text-brand-700 hover:bg-brand-50" aria-label="Add event on this day"><Icon name="plus" className="h-4 w-4" /></button>
             </div>
             {dayItems.length ? (
               <ul className="m-0 list-none space-y-2 p-0">
                 {dayItems.map((it) => (
                   <li key={it.id}>
-                    <button type="button" onClick={() => open(it)} className="flex w-full gap-3 rounded-xl border border-[#F0F1F7] p-2.5 text-left transition hover:border-[#D5DCEA] hover:bg-[#FAFBFD]">
+                    <button type="button" onClick={() => open(it)} className="flex w-full gap-3 rounded-xl border border-mist-100 p-2.5 text-left transition hover:border-mist-200 hover:bg-mist-25">
                       <span className="w-1 shrink-0 rounded-full" style={{ backgroundColor: it.color }} />
                       <span className="min-w-0">
                         <span className="block truncate text-[13px] font-semibold text-navy">{it.title}</span>
-                        <span className="block text-[11.5px] text-[#8A93B2]">
+                        <span className="block text-[11.5px] text-mist-500">
                           {it.allDay ? 'All day' : `${fmtTime(it.start)} – ${fmtTime(it.end)}`}
                           {it.source === 'crm' ? ' · CRM appointment' : ` · ${CATEGORY[it.category]?.label || ''}`}
                         </span>
-                        {(it.location || it.description) && <span className="block truncate text-[11.5px] text-[#9AA3BF]">{it.location || it.description}</span>}
+                        {(it.location || it.description) && <span className="block truncate text-[11.5px] text-mist-500">{it.location || it.description}</span>}
                       </span>
                     </button>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="m-0 rounded-xl bg-[#FAFBFD] px-3 py-6 text-center text-[12.5px] text-[#9AA3BF]">Nothing scheduled. Double-click a day to add an event.</p>
+              <p className="m-0 rounded-xl bg-mist-25 px-3 py-6 text-center text-[12.5px] text-mist-500">Nothing scheduled. Double-click a day to add an event.</p>
             )}
           </section>
 
-          <section className="rounded-2xl border border-[#E6E9F2] bg-white p-4">
-            <h3 className="m-0 mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-[#8A93B2]">Legend</h3>
+          <section className="rounded-2xl border border-mist-200 bg-white p-4">
+            <h3 className="m-0 mb-3 text-[13px] font-semibold text-mist-500">Legend</h3>
             <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0">
               {EVENT_CATEGORIES.map((c) => (
-                <li key={c.value} className="flex items-center gap-2 text-[12.5px] text-[#4C5678]"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} />{c.label}</li>
+                <li key={c.value} className="flex items-center gap-2 text-[12.5px] text-mist-600"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} />{c.label}</li>
               ))}
-              {crmOn && <li className="flex items-center gap-2 text-[12.5px] text-[#4C5678]"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: APPOINTMENT_COLOR }} />Appointments</li>}
+              {crmOn && <li className="flex items-center gap-2 text-[12.5px] text-mist-600"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: APPOINTMENT_COLOR }} />Appointments</li>}
             </ul>
             {crmOn && <div className="mt-3"><Toggle checked={showAppts} onChange={setShowAppts} label="Show CRM appointments" hint="Patient visits from the CRM module" /></div>}
           </section>

@@ -151,7 +151,7 @@ export function useToast() {
     <div
       role="status"
       className={`fixed bottom-6 right-6 z-[70] max-w-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-xl ${
-        toast.tone === 'error' ? 'bg-[#9B1C12] text-white' : 'bg-[#171d39] text-white'
+        toast.tone === 'error' ? 'bg-danger-700 text-white' : 'bg-ink-950 text-white'
       }`}
     >
       {toast.message}
@@ -173,22 +173,22 @@ export function useDebounced(value, delay = 300) {
    Primitives
    ═══════════════════════════════════════════════════════════════════════ */
 const TONES = {
-  green: 'bg-[#DEF2F3] text-[#155E62]',
-  amber: 'bg-[#FDF0DC] text-[#7E4305]',
-  red: 'bg-[#FDE7E4] text-[#9B1C12]',
-  blue: 'bg-[#E2ECFA] text-[#1D4E9A]',
-  gray: 'bg-[#E8E9F3] text-[#3B3F5D]',
-  teal: 'bg-[#DDEFEF] text-[#0A7A82]',
-  ink: 'bg-[#E7E4F5] text-[#4A3D8F]',
+  green: 'bg-brand-50 text-brand-800',
+  amber: 'bg-sun-50 text-sun-700',
+  red: 'bg-danger-100 text-danger-700',
+  blue: 'bg-info-100 text-info-700',
+  gray: 'bg-mist-100 text-mist-800',
+  teal: 'bg-brand-50 text-brand-700',
+  ink: 'bg-iris-100 text-iris-700',
 }
 const DOTS = {
-  green: 'bg-[#155E62]',
-  amber: 'bg-[#C97A12]',
-  red: 'bg-[#C4321F]',
-  blue: 'bg-[#1D4E9A]',
-  gray: 'bg-[#8A8DA8]',
-  teal: 'bg-[#0A7A82]',
-  ink: 'bg-[#4A3D8F]',
+  green: 'bg-brand-800',
+  amber: 'bg-sun-600',
+  red: 'bg-danger-600',
+  blue: 'bg-info-700',
+  gray: 'bg-mist-400',
+  teal: 'bg-brand-600',
+  ink: 'bg-iris-700',
 }
 
 export function Pill({ tone = 'gray', children, dot = false, className = '' }) {
@@ -201,7 +201,7 @@ export function Pill({ tone = 'gray', children, dot = false, className = '' }) {
 }
 
 export function EnumPill({ list, value, dot = true }) {
-  if (!value) return <span className="text-[#9aaac8]">—</span>
+  if (!value) return <span className="text-mist-500">—</span>
   return <Pill tone={toneOf(list, value)} dot={dot}>{labelOf(list, value)}</Pill>
 }
 
@@ -210,18 +210,18 @@ export function Dot({ tone = 'teal' }) {
 }
 
 const BTN = {
-  primary: 'bg-[#0A7A82] text-white hover:bg-[#075E66] border border-[#0A7A82]',
-  secondary: 'bg-white text-[#171d39] border border-[#C8C9D4] hover:bg-[#F7F8FB]',
-  ghost: 'bg-transparent text-[#0A7A82] border border-transparent hover:bg-[#F3FAFA]',
-  danger: 'bg-white text-[#B42318] border border-[#F3C1BC] hover:bg-[#FFF5F4]',
-  dark: 'bg-[#171d39] text-white border border-[#171d39] hover:bg-[#262B66]',
+  primary: 'bg-brand-600 text-white hover:bg-brand-700 border border-brand-600',
+  secondary: 'bg-white text-ink-950 border border-mist-300 hover:bg-mist-25',
+  ghost: 'bg-transparent text-brand-700 border border-transparent hover:bg-brand-50',
+  danger: 'bg-white text-danger-600 border border-danger-200 hover:bg-danger-50',
+  dark: 'bg-ink-950 text-white border border-ink-950 hover:bg-ink-800',
 }
 export function Button({ variant = 'primary', size = 'md', className = '', children, ...props }) {
-  const sizes = { sm: 'min-h-8 px-2.5 text-[12.5px]', md: 'min-h-10 px-4 text-sm', lg: 'min-h-11 px-5 text-sm' }
+  const sizes = { sm: 'min-h-8 px-2.5 text-[12.5px]', md: 'min-h-9 px-3.5 text-[13.5px]', lg: 'min-h-10 px-5 text-sm' }
   return (
     <button
       type="button"
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold transition disabled:cursor-not-allowed disabled:opacity-55 ${sizes[size]} ${BTN[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-55 ${sizes[size]} ${BTN[variant]} ${className}`}
       {...props}
     >
       {children}
@@ -229,13 +229,22 @@ export function Button({ variant = 'primary', size = 'md', className = '', child
   )
 }
 
-export function PageHeader({ eyebrow = 'CRM', title, subtitle, actions }) {
+/*
+ * Page title row. The module name is already in the navigation above, so the small
+ * label over the title is opt-in (pass `eyebrow`). `count` shows a chip like "12 open".
+ */
+export function PageHeader({ eyebrow, title, subtitle, actions, count }) {
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div className="min-w-0">
-        {eyebrow && <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#69789a]">{eyebrow}</p>}
-        <h1 className="m-0 text-[26px] font-bold tracking-[-0.02em] text-navy">{title}</h1>
-        {subtitle && <p className="mt-1 max-w-3xl text-sm text-[#43476A]">{subtitle}</p>}
+        {eyebrow && <p className="mb-1 text-[13px] font-semibold text-brand-700">{eyebrow}</p>}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="m-0 text-[24px] font-semibold tracking-[-0.02em] text-ink-950">{title}</h1>
+          {count != null && count !== '' && (
+            <span className="rounded-full bg-mist-100 px-2.5 py-0.5 text-[12.5px] font-medium text-mist-700">{count}</span>
+          )}
+        </div>
+        {subtitle && <p className="mt-1 max-w-3xl text-[13.5px] text-mist-600">{subtitle}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
     </div>
@@ -244,19 +253,30 @@ export function PageHeader({ eyebrow = 'CRM', title, subtitle, actions }) {
 
 export function Card({ title, actions, children, className = '', bodyClassName = '', subtitle }) {
   return (
-    <section className={`min-w-0 rounded-[14px] border border-[#E4E6EF] bg-white shadow-[0_1px_2px_rgba(24,28,66,0.04)] ${className}`}>
+    <section className={`min-w-0 rounded-[12px] border border-mist-200 bg-white ${className}`}>
       {(title || actions) && (
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#F0F1F7] px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-mist-200 px-5 py-3.5">
           <div className="min-w-0">
-            {title && <h2 className="m-0 text-[15px] font-bold text-navy">{title}</h2>}
-            {subtitle && <p className="m-0 text-[12px] text-[#687699]">{subtitle}</p>}
+            {title && <h2 className="m-0 text-[15px] font-semibold text-ink-950">{title}</h2>}
+            {subtitle && <p className="m-0 mt-0.5 text-[12.5px] text-mist-600">{subtitle}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </div>
       )}
-      <div className={`p-4 ${bodyClassName}`}>{children}</div>
+      <div className={`p-5 ${bodyClassName}`}>{children}</div>
     </section>
   )
+}
+
+/* Note under a KPI takes the meaning color of its tone (teal = normal, red = needs action …) */
+const KPI_NOTE = {
+  teal: 'text-brand-700',
+  green: 'text-success-600',
+  amber: 'text-sun-600',
+  red: 'text-danger-600',
+  blue: 'text-info-600',
+  ink: 'text-iris-600',
+  gray: 'text-mist-600',
 }
 
 export function Kpi({ label, value, hint, tone = 'teal', onClick }) {
@@ -265,16 +285,16 @@ export function Kpi({ label, value, hint, tone = 'teal', onClick }) {
     <Tag
       type={onClick ? 'button' : undefined}
       onClick={onClick}
-      className={`group rounded-[14px] border border-[#E4E6EF] bg-[linear-gradient(135deg,#ffffff_0%,#f8faff_100%)] p-4 text-left shadow-[0_1px_2px_rgba(24,28,66,0.04)] ${
-        onClick ? 'transition hover:-translate-y-0.5 hover:border-[#9ddedc] hover:shadow-[0_12px_24px_rgba(17,24,52,0.07)]' : ''
+      className={`group rounded-[12px] border border-mist-200 bg-white px-5 py-4 text-left ${
+        onClick ? 'transition-colors hover:border-brand-300 focus-visible:outline-2 focus-visible:outline-brand-500' : ''
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#69789a]">{label}</span>
-        <Dot tone={tone} />
+        <span className="text-[13px] font-medium text-mist-600">{label}</span>
+        {onClick && <Icon name="arrowRight" className="h-3.5 w-3.5 text-mist-300 transition-colors group-hover:text-brand-600" />}
       </div>
-      <div className="mt-2 font-mono text-[26px] font-semibold tracking-[-0.04em] text-[#171d39]">{value ?? '—'}</div>
-      {hint && <div className="mt-0.5 text-[12px] text-[#687699]">{hint}</div>}
+      <div className="mt-1.5 font-mono text-[28px] font-semibold leading-tight tracking-[-0.03em] text-ink-950">{value ?? '—'}</div>
+      {hint && <div className={`mt-1 text-[12.5px] font-medium ${KPI_NOTE[tone] || KPI_NOTE.teal}`}>{hint}</div>}
     </Tag>
   )
 }
@@ -282,18 +302,18 @@ export function Kpi({ label, value, hint, tone = 'teal', onClick }) {
 export function Alert({ tone = 'error', children }) {
   if (!children) return null
   const cls = tone === 'error'
-    ? 'border-[#F3C1BC] bg-[#FFF5F4] text-[#B42318]'
+    ? 'border-danger-200 bg-danger-50 text-danger-600'
     : tone === 'warn'
-      ? 'border-[#f1d9a9] bg-[#fffaf2] text-[#7E4305]'
-      : 'border-[#cfeef0] bg-[#f2fbfb] text-[#155E62]'
-  return <div role="alert" className={`mb-4 rounded-xl border px-3.5 py-3 text-sm font-semibold ${cls}`}>{children}</div>
+      ? 'border-sun-100 bg-sun-50 text-sun-700'
+      : 'border-brand-100 bg-brand-50 text-brand-800'
+  return <div role="alert" className={`mb-4 rounded-lg border px-3.5 py-3 text-sm font-medium ${cls}`}>{children}</div>
 }
 
 export function Empty({ title = 'Nothing here yet', children, action }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-[12px] border border-dashed border-[#D6DEE1] bg-[#FBFBFD] px-4 py-10 text-center">
+    <div className="flex flex-col items-center justify-center rounded-[12px] border border-dashed border-mist-200 bg-mist-25 px-4 py-10 text-center">
       <p className="m-0 text-sm font-semibold text-navy">{title}</p>
-      {children && <p className="m-0 mt-1 max-w-md text-[13px] text-[#4C5076]">{children}</p>}
+      {children && <p className="m-0 mt-1 max-w-md text-[13px] text-mist-700">{children}</p>}
       {action && <div className="mt-3">{action}</div>}
     </div>
   )
@@ -301,18 +321,28 @@ export function Empty({ title = 'Nothing here yet', children, action }) {
 
 export function Loading({ label = 'Loading…' }) {
   return (
-    <div className="flex items-center gap-2 px-1 py-8 text-sm text-[#4C5076]">
-      <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#DDEFEF] border-t-[#0A7A82]" />
+    <div className="flex items-center gap-2 px-1 py-8 text-sm text-mist-700">
+      <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-50 border-t-brand-600" />
       {label}
     </div>
   )
 }
 
-export function Avatar({ name, size = 'md', tone = 'teal' }) {
+const AVATAR_TONES = {
+  teal: 'bg-brand-100 text-brand-800',
+  blue: 'bg-info-100 text-info-700',
+  ink: 'bg-iris-100 text-iris-700',
+  sun: 'bg-sun-100 text-sun-700',
+  green: 'bg-success-100 text-success-700',
+}
+const AVATAR_CYCLE = ['teal', 'ink', 'sun', 'green', 'blue']
+
+export function Avatar({ name, size = 'md', tone }) {
   const sizes = { sm: 'h-7 w-7 text-[11px]', md: 'h-9 w-9 text-[12px]', lg: 'h-14 w-14 text-[18px]' }
-  const bg = tone === 'blue' ? 'bg-[#2f54eb]' : tone === 'ink' ? 'bg-[#4A3D8F]' : 'bg-[#0A7A82]'
+  const key = tone || AVATAR_CYCLE[[...String(name || '?')].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % AVATAR_CYCLE.length]
+  const bg = AVATAR_TONES[key] || AVATAR_TONES.teal
   return (
-    <span className={`inline-flex shrink-0 items-center justify-center rounded-full font-bold text-white ${sizes[size]} ${bg}`}>
+    <span className={`inline-flex shrink-0 items-center justify-center rounded-full font-semibold ${sizes[size]} ${bg}`}>
       {initials(name)}
     </span>
   )
@@ -320,7 +350,7 @@ export function Avatar({ name, size = 'md', tone = 'teal' }) {
 
 export function Tabs({ tabs, value, onChange }) {
   return (
-    <div className="mb-4 flex flex-wrap gap-1 border-b border-[#EAEBF4]" role="tablist">
+    <div className="mb-4 flex flex-wrap gap-1 border-b border-mist-200" role="tablist">
       {tabs.map((t) => {
         const active = t.value === value
         return (
@@ -330,15 +360,15 @@ export function Tabs({ tabs, value, onChange }) {
             role="tab"
             aria-selected={active}
             onClick={() => onChange(t.value)}
-            className={`relative px-3.5 pb-2.5 pt-2 text-[13px] font-semibold transition ${active ? 'text-[#171d39]' : 'text-[#8A8DA8] hover:text-[#4C5076]'}`}
+            className={`relative px-3.5 pb-2.5 pt-2 text-[13px] font-medium transition-colors ${active ? 'font-semibold text-ink-950' : 'text-mist-600 hover:text-ink-950'}`}
           >
             {t.label}
             {t.count != null && (
-              <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-[#DDEFEF] text-[#0A7A82]' : 'bg-[#EEF0F6] text-[#687699]'}`}>
+              <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-brand-50 text-brand-700' : 'bg-mist-100 text-mist-500'}`}>
                 {t.count}
               </span>
             )}
-            {active && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full bg-[#0A7A82]" />}
+            {active && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full bg-brand-600" />}
           </button>
         )
       })}
@@ -348,14 +378,14 @@ export function Tabs({ tabs, value, onChange }) {
 
 export function Segmented({ options, value, onChange }) {
   return (
-    <div className="inline-flex rounded-lg border border-[#D9DAE1] bg-white p-0.5">
+    <div className="inline-flex rounded-lg bg-mist-100 p-0.5">
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
           className={`rounded-md px-3 py-1.5 text-[12.5px] font-semibold transition ${
-            value === o.value ? 'bg-[#171d39] text-white' : 'text-[#4C5076] hover:bg-[#F3F4F8]'
+            value === o.value ? 'bg-white text-ink-950 shadow-[0_1px_2px_rgba(17,20,58,0.1)]' : 'text-mist-600 hover:text-ink-950'
           }`}
         >
           {o.label}
@@ -370,7 +400,7 @@ export function Segmented({ options, value, onChange }) {
    ═══════════════════════════════════════════════════════════════════════ */
 export function Toolbar({ children, right }) {
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-[12px] border border-[#E4E6EF] bg-white px-3 py-2.5">
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
       <div className="flex flex-1 flex-wrap items-center gap-2">{children}</div>
       {right && <div className="flex flex-wrap items-center gap-2">{right}</div>}
     </div>
@@ -380,27 +410,42 @@ export function Toolbar({ children, right }) {
 export function SearchInput({ value, onChange, placeholder = 'Search…', className = '' }) {
   return (
     <div className={`relative min-w-[200px] flex-1 sm:max-w-xs ${className}`}>
-      <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9aaac8]" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-mist-500" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="22" y2="22" />
       </svg>
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-9 w-full rounded-lg border border-[#D9DAE1] bg-white pl-8 pr-3 text-[13px] outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15"
+        className="h-8 w-full rounded-lg border border-mist-200 bg-white pl-8 pr-3 text-[13px] outline-none transition placeholder:text-mist-500 hover:border-mist-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-400/15"
       />
     </div>
   )
 }
 
 export function FilterSelect({ value, onChange, options, allLabel = 'All', label }) {
+  const isAll = value === 'ALL' || value === '' || value == null
+  const filtering = allLabel != null && !isAll
+  const current = isAll ? allLabel : (options.find((o) => String(o.value) === String(value))?.label ?? value)
+  const showValue = !isAll || allLabel == null || !label
   return (
-    <label className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#4C5076]">
-      {label && <span>{label}</span>}
+    <label
+      className={`relative inline-flex h-8 max-w-[260px] cursor-pointer items-center gap-1 rounded-full border px-3 text-[12.5px] transition-colors focus-within:ring-4 focus-within:ring-brand-400/15 ${
+        filtering
+          ? 'border-brand-200 bg-brand-50 text-brand-800'
+          : isAll && allLabel != null
+            ? 'border-dashed border-mist-300 bg-white text-mist-700 hover:border-mist-400 hover:text-ink-950'
+            : 'border-mist-200 bg-white text-ink-950 hover:border-mist-300'
+      }`}
+    >
+      {label && <span className="shrink-0 font-medium">{label}{showValue ? ':' : ''}</span>}
+      {showValue && <span className="truncate font-semibold">{current}</span>}
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-9 rounded-lg border border-[#D9DAE1] bg-white px-2.5 text-[13px] font-medium text-navy outline-none focus:border-[#0A7A82]"
+        aria-label={label || allLabel || 'Filter'}
+        className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
       >
         {allLabel != null && <option value="ALL">{allLabel}</option>}
         {options.map((o) => (
@@ -436,13 +481,13 @@ export function DataTable({ columns, rows, loading, empty = 'No records yet.', o
   const allChecked = selectable && visible.length > 0 && visible.every((r) => selected.includes(r.id))
 
   return (
-    <div className="overflow-hidden rounded-[12px] border border-[#D9DAE1] bg-white">
+    <div className="overflow-hidden rounded-[12px] border border-mist-200 bg-white">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-[#F8F9FC]">
+            <tr className="bg-mist-25">
               {selectable && (
-                <th className="w-10 border-b border-[#DFE0E6] px-3 py-2.5">
+                <th className="w-10 border-b border-mist-200 px-3 py-2.5">
                   <input
                     type="checkbox"
                     aria-label="Select all on page"
@@ -457,12 +502,12 @@ export function DataTable({ columns, rows, loading, empty = 'No records yet.', o
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`whitespace-nowrap border-b border-[#DFE0E6] px-3 py-2.5 text-[11.5px] font-semibold uppercase tracking-[0.04em] text-[#4C5077] ${col.align === 'right' ? 'text-right' : ''}`}
+                  className={`whitespace-nowrap border-b border-mist-200 px-3 py-2.5 text-[12px] font-semibold text-mist-600 ${col.align === 'right' ? 'text-right' : ''}`}
                 >
                   {col.sortable === false ? col.label : (
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1 uppercase hover:text-navy"
+                      className="inline-flex items-center gap-1 hover:text-ink-950"
                       onClick={() => setSort((s) => (s?.key === col.key ? { key: col.key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key: col.key, dir: 'asc' }))}
                     >
                       {col.label}
@@ -478,16 +523,16 @@ export function DataTable({ columns, rows, loading, empty = 'No records yet.', o
               <tr><td colSpan={columns.length + (selectable ? 1 : 0)} className="px-3"><Loading /></td></tr>
             )}
             {!loading && rows.length === 0 && (
-              <tr><td colSpan={columns.length + (selectable ? 1 : 0)} className="px-3 py-10 text-center text-sm text-[#4C5076]">{empty}</td></tr>
+              <tr><td colSpan={columns.length + (selectable ? 1 : 0)} className="px-3 py-10 text-center text-sm text-mist-700">{empty}</td></tr>
             )}
             {!loading && visible.map((row) => (
               <tr
                 key={row.id}
-                className={`transition hover:bg-[#F7F8FB] ${onRowClick ? 'cursor-pointer' : ''} ${selected.includes(row.id) ? 'bg-[#F3FAFA]' : ''}`}
+                className={`transition hover:bg-mist-25 ${onRowClick ? 'cursor-pointer' : ''} ${selected.includes(row.id) ? 'bg-brand-50' : ''}`}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {selectable && (
-                  <td className="border-b border-[#EBECF4] px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
+                  <td className="border-b border-mist-200 px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       aria-label="Select row"
@@ -499,9 +544,12 @@ export function DataTable({ columns, rows, loading, empty = 'No records yet.', o
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`border-b border-[#EBECF4] px-3 py-2.5 text-[13.5px] text-navy ${col.align === 'right' ? 'text-right' : ''} ${col.nowrap ? 'whitespace-nowrap' : ''}`}
+                    className={`border-b border-mist-100 px-3 py-3 text-[13.5px] text-ink-950 ${col.align === 'right' ? 'text-right' : ''} ${col.nowrap ? 'whitespace-nowrap' : ''}`}
                   >
-                    {col.render ? col.render(row) : (row[col.key] ?? '—')}
+                    {(() => {
+                      const v = col.render ? col.render(row) : row[col.key]
+                      return v === null || v === undefined || v === '' || v === '—' ? <span className="text-mist-300">—</span> : v
+                    })()}
                   </td>
                 ))}
               </tr>
@@ -510,7 +558,7 @@ export function DataTable({ columns, rows, loading, empty = 'No records yet.', o
         </table>
       </div>
       {!loading && rows.length > pageSize && (
-        <div className="flex items-center justify-between border-t border-[#EBECF4] px-3 py-2 text-[12.5px] text-[#4C5076]">
+        <div className="flex items-center justify-between border-t border-mist-200 px-3 py-2 text-[12.5px] text-mist-700">
           <span>
             {page * pageSize + 1}–{Math.min(rows.length, (page + 1) * pageSize)} of {rows.length}
           </span>
@@ -537,19 +585,19 @@ export function Modal({ open, title, subtitle, onClose, children, footer, size =
   if (!open) return null
   const widths = { sm: 'max-w-md', md: 'max-w-xl', lg: 'max-w-3xl', xl: 'max-w-5xl' }
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[#151940]/45 px-3 py-6 sm:py-10" onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}>
-      <div role="dialog" aria-modal="true" className={`flex max-h-[calc(100vh-48px)] w-full ${widths[size]} flex-col overflow-hidden rounded-[16px] bg-white shadow-2xl`}>
-        <div className="flex shrink-0 items-start justify-between gap-3 border-b border-[#EAEBF4] px-5 py-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink-950/45 px-3 py-6 sm:py-10" onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}>
+      <div role="dialog" aria-modal="true" className={`flex max-h-[calc(100vh-48px)] w-full ${widths[size]} flex-col overflow-hidden rounded-[14px] border border-mist-200 bg-white shadow-[0_24px_48px_-16px_rgba(17,20,58,0.28)]`}>
+        <div className="flex shrink-0 items-start justify-between gap-3 border-b border-mist-200 px-5 py-4">
           <div>
-            <h2 className="m-0 text-lg font-bold text-navy">{title}</h2>
-            {subtitle && <p className="m-0 mt-0.5 text-[13px] text-[#4C5076]">{subtitle}</p>}
+            <h2 className="m-0 text-lg font-semibold text-ink-950">{title}</h2>
+            {subtitle && <p className="m-0 mt-0.5 text-[13px] text-mist-700">{subtitle}</p>}
           </div>
-          <button type="button" onClick={onClose} className="rounded-lg px-2 py-1 text-sm font-semibold text-[#4C5076] hover:bg-[#F3F4F8] hover:text-navy" aria-label="Close">
+          <button type="button" onClick={onClose} className="rounded-lg px-2 py-1 text-sm font-semibold text-mist-700 hover:bg-mist-50 hover:text-navy" aria-label="Close">
             <Icon name="x" className="h-4 w-4" />
           </button>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-[#EAEBF4] bg-white px-5 py-3">{footer}</div>}
+        {footer && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-mist-200 bg-white px-5 py-3">{footer}</div>}
       </div>
     </div>
   )
@@ -631,8 +679,8 @@ export function FormModal({ open, title, subtitle, sections, initial, onSubmit, 
           if (!fields.length) return null
           return (
             <section key={section.title || i}>
-              {section.title && <h3 className="m-0 mb-0.5 text-[12px] font-bold uppercase tracking-[0.06em] text-[#0A7A82]">{section.title}</h3>}
-              {section.hint && <p className="m-0 mb-2 text-[12.5px] text-[#4C5076]">{section.hint}</p>}
+              {section.title && <h3 className="m-0 mb-0.5 text-[12px] font-semibold text-brand-700">{section.title}</h3>}
+              {section.hint && <p className="m-0 mb-2 text-[12.5px] text-mist-700">{section.hint}</p>}
               <div className="mt-2 grid gap-3 sm:grid-cols-2">
                 {fields.map((field) => (
                   <Field key={field.name} field={field} value={values[field.name]} values={values} onChange={(v) => set(field.name, v)} team={team} partners={partners} />
@@ -647,12 +695,12 @@ export function FormModal({ open, title, subtitle, sections, initial, onSubmit, 
   )
 }
 
-const INPUT = 'mt-1 w-full rounded-lg border border-[#CDCED8] bg-white px-3 py-2 text-sm font-normal text-navy outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15'
+const INPUT = 'mt-1 w-full rounded-lg border border-mist-300 bg-white px-3 py-2 text-sm font-normal text-navy outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15'
 
 export function Field({ field, value, values, onChange, team = [], partners = [] }) {
   const span = field.span === 2 || field.type === 'textarea' ? 'sm:col-span-2' : ''
   if (field.type === 'heading') {
-    return <p className="m-0 text-[12px] font-semibold text-[#4C5076] sm:col-span-2">{field.label}</p>
+    return <p className="m-0 text-[12px] font-semibold text-mist-700 sm:col-span-2">{field.label}</p>
   }
   if (field.type === 'checkbox') {
     return (
@@ -699,7 +747,7 @@ export function Field({ field, value, values, onChange, team = [], partners = []
     <label className={`block text-[12.5px] font-semibold text-navy ${span}`}>
       {field.label}
       {control}
-      {field.hint && <span className="mt-1 block text-[11.5px] font-normal text-[#687699]">{field.hint}</span>}
+      {field.hint && <span className="mt-1 block text-[11.5px] font-normal text-mist-500">{field.hint}</span>}
     </label>
   )
 }
@@ -755,13 +803,13 @@ export function PatientPicker({ value, label, onChange, lifecycle }) {
         onChange={(e) => setQuery(e.target.value)}
       />
       {open && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-[#E0E2E9] bg-white shadow-xl">
-          {results.length === 0 && <p className="m-0 px-3 py-3 text-[13px] text-[#687699]">No matches</p>}
+        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-mist-200 bg-white shadow-xl">
+          {results.length === 0 && <p className="m-0 px-3 py-3 text-[13px] text-mist-500">No matches</p>}
           {results.map((p) => (
             <button
               key={p.id}
               type="button"
-              className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px] hover:bg-[#F3FAFA]"
+              className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px] hover:bg-brand-50"
               onClick={() => {
                 onChange(p.id)
                 setCurrent(`${p.fullName}${p.phone ? ` · ${p.phone}` : ''}`)
@@ -770,7 +818,7 @@ export function PatientPicker({ value, label, onChange, lifecycle }) {
             >
               <span>
                 <b className="text-navy">{p.fullName}</b>
-                <span className="ml-2 text-[#687699]">{p.phone || p.email || ''}</span>
+                <span className="ml-2 text-mist-500">{p.phone || p.email || ''}</span>
               </span>
               <Pill tone={p.lifecycleStage === 'PATIENT' ? 'green' : 'blue'}>{p.lifecycleStage === 'PATIENT' ? 'Patient' : 'Lead'}</Pill>
             </button>
@@ -867,7 +915,7 @@ export function ConfirmModal({ open, title, message, confirmLabel = 'Delete', on
         </>
       }
     >
-      <p className="m-0 text-sm text-[#43476A]">{message}</p>
+      <p className="m-0 text-sm text-mist-700">{message}</p>
     </Modal>
   )
 }
@@ -886,24 +934,24 @@ const ACTIVITY_ICON = {
   SYSTEM: 'info',
 }
 const ACTIVITY_TONE = {
-  CALL_INBOUND: 'bg-[#DDEFEF] text-[#0A7A82]',
-  CALL_OUTBOUND: 'bg-[#DDEFEF] text-[#0A7A82]',
-  NOTE: 'bg-[#FDF0DC] text-[#7E4305]',
-  SMS: 'bg-[#E2ECFA] text-[#1D4E9A]',
-  EMAIL: 'bg-[#E2ECFA] text-[#1D4E9A]',
-  MEETING: 'bg-[#E7E4F5] text-[#4A3D8F]',
-  STATUS_CHANGE: 'bg-[#EEF0F6] text-[#3B3F5D]',
-  SYSTEM: 'bg-[#EEF0F6] text-[#687699]',
+  CALL_INBOUND: 'bg-brand-50 text-brand-700',
+  CALL_OUTBOUND: 'bg-brand-50 text-brand-700',
+  NOTE: 'bg-sun-50 text-sun-700',
+  SMS: 'bg-info-100 text-info-700',
+  EMAIL: 'bg-info-100 text-info-700',
+  MEETING: 'bg-iris-100 text-iris-700',
+  STATUS_CHANGE: 'bg-mist-100 text-mist-800',
+  SYSTEM: 'bg-mist-100 text-mist-500',
 }
 
 export function Timeline({ items, loading, showPatient = false, empty = 'No activity yet.' }) {
   if (loading) return <Loading />
-  if (!items?.length) return <p className="m-0 py-4 text-sm text-[#687699]">{empty}</p>
+  if (!items?.length) return <p className="m-0 py-4 text-sm text-mist-500">{empty}</p>
   return (
     <ol className="relative m-0 list-none space-y-0 p-0">
       {items.map((a, i) => (
         <li key={a.id} className="relative flex gap-3 pb-4">
-          {i < items.length - 1 && <span className="absolute left-[15px] top-8 bottom-0 w-px bg-[#E4E6EF]" />}
+          {i < items.length - 1 && <span className="absolute left-[15px] top-8 bottom-0 w-px bg-mist-200" />}
           <span className={`z-[1] flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[14px] font-bold ${ACTIVITY_TONE[a.type] || ACTIVITY_TONE.SYSTEM}`}>
             <Icon name={a.callOutcome === 'Missed' ? 'phoneMissed' : ACTIVITY_ICON[a.type] || 'info'} className="h-3.5 w-3.5" />
           </span>
@@ -911,12 +959,12 @@ export function Timeline({ items, loading, showPatient = false, empty = 'No acti
             <div className="flex flex-wrap items-baseline justify-between gap-x-3">
               <p className="m-0 text-[13.5px] font-semibold text-navy">
                 {a.subject}
-                {showPatient && a.patientName && <span className="font-normal text-[#687699]"> · {a.patientName}</span>}
+                {showPatient && a.patientName && <span className="font-normal text-mist-500"> · {a.patientName}</span>}
               </p>
-              <span className="text-[11.5px] text-[#8A8DA8]" title={fmtDateTime(a.occurredAt)}>{fmtRelative(a.occurredAt)}</span>
+              <span className="text-[11.5px] text-mist-500" title={fmtDateTime(a.occurredAt)}>{fmtRelative(a.occurredAt)}</span>
             </div>
-            {a.body && <p className="m-0 mt-0.5 whitespace-pre-line text-[13px] text-[#43476A]">{a.body}</p>}
-            <p className="m-0 mt-0.5 text-[11.5px] text-[#8A8DA8]">
+            {a.body && <p className="m-0 mt-0.5 whitespace-pre-line text-[13px] text-mist-700">{a.body}</p>}
+            <p className="m-0 mt-0.5 text-[11.5px] text-mist-500">
               {a.actorName || 'System'}
               {a.durationSeconds ? ` · ${Math.round(a.durationSeconds / 60)} min` : ''}
               {a.phone && (a.type === 'CALL_INBOUND' || a.type === 'CALL_OUTBOUND') ? ` · ${a.phone}` : ''}
@@ -929,18 +977,18 @@ export function Timeline({ items, loading, showPatient = false, empty = 'No acti
 }
 
 /** Simple horizontal bars (dashboard). */
-export function BarList({ rows, color = '#0A7A82', format = (v) => v }) {
+export function BarList({ rows, color = '#1E8E94', format = (v) => v }) {
   const max = Math.max(1, ...rows.map((r) => Number(r.value) || 0))
-  if (!rows.length) return <p className="m-0 text-sm text-[#687699]">No data yet.</p>
+  if (!rows.length) return <p className="m-0 text-sm text-mist-500">No data yet.</p>
   return (
     <div className="flex flex-col gap-2.5">
       {rows.map((row) => (
         <div key={row.label} className="grid grid-cols-[minmax(0,1.1fr)_minmax(80px,1.6fr)_auto] items-center gap-2.5 text-[13px]">
           <span className="truncate font-medium text-navy" title={row.label}>{row.label}</span>
-          <span className="h-2.5 overflow-hidden rounded-full bg-[#EEF1F6]">
+          <span className="h-2 overflow-hidden rounded-full bg-mist-100">
             <i className="block h-full rounded-full" style={{ width: `${row.value ? Math.max(4, (row.value / max) * 100) : 0}%`, background: row.color || color }} />
           </span>
-          <b className="min-w-[3ch] text-right font-mono text-navy">{format(row.value)}</b>
+          <b className="min-w-[3ch] text-right font-mono font-semibold text-ink-950">{format(row.value)}</b>
         </div>
       ))}
     </div>
@@ -951,7 +999,7 @@ export function BarList({ rows, color = '#0A7A82', format = (v) => v }) {
 export function StagePath({ stages, value, onSelect, disabled }) {
   const idx = stages.findIndex((s) => s.value === value)
   return (
-    <div className="flex w-full gap-1 overflow-x-auto rounded-[12px] border border-[#E4E6EF] bg-white p-1">
+    <div className="flex w-full gap-1 overflow-x-auto rounded-[12px] border border-mist-200 bg-white p-1">
       {stages.map((s, i) => {
         const current = i === idx
         const done = idx > -1 && i < idx
@@ -964,10 +1012,10 @@ export function StagePath({ stages, value, onSelect, disabled }) {
             onClick={() => onSelect?.(s.value)}
             className={`relative flex min-w-[110px] flex-1 items-center justify-center gap-1 rounded-[8px] px-3 py-2 text-[12px] font-semibold transition ${
               current
-                ? lost ? 'bg-[#C4321F] text-white' : 'bg-[#0A7A82] text-white'
+                ? lost ? 'bg-danger-600 text-white' : 'bg-brand-600 text-white'
                 : done
-                  ? 'bg-[#DDEFEF] text-[#075E66] hover:bg-[#cde7e7]'
-                  : 'bg-[#F4F5F9] text-[#687699] hover:bg-[#ECEEF4]'
+                  ? 'bg-brand-50 text-brand-800 hover:bg-brand-100'
+                  : 'bg-mist-50 text-mist-500 hover:bg-mist-100'
             } ${disabled ? 'cursor-default' : ''}`}
             title={s.label}
           >
@@ -985,7 +1033,7 @@ export function DetailGrid({ items }) {
     <dl className="m-0 grid gap-x-6 gap-y-3 sm:grid-cols-2">
       {items.filter(Boolean).map(([label, value]) => (
         <div key={label} className="min-w-0">
-          <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#8A8DA8]">{label}</dt>
+          <dt className="text-[12.5px] font-medium text-mist-600">{label}</dt>
           <dd className="m-0 mt-0.5 break-words text-[13.5px] text-navy">{value === null || value === undefined || value === '' ? '—' : value}</dd>
         </div>
       ))}

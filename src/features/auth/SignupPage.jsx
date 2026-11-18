@@ -41,7 +41,7 @@ export default function SignupPage() {
     const value = form.password
     return [
       { label: 'At least 8 characters', valid: value.length >= 8 },
-      { label: 'At least one uppercase letter', valid: /[A-Z]/.test(value) },
+      { label: 'At least one letter', valid: /[A-Z]/.test(value) },
       { label: 'At least one lowercase letter', valid: /[a-z]/.test(value) },
       { label: 'At least one number', valid: /\d/.test(value) },
       { label: 'At least one special character', valid: /[^A-Za-z0-9]/.test(value) },
@@ -64,11 +64,11 @@ export default function SignupPage() {
     return ''
   }, [form.password])
 
-  const passwordRequirementsText = 'Use 8–64 characters with at least one uppercase letter, one lowercase letter, one number, and one special character.'
+  const passwordRequirementsText = 'Use 8–64 characters with at least one letter, one lowercase letter, one number, and one special character.'
 
   const passwordRequirements = [
     'At least 8 characters',
-    'At least 1 uppercase letter',
+    'At least 1 letter',
     'At least 1 lowercase letter',
     'At least 1 number',
     'At least 1 special character',
@@ -83,7 +83,7 @@ export default function SignupPage() {
   const passwordInlineError = useMemo(() => {
     if (!form.password) return ''
     if (form.password.length < 8) return 'Use at least 8 characters.'
-    if (!/[A-Z]/.test(form.password)) return 'Add at least one uppercase letter.'
+    if (!/[A-Z]/.test(form.password)) return 'Add at least one letter.'
     if (!/[a-z]/.test(form.password)) return 'Add at least one lowercase letter.'
     if (!/\d/.test(form.password)) return 'Add at least one number.'
     if (!/[^A-Za-z0-9]/.test(form.password)) return 'Add at least one special character.'
@@ -139,7 +139,7 @@ export default function SignupPage() {
   function passwordErrorMessage() {
     if (!form.password) return 'Enter a password.'
     if (form.password.length < 8 || form.password.length > 64) return 'Password must be 8–64 characters long.'
-    if (!/[A-Z]/.test(form.password)) return 'Include at least one uppercase letter.'
+    if (!/[A-Z]/.test(form.password)) return 'Include at least one letter.'
     if (!/[a-z]/.test(form.password)) return 'Include at least one lowercase letter.'
     if (!/\d/.test(form.password)) return 'Include at least one number.'
     if (!/[^A-Za-z0-9]/.test(form.password)) return 'Include at least one special character.'
@@ -368,7 +368,7 @@ export default function SignupPage() {
           justify-content: space-between;
           gap: 12px;
           font-size: 14px;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-topbar a {
           color: #1B1F4B;
@@ -396,7 +396,7 @@ export default function SignupPage() {
           margin: 0 0 30px;
           font-size: 15.5px;
           line-height: 1.55;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-sso {
           display: grid;
@@ -414,7 +414,7 @@ export default function SignupPage() {
           gap: 10px;
           height: 50px;
           width: 100%;
-          border: 1px solid #E1E4EE;
+          border: 1px solid #DEE1EE;
           border-radius: 11px;
           background: #fff;
           color: #1B1F4B;
@@ -425,8 +425,8 @@ export default function SignupPage() {
           transition: border-color 0.15s ease, background 0.15s ease;
         }
         .auth-sso-btn:hover {
-          background: #FBFCFE;
-          border-color: #BFC5DA;
+          background: #FAFBFE;
+          border-color: #C6CADF;
         }
         .auth-sso-btn svg {
           width: 18px;
@@ -437,7 +437,7 @@ export default function SignupPage() {
           align-items: center;
           gap: 14px;
           margin: 22px 0;
-          color: #8A90AD;
+          color: #9DA2C0;
           font-size: 13px;
         }
         .auth-divider::before,
@@ -445,7 +445,7 @@ export default function SignupPage() {
           content: '';
           flex: 1;
           height: 1px;
-          background: #E1E4EE;
+          background: #DEE1EE;
         }
         .auth-grid-2 {
           display: grid;
@@ -478,7 +478,7 @@ export default function SignupPage() {
           transform: translateY(-50%);
           width: 19px;
           height: 19px;
-          color: #7C83A3;
+          color: #727799;
           pointer-events: none;
         }
         .auth-icon-field input,
@@ -486,10 +486,10 @@ export default function SignupPage() {
           width: 100%;
           height: 52px;
           padding: 0 14px 0 46px;
-          border: 1px solid #DCE4F5;
+          border: 1px solid #DCE8FA;
           border-radius: 10px;
-          background: #EAF0FB;
-          color: #181C42;
+          background: #EEF4FD;
+          color: #11143A;
           font-family: var(--font-sans);
           font-size: 15px;
           font-weight: 400;
@@ -497,7 +497,7 @@ export default function SignupPage() {
           transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
         .auth-icon-field input::placeholder {
-          color: #A5AAC2;
+          color: #9DA2C0;
           font-family: var(--font-sans);
           font-size: 15px;
           font-weight: 400;
@@ -510,7 +510,7 @@ export default function SignupPage() {
           transform: translateY(-50%);
           border: none;
           background: transparent;
-          color: #5E6485;
+          color: #5A5F85;
           font-family: var(--font-sans);
           font-size: 12.5px;
           font-weight: 400;
@@ -529,7 +529,7 @@ export default function SignupPage() {
           font-family: var(--font-sans);
           font-size: 14px;
           line-height: 1.5;
-          color: #5E6485;
+          color: #5A5F85;
         }
         .auth-checks input {
           width: 18px;
@@ -552,15 +552,15 @@ export default function SignupPage() {
           font-size: 12.25px;
           font-weight: 400;
           line-height: 1.3;
-          color: #B42318;
+          color: #C4321F;
         }
         .auth-field-status-error {
-          color: #B42318;
+          color: #C4321F;
         }
         .auth-error {
           min-height: 22px;
           margin: 10px 0 0;
-          color: #B42318;
+          color: #C4321F;
           font-family: var(--font-sans);
           font-size: 13.5px;
           font-weight: 400;
@@ -585,7 +585,7 @@ export default function SignupPage() {
           box-shadow: none;
         }
         .auth-primary-btn:hover:not(:disabled) {
-          background: #262B66;
+          background: #22265A;
         }
         .auth-visual {
           position: relative;
@@ -595,7 +595,7 @@ export default function SignupPage() {
           overflow: hidden;
           border-radius: 24px;
           min-height: 560px;
-          background: #17242F;
+          background: #11143A;
           box-shadow:
             inset 0 80px 90px -50px rgba(3,10,17,0.82),
             inset 0 -120px 150px rgba(2,8,14,0.82),
@@ -703,9 +703,9 @@ export default function SignupPage() {
           gap: 6px;
           margin-top: 10px;
           padding: 8px 10px;
-          border: 1px solid #E7ECF8;
+          border: 1px solid #EAECFC;
           border-radius: 10px;
-          background: #F7F9FD;
+          background: #FAFBFE;
           min-height: 118px;
         }
         .auth-password-rule {
@@ -713,10 +713,10 @@ export default function SignupPage() {
           align-items: center;
           gap: 8px;
           font-size: 12.5px;
-          color: #6B728B;
+          color: #727799;
         }
         .auth-password-rule.is-valid {
-          color: #0F8A5F;
+          color: #12805C;
         }
         .auth-password-dot {
           width: 7px;
@@ -725,7 +725,7 @@ export default function SignupPage() {
           background: currentColor;
         }
         .auth-password-rule.is-valid .auth-password-dot {
-          background: #0F8A5F;
+          background: #12805C;
         }
         .auth-label-with-icon {
           display: inline-flex;
@@ -759,7 +759,7 @@ export default function SignupPage() {
           margin: 0;
           border: none;
           background: transparent;
-          color: #6A7290;
+          color: #727799;
           cursor: help;
           vertical-align: middle;
           transform: translateY(1px);

@@ -106,7 +106,7 @@ function ReferralQueue({ state, editors, toast }) {
             key: 'patientName',
             label: 'Patient',
             render: (r) => (
-              <Link onClick={(e) => e.stopPropagation()} to={`/app/crm/patients/${r.patientId}`} className="font-semibold text-[#0A7A82]">
+              <Link onClick={(e) => e.stopPropagation()} to={`/app/crm/patients/${r.patientId}`} className="font-semibold text-brand-700">
                 {r.patientName}
               </Link>
             ),
@@ -123,7 +123,7 @@ function ReferralQueue({ state, editors, toast }) {
                 value={r.status}
                 onClick={(e) => e.stopPropagation()}
                 onChange={(e) => changeStatus(r, e.target.value)}
-                className="rounded-full border border-[#D9DAE1] bg-white px-2 py-1 text-[12px] font-semibold text-navy"
+                className="rounded-full border border-mist-200 bg-white px-2 py-1 text-[12px] font-semibold text-navy"
                 aria-label="Change referral status"
               >
                 {REFERRAL_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -183,9 +183,9 @@ function PartnerDirectory({ state, editors, toast }) {
         onRowClick={(p) => editors.open.partner(p)}
         empty="No referral partners yet. Add the physicians and facilities that send you patients."
         columns={[
-          { key: 'name', label: 'Partner', render: (p) => <div><b>{p.name}</b><p className="m-0 text-[12px] text-[#687699]">{p.specialty || labelOf(PARTNER_TYPES, p.partnerType)}{p.npi ? ` · NPI ${p.npi}` : ''}</p></div> },
+          { key: 'name', label: 'Partner', render: (p) => <div><b>{p.name}</b><p className="m-0 text-[12px] text-mist-500">{p.specialty || labelOf(PARTNER_TYPES, p.partnerType)}{p.npi ? ` · NPI ${p.npi}` : ''}</p></div> },
           { key: 'relationshipStatus', label: 'Relationship', render: (p) => <EnumPill list={PARTNER_STATUSES} value={p.relationshipStatus} /> },
-          { key: 'contactName', label: 'Contact', render: (p) => <div>{p.contactName || '—'}<p className="m-0 text-[12px] text-[#687699]">{p.phone || p.email || ''}</p></div> },
+          { key: 'contactName', label: 'Contact', render: (p) => <div>{p.contactName || '—'}<p className="m-0 text-[12px] text-mist-500">{p.phone || p.email || ''}</p></div> },
           { key: 'totalReferrals', label: 'Referrals', align: 'right', render: (p) => <span className="font-mono">{p.totalReferrals}</span> },
           { key: 'referralsLast90Days', label: 'Last 90d', align: 'right', render: (p) => <span className="font-mono">{p.referralsLast90Days}</span> },
           { key: 'openReferrals', label: 'Open', align: 'right', render: (p) => <span className="font-mono">{p.openReferrals}</span> },

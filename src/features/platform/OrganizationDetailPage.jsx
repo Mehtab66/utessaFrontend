@@ -34,13 +34,13 @@ export default function OrganizationDetailPage() {
           right={
             <Link
               to="/platform/organizations"
-              className="inline-flex min-h-[42px] items-center rounded-[10px] border border-[#DCDFEE] bg-white px-3.5 text-sm font-semibold text-[#1B1F4B] hover:bg-[#F6F7FB]"
+              className="inline-flex min-h-[42px] items-center rounded-[10px] border border-mist-200 bg-white px-3.5 text-sm font-semibold text-ink-900 hover:bg-mist-50"
             >
               Back to organizations
             </Link>
           }
         />
-        <p className="rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-sm font-semibold text-[#B4472F]">
+        <p className="rounded-xl border border-danger-200 bg-danger-50 px-3.5 py-3 text-sm font-semibold text-danger-700">
           {error || 'Organization not found.'}
         </p>
       </div>
@@ -55,7 +55,7 @@ export default function OrganizationDetailPage() {
         right={
           <Link
             to="/platform/organizations"
-            className="inline-flex min-h-[42px] items-center rounded-[10px] border border-[#DCDFEE] bg-white px-3.5 text-sm font-semibold text-[#1B1F4B] hover:bg-[#F6F7FB]"
+            className="inline-flex min-h-[42px] items-center rounded-[10px] border border-mist-200 bg-white px-3.5 text-sm font-semibold text-ink-900 hover:bg-mist-50"
           >
             Back to organizations
           </Link>
@@ -118,7 +118,7 @@ export default function OrganizationDetailPage() {
               render: (r) => (
                 <div>
                   <b>{r.fullName}</b>
-                  <div className="text-[13px] text-[#4A4E7A]">{r.email}</div>
+                  <div className="text-[13px] text-mist-700">{r.email}</div>
                 </div>
               ),
             },
@@ -152,9 +152,9 @@ export default function OrganizationDetailPage() {
 
 function Detail({ label, value, mono }) {
   return (
-    <div className="grid grid-cols-[140px_minmax(0,1fr)] gap-3 border-b border-[#EBECF4] pb-2 last:border-b-0 last:pb-0">
-      <dt className="text-[#4A4E7A]">{label}</dt>
-      <dd className={`m-0 break-all font-medium text-[#1B1F4B] ${mono ? 'font-mono text-[13px]' : ''}`}>
+    <div className="grid grid-cols-[140px_minmax(0,1fr)] gap-3 border-b border-mist-200 pb-2 last:border-b-0 last:pb-0">
+      <dt className="text-mist-700">{label}</dt>
+      <dd className={`m-0 break-all font-medium text-ink-900 ${mono ? 'font-mono text-[13px]' : ''}`}>
         {value || '—'}
       </dd>
     </div>

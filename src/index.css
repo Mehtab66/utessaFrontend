@@ -1,34 +1,118 @@
 @import "tailwindcss";
 
+/*
+ * ═══ Utessa brand palette ═══════════════════════════════════════════════
+ * Every color in the app comes from these ramps, all derived from the logo:
+ *   navy #1B1F4B · teal #1E8E94 · turquoise #3BC4CA · cyan #5CE1E6
+ *   aqua #8FEAEE · lavender #C9CDF2 · sunshine #FFD23F · slate #60658E
+ * Use them as Tailwind classes: bg-brand-600, text-ink-900, border-mist-200 …
+ */
 @theme {
-  --color-primary: #1B1F4B;
-  --color-primary-hover: #262B66;
-  --color-primary-pressed: #12153A;
-  --color-primary-disabled: #9FA4C4;
-  --color-accent: #FFD23F;
-  --color-accent-text: #1B1F4B;
-  --color-text: #181C42;
-  --color-muted: #5E6485;
-  --color-faint: #8A90AD;
-  --color-soft: #F1F3F9;
-  --color-page: #F3F5FA;
+  /* brand — primary teal (logo "U" = 600, turquoise tile = 400) */
+  --color-brand-50: #EDFBFC;
+  --color-brand-100: #D2F4F6;
+  --color-brand-200: #A6E9ED;
+  --color-brand-300: #6FD8DE;
+  --color-brand-400: #3BC4CA;
+  --color-brand-500: #22A8AF;
+  --color-brand-600: #1E8E94;
+  --color-brand-700: #187279;
+  --color-brand-800: #155C62;
+  --color-brand-900: #124A50;
+  --color-brand-950: #0A2E32;
+
+  /* aqua — bright accents from the logo cross */
+  --color-aqua-300: #8FEAEE;
+  --color-aqua-400: #5CE1E6;
+
+  /* ink — navy for text and dark surfaces (logo tile = 900) */
+  --color-ink-600: #3A3F7A;
+  --color-ink-700: #2A2F63;
+  --color-ink-800: #22265A;
+  --color-ink-900: #1B1F4B;
+  --color-ink-950: #11143A;
+
+  /* mist — neutrals tinted with the logo slate */
+  --color-mist-25: #FAFBFE;
+  --color-mist-50: #F4F5FA;
+  --color-mist-100: #ECEEF6;
+  --color-mist-200: #DEE1EE;
+  --color-mist-300: #C6CADF;
+  --color-mist-400: #9DA2C0;
+  --color-mist-500: #727799;
+  --color-mist-600: #5A5F85;
+  --color-mist-700: #464A6E;
+  --color-mist-800: #33375A;
+
+  /* iris — lavender tile, secondary accent */
+  --color-iris-50: #F5F6FE;
+  --color-iris-100: #EAECFC;
+  --color-iris-200: #C9CDF2;
+  --color-iris-300: #ABB1EA;
+  --color-iris-400: #8A91DC;
+  --color-iris-500: #6D74C9;
+  --color-iris-600: #575DAE;
+  --color-iris-700: #474C8E;
+
+  /* sun — yellow tile, highlights and warnings */
+  --color-sun-50: #FFFAEB;
+  --color-sun-100: #FFF2C6;
+  --color-sun-200: #FFE58C;
+  --color-sun-300: #FFD23F;
+  --color-sun-400: #F4B81B;
+  --color-sun-500: #D69508;
+  --color-sun-600: #AD7406;
+  --color-sun-700: #865908;
+
+  /* status */
+  --color-success-50: #ECFAF3;
+  --color-success-100: #D3F3E3;
+  --color-success-200: #A9E6C8;
+  --color-success-500: #1FA971;
+  --color-success-600: #12805C;
+  --color-success-700: #0E6A4C;
+  --color-danger-50: #FFF2F1;
+  --color-danger-100: #FDE2DF;
+  --color-danger-200: #F9C4BE;
+  --color-danger-500: #E5484D;
+  --color-danger-600: #C4321F;
+  --color-danger-700: #9B1C12;
+  --color-info-50: #EEF4FD;
+  --color-info-100: #DCE8FA;
+  --color-info-200: #B9D1F4;
+  --color-info-500: #2E7FD9;
+  --color-info-600: #1D5FB0;
+  --color-info-700: #1D4E9A;
+
+  /* Semantic names used across older screens — now pointing at the palette */
+  --color-primary: var(--color-ink-900);
+  --color-primary-hover: var(--color-ink-800);
+  --color-primary-pressed: var(--color-ink-950);
+  --color-primary-disabled: var(--color-mist-400);
+  --color-accent: var(--color-sun-300);
+  --color-accent-text: var(--color-ink-900);
+  --color-text: var(--color-ink-950);
+  --color-muted: var(--color-mist-600);
+  --color-faint: var(--color-mist-500);
+  --color-soft: var(--color-mist-50);
+  --color-page: var(--color-mist-50);
   --color-card: #FFFFFF;
-  --color-border: #E1E4EE;
-  --color-navy: #1B1F4B;
-  --color-navy-deep: #12153A;
-  --color-cyan: #5CE1E6;
-  --color-lcyan: #8FEAEE;
-  --color-lavender: #C9CDF2;
-  --color-yellow: #FFD23F;
-  --color-teal: #3BC4CA;
-  --color-bg: #F5F6F8;
-  --color-warn: #B42318;
-  --color-ok: #12805C;
+  --color-border: var(--color-mist-200);
+  --color-navy: var(--color-ink-900);
+  --color-navy-deep: var(--color-ink-950);
+  --color-cyan: var(--color-aqua-400);
+  --color-lcyan: var(--color-aqua-300);
+  --color-lavender: var(--color-iris-200);
+  --color-yellow: var(--color-sun-300);
+  --color-teal: var(--color-brand-400);
+  --color-bg: var(--color-mist-50);
+  --color-warn: var(--color-danger-600);
+  --color-ok: var(--color-success-600);
   --font-sans: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-heading: "Poppins", "Figtree", "Segoe UI", system-ui, sans-serif;
   /* Numbers stay in Figtree, with tabular figures so columns line up */
   --font-mono: "Figtree", "Segoe UI", system-ui, sans-serif;
-  --shadow-panel: 0 1px 2px rgba(24, 28, 66, .05), 0 8px 24px -6px rgba(24, 28, 66, .10);
+  --shadow-panel: 0 1px 2px rgba(27, 31, 75, .06), 0 8px 24px -8px rgba(27, 31, 75, .14);
 }
 
 @layer base {
@@ -131,13 +215,27 @@ body {
   font-size: 14px;
   line-height: 1.5;
   font-feature-settings: "kern", "liga";
+  color: var(--color-ink-950);
+  background: var(--color-mist-50);
+}
+
+/* Crisp keyboard focus in the brand color */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-brand-100);
+  color: var(--color-ink-950);
 }
 
 h1,
 h2 {
   font-family: var(--font-heading);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: inherit;
 }
 
 .font-mono {

@@ -21,6 +21,21 @@ export default function GlobalSearch({ enabled = true }) {
   const [loading, setLoading] = useState(false)
   const debounced = useDebounced(q, 250)
   const ref = useRef(null)
+  const inputRef = useRef(null)
+  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
+
+  /* Ctrl+K / ⌘K focuses the search from anywhere */
+  useEffect(() => {
+    function onKey(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
 
   useEffect(() => {
     if (!enabled || debounced.trim().length < 2) {
@@ -54,13 +69,14 @@ export default function GlobalSearch({ enabled = true }) {
 
   const digits = q.replace(/\D/g, '')
   return (
-    <div className="relative mx-auto flex w-full max-w-md items-center" ref={ref}>
-      <span className="pointer-events-none absolute left-3 text-[#9aaac8]">
+    <div className="relative mx-auto flex w-full max-w-lg items-center" ref={ref}>
+      <span className="pointer-events-none absolute left-3.5 text-mist-500">
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="7" /><line x1="16.5" y1="16.5" x2="22" y2="22" />
         </svg>
       </span>
       <input
+        ref={inputRef}
         type="text"
         value={q}
         onChange={(e) => {
@@ -76,12 +92,15 @@ export default function GlobalSearch({ enabled = true }) {
         }}
         placeholder={enabled ? 'Search patients, leads, phone, MRN, opportunities…' : 'Search…'}
         aria-label="Global search"
-        className="h-9 w-full rounded-lg border border-[#d8dae5] bg-white pl-9 pr-3 text-[13px] text-[#171d39] placeholder-[#9aaac8] outline-none transition focus:border-[#2f54eb] focus:ring-2 focus:ring-[#2f54eb]/15"
+        className="h-10 w-full rounded-full border border-mist-200 bg-mist-50 pl-10 pr-16 text-[13.5px] text-ink-950 placeholder-mist-500 outline-none transition hover:border-mist-300 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-400/15"
       />
+      <kbd className="pointer-events-none absolute right-3 hidden items-center gap-0.5 rounded-md border border-mist-200 bg-white px-1.5 py-0.5 font-sans text-[11px] font-semibold text-mist-600 sm:inline-flex">
+        {isMac ? '⌘' : 'Ctrl'} K
+      </kbd>
       {open && enabled && q.trim().length >= 2 && (
-        <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-2xl border border-[#e0e2e9] bg-white shadow-xl">
-          {loading && results.length === 0 && <p className="m-0 px-4 py-3 text-[13px] text-[#687699]">Searching…</p>}
-          {!loading && results.length === 0 && <p className="m-0 px-4 py-3 text-[13px] text-[#687699]">No matches for “{q}”.</p>}
+        <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-2xl border border-mist-200 bg-white shadow-xl">
+          {loading && results.length === 0 && <p className="m-0 px-4 py-3 text-[13px] text-mist-500">Searching…</p>}
+          {!loading && results.length === 0 && <p className="m-0 px-4 py-3 text-[13px] text-mist-500">No matches for “{q}”.</p>}
           <ul className="m-0 max-h-80 list-none overflow-y-auto p-1">
             {results.map((r, i) => {
               const [tone, label] = TYPE[r.type] || TYPE.LEAD
@@ -91,11 +110,11 @@ export default function GlobalSearch({ enabled = true }) {
                     type="button"
                     onMouseEnter={() => setActive(i)}
                     onClick={() => go(r)}
-                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left ${i === active ? 'bg-[#F3FAFA]' : ''}`}
+                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left ${i === active ? 'bg-brand-50' : ''}`}
                   >
                     <span className="min-w-0">
-                      <span className="block truncate text-[13px] font-semibold text-[#171d39]">{r.title}</span>
-                      <span className="block truncate text-[12px] text-[#687699]">{r.subtitle}</span>
+                      <span className="block truncate text-[13px] font-semibold text-ink-950">{r.title}</span>
+                      <span className="block truncate text-[12px] text-mist-500">{r.subtitle}</span>
                     </span>
                     <Pill tone={tone}>{label}</Pill>
                   </button>
@@ -110,7 +129,7 @@ export default function GlobalSearch({ enabled = true }) {
                 setOpen(false)
                 navigate(`/app/crm/call-desk?phone=${encodeURIComponent(q.trim())}`)
               }}
-              className="w-full border-t border-[#f0f1f7] px-4 py-2.5 text-left text-[12.5px] font-semibold text-[#0A7A82] hover:bg-[#F3FAFA]"
+              className="w-full border-t border-mist-100 px-4 py-2.5 text-left text-[12.5px] font-semibold text-brand-700 hover:bg-brand-50"
             >
               <span className="inline-flex items-center gap-1.5"><Icon name="phone" /> Look up {q.trim()} on Calls</span>
             </button>

@@ -107,7 +107,7 @@ export default function AppointmentsPage() {
           empty="No appointments in this range."
           columns={[
             { key: 'startsAt', label: 'When', nowrap: true, render: (a) => fmtDateTime(a.startsAt) },
-            { key: 'patientName', label: 'Patient', render: (a) => <Link onClick={(e) => e.stopPropagation()} to={`/app/crm/patients/${a.patientId}`} className="font-semibold text-[#0A7A82]">{a.patientName}</Link> },
+            { key: 'patientName', label: 'Patient', render: (a) => <Link onClick={(e) => e.stopPropagation()} to={`/app/crm/patients/${a.patientId}`} className="font-semibold text-brand-700">{a.patientName}</Link> },
             { key: 'appointmentType', label: 'Type', render: (a) => labelOf(APPT_TYPES, a.appointmentType) },
             { key: 'mode', label: 'Mode', render: (a) => labelOf(APPT_MODES, a.mode) },
             { key: 'providerName', label: 'Provider' },
@@ -116,21 +116,21 @@ export default function AppointmentsPage() {
           ]}
         />
       ) : loading ? <Loading /> : byDay.length === 0 ? (
-        <Card><p className="m-0 py-6 text-center text-sm text-[#687699]">No appointments in this range.</p></Card>
+        <Card><p className="m-0 py-6 text-center text-sm text-mist-500">No appointments in this range.</p></Card>
       ) : (
         <div className="space-y-4">
           {byDay.map(([day, items]) => (
             <Card key={day} title={new Date(day).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} subtitle={`${items.length} appointment${items.length === 1 ? '' : 's'}`} bodyClassName="p-0">
-              <ul className="m-0 list-none divide-y divide-[#F0F1F7] p-0">
+              <ul className="m-0 list-none divide-y divide-mist-100 p-0">
                 {items.map((a) => (
                   <li key={a.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                     <div className="w-20 shrink-0">
                       <p className="m-0 font-mono text-[14px] font-semibold text-navy">{fmtTime(a.startsAt)}</p>
-                      <p className="m-0 text-[11.5px] text-[#8A8DA8]">{a.durationMinutes} min</p>
+                      <p className="m-0 text-[11.5px] text-mist-500">{a.durationMinutes} min</p>
                     </div>
                     <button type="button" className="min-w-0 flex-1 text-left" onClick={() => editors.open.appointment(a)}>
                       <p className="m-0 text-[13.5px] font-semibold text-navy">{a.patientName}</p>
-                      <p className="m-0 text-[12.5px] text-[#687699]">
+                      <p className="m-0 text-[12.5px] text-mist-500">
                         {labelOf(APPT_TYPES, a.appointmentType)} · {labelOf(APPT_MODES, a.mode)}{a.providerName ? ` · ${a.providerName}` : ''}{a.location ? ` · ${a.location}` : ''}
                       </p>
                     </button>
@@ -149,7 +149,7 @@ export default function AppointmentsPage() {
           ))}
         </div>
       )}
-      {active.length > 0 && <p className="mt-3 text-[12px] text-[#687699]">{active.length} active appointment{active.length === 1 ? '' : 's'} in this range.</p>}
+      {active.length > 0 && <p className="mt-3 text-[12px] text-mist-500">{active.length} active appointment{active.length === 1 ? '' : 's'} in this range.</p>}
 
       <PromptModal
         open={Boolean(reasonFor)}

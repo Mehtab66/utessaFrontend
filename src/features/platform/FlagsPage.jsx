@@ -17,7 +17,7 @@ export default function FlagsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         {FLAGS.map((f) => (
           <Panel key={f.name} title={f.name} right={<StatusPill tone={f.mode === 'Off' ? 'mute' : 'info'}>{f.mode}</StatusPill>}>
-            <p className="m-0 text-sm text-[#4A4E7A]">{f.desc}</p>
+            <p className="m-0 text-sm text-mist-700">{f.desc}</p>
           </Panel>
         ))}
       </div>

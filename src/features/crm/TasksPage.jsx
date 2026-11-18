@@ -71,20 +71,20 @@ export default function TasksPage() {
                   e.stopPropagation()
                   setCompleting(t)
                 }}
-                className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#C8C9D4] text-[11px] text-transparent transition hover:border-[#0A7A82] hover:text-[#0A7A82]"
+                className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-mist-300 text-[11px] text-transparent transition hover:border-brand-600 hover:text-brand-700"
               >
                 <Icon name="check" className="h-3 w-3" strokeWidth={2.6} />
               </button>
-            ) : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#155E62] text-white"><Icon name="check" className="h-3 w-3" strokeWidth={2.6} /></span>),
+            ) : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-800 text-white"><Icon name="check" className="h-3 w-3" strokeWidth={2.6} /></span>),
           },
-          { key: 'title', label: 'Task', render: (t) => <span className={t.status === 'DONE' ? 'text-[#8A8DA8] line-through' : 'font-semibold'}>{t.title}</span> },
+          { key: 'title', label: 'Task', render: (t) => <span className={t.status === 'DONE' ? 'text-mist-500 line-through' : 'font-semibold'}>{t.title}</span> },
           {
             key: 'patientName',
             label: 'Patient / lead',
             render: (t) => (t.patientId ? (
               <span>
-                <Link onClick={(e) => e.stopPropagation()} to={`/app/crm/patients/${t.patientId}`} className="font-semibold text-[#0A7A82]">{t.patientName}</Link>
-                {t.patientPhone && <span className="block text-[12px] text-[#687699]">{t.patientPhone}</span>}
+                <Link onClick={(e) => e.stopPropagation()} to={`/app/crm/patients/${t.patientId}`} className="font-semibold text-brand-700">{t.patientName}</Link>
+                {t.patientPhone && <span className="block text-[12px] text-mist-500">{t.patientPhone}</span>}
               </span>
             ) : '—'),
           },
@@ -96,12 +96,12 @@ export default function TasksPage() {
             nowrap: true,
             render: (t) => (
               <span>
-                <span className={t.overdue ? 'font-semibold text-[#B42318]' : ''}>{fmtDateTime(t.dueAt)}</span>
-                <span className="block text-[11.5px] text-[#8A8DA8]">{t.status === 'DONE' ? `done ${fmtRelative(t.completedAt)}` : fmtRelative(t.dueAt)}</span>
+                <span className={t.overdue ? 'font-semibold text-danger-600' : ''}>{fmtDateTime(t.dueAt)}</span>
+                <span className="block text-[11.5px] text-mist-500">{t.status === 'DONE' ? `done ${fmtRelative(t.completedAt)}` : fmtRelative(t.dueAt)}</span>
               </span>
             ),
           },
-          { key: 'assignedName', label: 'Assignee', render: (t) => t.assignedName || <span className="text-[#9aaac8]">Unassigned</span> },
+          { key: 'assignedName', label: 'Assignee', render: (t) => t.assignedName || <span className="text-mist-500">Unassigned</span> },
           { key: 'createdByName', label: 'Source', render: (t) => (t.createdByName ? <Pill tone="gray">{t.createdByName}</Pill> : '—') },
         ]}
       />

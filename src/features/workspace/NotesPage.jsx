@@ -78,8 +78,8 @@ export default function NotesPage() {
           <Chip active={filter === 'shared'} onClick={() => setFilter('shared')} count={counts.shared}>Shared with team</Chip>
         </div>
         <div className="relative">
-          <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9AA3BF]" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search notes" className="h-9 w-60 rounded-lg border border-[#E1E4EE] bg-white pl-9 pr-3 text-[13px] outline-none focus:border-[#0A7A82]" />
+          <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-mist-500" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search notes" className="h-9 w-60 rounded-lg border border-mist-200 bg-white pl-9 pr-3 text-[13px] outline-none focus:border-brand-600" />
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export default function NotesPage() {
           <button
             type="button"
             onClick={() => setEditing({ ...EMPTY })}
-            className="mb-4 flex w-full break-inside-avoid flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#D5DAE6] bg-white/60 px-4 py-10 text-[#8A93B2] transition hover:border-[#0A7A82] hover:text-[#0A7A82]"
+            className="mb-4 flex w-full break-inside-avoid flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-mist-200 bg-white/60 px-4 py-10 text-mist-500 transition hover:border-brand-600 hover:text-brand-700"
           >
             <Icon name="plus" className="h-6 w-6" />
             <span className="text-[13px] font-semibold">Add a note</span>
@@ -99,7 +99,7 @@ export default function NotesPage() {
             return (
               <article
                 key={n.id}
-                className="group relative mb-4 break-inside-avoid rounded-2xl border p-4 shadow-[0_1px_2px_rgba(24,28,66,0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_-14px_rgba(17,24,52,0.35)]"
+                className="group relative mb-4 break-inside-avoid rounded-2xl border p-4 transition"
                 style={{ backgroundColor: c.bg, borderColor: c.border }}
               >
                 <div className="mb-2 flex items-start gap-2">
@@ -107,14 +107,14 @@ export default function NotesPage() {
                     <h3 className="m-0 text-[15px] font-bold leading-snug text-navy">{n.title}</h3>
                   </button>
                   {n.mine && (
-                    <button type="button" onClick={() => togglePin(n)} className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition ${n.pinned ? 'bg-navy text-white' : 'text-[#5E6485] opacity-0 hover:bg-black/5 group-hover:opacity-100'}`} aria-label={n.pinned ? 'Unpin' : 'Pin'}>
+                    <button type="button" onClick={() => togglePin(n)} className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition ${n.pinned ? 'bg-navy text-white' : 'text-mist-600 opacity-0 hover:bg-black/5 group-hover:opacity-100'}`} aria-label={n.pinned ? 'Unpin' : 'Pin'}>
                       <Icon name="pin" className="h-3.5 w-3.5" />
                     </button>
                   )}
-                  {!n.mine && n.pinned && <Icon name="pin" className="h-3.5 w-3.5 text-[#5E6485]" />}
+                  {!n.mine && n.pinned && <Icon name="pin" className="h-3.5 w-3.5 text-mist-600" />}
                 </div>
-                {n.body && <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-[#3B3F5D]">{n.body}</p>}
-                <footer className="mt-3 flex items-center gap-2 text-[11px] text-[#6B7190]">
+                {n.body && <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-mist-800">{n.body}</p>}
+                <footer className="mt-3 flex items-center gap-2 text-[11px] text-mist-500">
                   {n.shared ? (
                     <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 font-semibold"><Icon name="users" className="h-3 w-3" /> Shared</span>
                   ) : (
@@ -129,7 +129,7 @@ export default function NotesPage() {
         </div>
       )}
       {!loading && data && !notes.length && (
-        <p className="mt-2 text-center text-[13px] text-[#8A93B2]">{query ? 'No notes match your search.' : 'No notes here yet.'}</p>
+        <p className="mt-2 text-center text-[13px] text-mist-500">{query ? 'No notes match your search.' : 'No notes here yet.'}</p>
       )}
 
       <NoteModal note={editing} onClose={() => setEditing(null)} onSave={save} onDelete={(n) => setConfirm(n)} />

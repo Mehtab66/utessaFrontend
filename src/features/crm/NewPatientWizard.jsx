@@ -11,11 +11,11 @@ const VISIT_TYPES = [
 ]
 
 const SYNC_STYLE = {
-  DONE: ['bg-[#0A7A82] text-white', 'check'],
-  QUEUED: ['border-2 border-[#0A7A82] bg-white text-[#0A7A82]', 'clock'],
-  WAITING: ['bg-[#FDF0DC] text-[#7E4305]', 'clock'],
-  SKIPPED: ['bg-[#EEF0FA] text-[#5B6080]', 'x'],
-  FAILED: ['bg-[#B42318] text-white', 'alert'],
+  DONE: ['bg-brand-600 text-white', 'check'],
+  QUEUED: ['border-2 border-brand-600 bg-white text-brand-700', 'clock'],
+  WAITING: ['bg-sun-50 text-sun-700', 'clock'],
+  SKIPPED: ['bg-mist-100 text-mist-600', 'x'],
+  FAILED: ['bg-danger-600 text-white', 'alert'],
 }
 
 /** Progress rows for what was saved locally and what is queued for the EHR / phone system. */
@@ -25,11 +25,11 @@ export function SyncList({ steps }) {
       {steps.map((s) => {
         const [cls, icon] = SYNC_STYLE[s.state] || SYNC_STYLE.WAITING
         return (
-          <li key={s.label} className="flex items-start gap-3 border-t border-[#EDEEF5] py-2.5 first:border-0 first:pt-0">
+          <li key={s.label} className="flex items-start gap-3 border-t border-mist-200 py-2.5 first:border-0 first:pt-0">
             <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${cls}`}><Icon name={icon} className="h-3.5 w-3.5" strokeWidth={2.4} /></span>
             <span className="min-w-0">
               <span className="block text-[13.5px] font-semibold text-navy">{s.label}</span>
-              {s.detail && <span className="block text-[12.5px] text-[#5B6080]">{s.detail}</span>}
+              {s.detail && <span className="block text-[12.5px] text-mist-600">{s.detail}</span>}
             </span>
           </li>
         )
@@ -129,7 +129,7 @@ export default function NewPatientWizard({ open, onClose, number, line, timer, e
     }
   }
 
-  const choice = (on) => `min-h-10 rounded-lg border px-3.5 text-[13px] font-semibold transition ${on ? 'border-[#0A7A82] bg-[#E6F4F4] text-[#0B4F4F] shadow-[inset_0_0_0_1px_#0A7A82]' : 'border-[#CDD0E3] bg-white text-navy hover:border-[#8D91B3]'}`
+  const choice = (on) => `min-h-10 rounded-lg border px-3.5 text-[13px] font-semibold transition ${on ? 'border-brand-600 bg-brand-50 text-brand-900 shadow-[inset_0_0_0_1px_#1E8E94]' : 'border-mist-300 bg-white text-navy hover:border-mist-400'}`
   const review = [
     ['Patient', `${f.firstName} ${f.lastName}`],
     ['Date of birth', fmtDate(f.dateOfBirth)],
@@ -159,10 +159,10 @@ export default function NewPatientWizard({ open, onClose, number, line, timer, e
         </>
       }
     >
-      <ol className="m-0 mb-5 flex list-none flex-wrap gap-x-6 gap-y-2 border-b border-[#EDEEF5] p-0 pb-4">
+      <ol className="m-0 mb-5 flex list-none flex-wrap gap-x-6 gap-y-2 border-b border-mist-200 p-0 pb-4">
         {STEPS.map((s, i) => (
-          <li key={s} className={`flex items-center gap-2 text-[13px] font-bold ${i === step ? 'text-navy' : i < step ? 'text-[#0A7A82]' : 'text-[#8A8DA8]'}`}>
-            <span className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[12px] ${i === step ? 'border-[#0A7A82] bg-[#0A7A82] text-white' : i < step ? 'border-[#0A7A82] text-[#0A7A82]' : 'border-[#CDD0E3]'}`}>
+          <li key={s} className={`flex items-center gap-2 text-[13px] font-bold ${i === step ? 'text-navy' : i < step ? 'text-brand-700' : 'text-mist-500'}`}>
+            <span className={`flex h-[26px] w-[26px] items-center justify-center rounded-full border-2 text-[12px] ${i === step ? 'border-brand-600 bg-brand-600 text-white' : i < step ? 'border-brand-600 text-brand-700' : 'border-mist-300'}`}>
               {i < step ? <Icon name="check" className="h-3.5 w-3.5" strokeWidth={2.6} /> : i + 1}
             </span>
             {s}
@@ -192,7 +192,7 @@ export default function NewPatientWizard({ open, onClose, number, line, timer, e
 
       {step === 1 && (
         <div>
-          <p className="m-0 mb-1.5 text-[12px] font-bold text-[#3B3F5D]">Coverage</p>
+          <p className="m-0 mb-1.5 text-[12px] font-bold text-mist-800">Coverage</p>
           <div className="mb-4 flex flex-wrap gap-2">
             <button type="button" className={choice(f.coverageType === 'INSURANCE')} aria-pressed={f.coverageType === 'INSURANCE'} onClick={() => set('coverageType')('INSURANCE')}>Insurance</button>
             <button type="button" className={choice(f.coverageType === 'SELF_PAY')} aria-pressed={f.coverageType === 'SELF_PAY'} onClick={() => set('coverageType')('SELF_PAY')}>Self-pay</button>
@@ -205,13 +205,13 @@ export default function NewPatientWizard({ open, onClose, number, line, timer, e
                 <Field field={{ name: 'grp', label: 'Group number' }} value={f.insuranceGroup} onChange={set('insuranceGroup')} />
                 <Field field={{ name: 'sub', label: 'Policy holder', type: 'select', options: POLICY_HOLDERS, noEmpty: true }} value={f.policyHolder} onChange={set('policyHolder')} />
               </div>
-              <div className="mt-4 flex items-start gap-2 rounded-[10px] bg-[#F4F5FA] px-3.5 py-3 text-[13px] text-[#3B3F5D]">
-                <Icon name="info" className="mt-0.5 h-4 w-4 text-[#0A7A82]" />
+              <div className="mt-4 flex items-start gap-2 rounded-[10px] bg-mist-50 px-3.5 py-3 text-[13px] text-mist-800">
+                <Icon name="info" className="mt-0.5 h-4 w-4 text-brand-700" />
                 <span>Real-time eligibility runs through your EHR or clearinghouse once it’s connected. Until then, coverage is saved as <b>not verified</b> for the front desk to confirm before the visit.</span>
               </div>
             </>
           ) : (
-            <p className="m-0 rounded-[10px] bg-[#F4F5FA] px-3.5 py-3 text-[13.5px] text-navy">Self-pay new patient. The caller can add insurance later from their intake forms.</p>
+            <p className="m-0 rounded-[10px] bg-mist-50 px-3.5 py-3 text-[13.5px] text-navy">Self-pay new patient. The caller can add insurance later from their intake forms.</p>
           )}
         </div>
       )}
@@ -240,15 +240,15 @@ export default function NewPatientWizard({ open, onClose, number, line, timer, e
           </div>
           <div className="mt-4 flex flex-wrap items-end gap-3">
             <div className="w-56"><Field field={{ name: 'from', label: 'Show openings from', type: 'date', min: new Date().toISOString().slice(0, 10) }} value={f.from} onChange={(v) => setF((p) => ({ ...p, from: v, startsAt: '' }))} /></div>
-            <span className="pb-2.5 text-[12.5px] text-[#5B6080]">Next 3 clinic days · {f.providerName || 'any provider'} · {duration} min</span>
+            <span className="pb-2.5 text-[12.5px] text-mist-600">Next 3 clinic days · {f.providerName || 'any provider'} · {duration} min</span>
           </div>
           <div className="mt-3">
             {openings === null ? <Loading label="Finding openings…" /> : openings.length === 0 ? (
-              <p className="m-0 rounded-[10px] bg-[#F4F5FA] px-3.5 py-3 text-[13.5px] text-navy">No openings in this range. Try a later date or another provider.</p>
+              <p className="m-0 rounded-[10px] bg-mist-50 px-3.5 py-3 text-[13.5px] text-navy">No openings in this range. Try a later date or another provider.</p>
             ) : (
               <div className="grid gap-3 sm:grid-cols-3">
                 {openings.map((d) => (
-                  <div key={d.date} className="rounded-[10px] border border-[#E1E3F0] p-3">
+                  <div key={d.date} className="rounded-[10px] border border-mist-200 p-3">
                     <p className="m-0 mb-2 text-[13.5px] font-bold text-navy">{new Date(`${d.date}T00:00:00`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {d.slots.map((s) => (
@@ -269,20 +269,20 @@ export default function NewPatientWizard({ open, onClose, number, line, timer, e
         <div>
           <div className="grid gap-3 sm:grid-cols-2">
             {review.map(([k, v]) => (
-              <div key={k} className="rounded-[10px] bg-[#F4F5FA] px-3.5 py-3">
-                <p className="m-0 text-[11px] font-bold uppercase tracking-[0.06em] text-[#5B6080]">{k}</p>
+              <div key={k} className="rounded-[10px] bg-mist-50 px-3.5 py-3">
+                <p className="m-0 text-[12px] font-semibold text-mist-600">{k}</p>
                 <p className="m-0 mt-1 text-[13.5px] font-semibold text-navy">{v}</p>
               </div>
             ))}
           </div>
-          <div className="mt-3 rounded-[10px] border border-[#E1E3F0] px-3.5 py-3">
-            <p className="m-0 text-[11px] font-bold uppercase tracking-[0.06em] text-[#5B6080]">Call notes moving to the profile</p>
+          <div className="mt-3 rounded-[10px] border border-mist-200 px-3.5 py-3">
+            <p className="m-0 text-[12px] font-semibold text-mist-600">Call notes moving to the profile</p>
             <p className="m-0 mt-1 whitespace-pre-line text-[13.5px] text-navy">{callNotes || 'No notes typed.'}</p>
           </div>
           <div className="mt-3">
             <Field field={{ name: 'sms', label: 'Caller agreed to appointment reminders and intake forms by text', type: 'checkbox' }} value={f.smsConsent} onChange={set('smsConsent')} />
           </div>
-          <p className="m-0 mt-2 text-[12.5px] text-[#5B6080]">On confirm, Utessa checks for a duplicate by name and date of birth, creates the patient, books the slot and queues the chart, appointment and call notes for the EHR.</p>
+          <p className="m-0 mt-2 text-[12.5px] text-mist-600">On confirm, Utessa checks for a duplicate by name and date of birth, creates the patient, books the slot and queues the chart, appointment and call notes for the EHR.</p>
         </div>
       )}
     </Modal>

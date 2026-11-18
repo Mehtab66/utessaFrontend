@@ -235,16 +235,16 @@ export default function PlatformHome() {
       <PageHeader
         title="Utessa at a glance"
         subtitle="Totals across every organization. Patient records, leads and documents never appear in this console."
-        right={<span className="rounded-full bg-[#E1F4F5] px-3 py-1.5 text-sm font-semibold text-[#0A3B40]">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
+        right={<span className="rounded-full bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-950">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
       />
 
       {error && (
-        <p className="mb-4 rounded-xl border border-[#F3C1BC] bg-[#FFF5F4] px-3.5 py-3 text-sm font-semibold text-[#B4472F]">
+        <p className="mb-4 rounded-xl border border-danger-200 bg-danger-50 px-3.5 py-3 text-sm font-semibold text-danger-700">
           {error}
         </p>
       )}
 
-      <div className="mb-5 flex flex-wrap gap-1.5 rounded-[12px] border border-[#E2E8EC] bg-white p-1.5 shadow-[0_4px_12px_rgba(27,31,75,0.02)]" role="tablist" aria-label="Overview sections">
+      <div className="mb-5 flex flex-wrap gap-1.5 rounded-[12px] border border-mist-200 bg-white p-1.5" role="tablist" aria-label="Overview sections">
         {TABS.map(([id, label]) => (
           <button
             key={id}
@@ -254,8 +254,8 @@ export default function PlatformHome() {
             onClick={() => setTab(id)}
             className={`rounded-[10px] px-3 py-2.5 text-sm font-semibold transition ${
               tab === id
-                ? 'bg-[#0F7F86] text-white shadow-[0_8px_22px_rgba(15,127,134,0.14)]'
-                : 'bg-transparent text-[#5B6B73] hover:bg-[#E1F4F5] hover:text-[#0A3B40]'
+                ? 'bg-brand-600 text-white shadow-[0_8px_22px_rgba(15,127,134,0.14)]'
+                : 'bg-transparent text-mist-500 hover:bg-brand-50 hover:text-brand-950'
             }`}
           >
             {label}
@@ -303,21 +303,21 @@ function SummaryTab({ data, loading }) {
         <Panel title="Needs attention" right="Live">
           <ul className="m-0 list-none space-y-3 p-0">
             {(data?.attention || []).map((item) => (
-              <li key={`${item.priority}-${item.title}`} className="rounded-[12px] border border-[#EBECF4] bg-[#F8F9FD] p-3">
+              <li key={`${item.priority}-${item.title}`} className="rounded-[12px] border border-mist-200 bg-mist-25 p-3">
                 <div className="mb-2">
                   <StatusPill tone={statusTone(item.priority)}>{item.priority}</StatusPill>
                 </div>
-                <p className="m-0 text-sm font-semibold text-[#1B1F4B]">{item.title}</p>
-                <p className="m-0 mt-1 text-[13px] text-[#4A4E7A]">{item.detail}</p>
+                <p className="m-0 text-sm font-semibold text-ink-900">{item.title}</p>
+                <p className="m-0 mt-1 text-[13px] text-mist-700">{item.detail}</p>
                 {item.href && (
-                  <Link to={item.href} className="mt-2 inline-block text-[13px] font-semibold text-[#1E8E94]">
+                  <Link to={item.href} className="mt-2 inline-block text-[13px] font-semibold text-brand-700">
                     Open
                   </Link>
                 )}
               </li>
             ))}
             {!loading && !(data?.attention || []).length && (
-              <li className="text-sm text-[#4A4E7A]">Nothing urgent — practices look healthy.</li>
+              <li className="text-sm text-mist-700">Nothing urgent — practices look healthy.</li>
             )}
           </ul>
         </Panel>
@@ -342,11 +342,11 @@ function GrowthTab({ data }) {
         <Panel title="New vs cancelled organizations" right="By month">
           <div className="space-y-3">
             {rows.map((row) => (
-              <div key={row.label} className="flex items-center justify-between rounded-xl bg-[#F8F9FD] px-3 py-2 text-sm">
-                <span className="font-medium text-[#1B1F4B]">{row.label}</span>
-                <div className="flex items-center gap-4 text-[#4A4E7A]">
+              <div key={row.label} className="flex items-center justify-between rounded-xl bg-mist-25 px-3 py-2 text-sm">
+                <span className="font-medium text-ink-900">{row.label}</span>
+                <div className="flex items-center gap-4 text-mist-700">
                   <span>+{row.new}</span>
-                  <span className="text-[#B4472F]">-{row.cancelled}</span>
+                  <span className="text-danger-700">-{row.cancelled}</span>
                 </div>
               </div>
             ))}
@@ -356,9 +356,9 @@ function GrowthTab({ data }) {
         <Panel title="Why organizations cancel" right="All time">
           <div className="space-y-3">
             {(growth.reasons || []).map((row) => (
-              <div key={row.reason} className="flex items-center justify-between border-b border-[#EBECF4] pb-2 last:border-0 last:pb-0">
-                <span className="text-[#1B1F4B]">{row.reason}</span>
-                <span className="font-mono text-[#1B1F4B]">{row.count}</span>
+              <div key={row.reason} className="flex items-center justify-between border-b border-mist-200 pb-2 last:border-0 last:pb-0">
+                <span className="text-ink-900">{row.reason}</span>
+                <span className="font-mono text-ink-900">{row.count}</span>
               </div>
             ))}
             {!growth.reasons?.length && <EmptyNote>No cancellations yet. When one happens, the reason picked at cancellation shows here.</EmptyNote>}
@@ -393,12 +393,12 @@ function RevenueTab({ data }) {
         <Panel title="Founding practice discount" right="All time">
           <div className="space-y-3">
             {(revenue.foundingDiscounts || []).map((row) => (
-              <div key={row.org} className="flex items-center justify-between border-b border-[#EBECF4] pb-2 last:border-0 last:pb-0">
+              <div key={row.org} className="flex items-center justify-between border-b border-mist-200 pb-2 last:border-0 last:pb-0">
                 <div>
-                  <div className="font-medium text-[#1B1F4B]">{row.org}</div>
-                  <div className="text-xs text-[#4A4E7A]">{row.rate}% off</div>
+                  <div className="font-medium text-ink-900">{row.org}</div>
+                  <div className="text-xs text-mist-700">{row.rate}% off</div>
                 </div>
-                <span className="font-mono text-[#1B1F4B]">{money(row.value)}/mo</span>
+                <span className="font-mono text-ink-900">{money(row.value)}/mo</span>
               </div>
             ))}
           </div>
@@ -439,13 +439,13 @@ function EngagementTab({ data }) {
         <Panel title="Inactive 14 days or more" right="Follow up">
           <div className="space-y-3">
             {(engagement.inactive || []).map((row) => (
-              <div key={row.org} className="flex items-center justify-between gap-3 border-b border-[#EBECF4] pb-2 last:border-0 last:pb-0">
+              <div key={row.org} className="flex items-center justify-between gap-3 border-b border-mist-200 pb-2 last:border-0 last:pb-0">
                 <div>
-                  <div className="font-medium text-[#1B1F4B]">{row.org}</div>
-                  <div className="text-xs text-[#4A4E7A]">Last sign-in {row.last} · {row.plan}</div>
+                  <div className="font-medium text-ink-900">{row.org}</div>
+                  <div className="text-xs text-mist-700">Last sign-in {row.last} · {row.plan}</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-mono text-[#1B1F4B]">{row.days} days</div>
+                  <div className="font-mono text-ink-900">{row.days} days</div>
                   <StatusPill tone={row.status === 'At risk' ? 'bad' : 'warn'}>{row.status}</StatusPill>
                 </div>
               </div>
@@ -579,9 +579,9 @@ function HealthTab({ data }) {
       <Panel title="Compliance notes" right="Platform">
         <div className="space-y-3">
           {(health.complianceNotes || []).map((note) => (
-            <div key={note.title} className="rounded-xl border border-[#EBECF4] bg-[#F8F9FD] p-3.5">
-              <div className="text-sm font-semibold text-[#1B1F4B]">{note.title}</div>
-              <div className="mt-1 text-sm text-[#4A4E7A]">{note.detail}</div>
+            <div key={note.title} className="rounded-xl border border-mist-200 bg-mist-25 p-3.5">
+              <div className="text-sm font-semibold text-ink-900">{note.title}</div>
+              <div className="mt-1 text-sm text-mist-700">{note.detail}</div>
             </div>
           ))}
         </div>

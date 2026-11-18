@@ -69,14 +69,14 @@ export default function PatientDetailPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-[12.5px] text-[#687699]">
-        <Link to={isLead ? '/app/crm/leads' : '/app/crm/patients'} className="font-semibold text-[#0A7A82]">
+      <div className="flex items-center gap-2 text-[12.5px] text-mist-500">
+        <Link to={isLead ? '/app/crm/leads' : '/app/crm/patients'} className="font-semibold text-brand-700">
           <span className="inline-flex items-center gap-1"><Icon name="arrowLeft" className="h-3.5 w-3.5" /> {isLead ? 'Patient leads' : 'Patients'}</span>
         </Link>
       </div>
 
       {/* Header */}
-      <section className="rounded-[16px] border border-[#E4E6EF] bg-white p-4 shadow-[0_1px_2px_rgba(24,28,66,0.04)]">
+      <section className="rounded-[16px] border border-mist-200 bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3.5">
             <Avatar name={p.fullName} size="lg" tone={isLead ? 'blue' : 'teal'} />
@@ -87,9 +87,9 @@ export default function PatientDetailPage() {
                 <EnumPill list={PRIORITIES} value={p.priority} />
                 {p.doNotContact && <Pill tone="red">Do not contact</Pill>}
               </div>
-              <p className="m-0 mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[13px] text-[#43476A]">
-                {p.phone && <a href={`tel:${p.phone}`} className="inline-flex items-center gap-1 font-semibold text-[#0A7A82]"><Icon name="phone" className="h-3.5 w-3.5" /> {formatPhone(p.phone)}</a>}
-                {p.email && <a href={`mailto:${p.email}`} className="text-[#0A7A82]">{p.email}</a>}
+              <p className="m-0 mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[13px] text-mist-700">
+                {p.phone && <a href={`tel:${p.phone}`} className="inline-flex items-center gap-1 font-semibold text-brand-700"><Icon name="phone" className="h-3.5 w-3.5" /> {formatPhone(p.phone)}</a>}
+                {p.email && <a href={`mailto:${p.email}`} className="text-brand-700">{p.email}</a>}
                 {p.dateOfBirth && <span>DOB {fmtDate(p.dateOfBirth)}{age != null ? ` · ${age} yrs` : ''}</span>}
                 {p.mrn && <span>MRN {p.mrn}</span>}
                 <span>Owner: {p.ownerName || 'Unassigned'}</span>
@@ -113,9 +113,9 @@ export default function PatientDetailPage() {
           <div className="mt-4">
             <StagePath stages={PATH} value={closed ? null : p.leadStatus} onSelect={(v) => (v === 'CONVERTED' ? setConvertOpen(true) : changeStatus(v))} />
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[12.5px]">
-              <span className="text-[#687699]">
+              <span className="text-mist-500">
                 {closed
-                  ? <>Closed as <b className="text-[#B42318]">{labelOf(LEAD_STATUSES, p.leadStatus)}</b>{p.lostReason ? ` — ${p.lostReason}` : ''}</>
+                  ? <>Closed as <b className="text-danger-600">{labelOf(LEAD_STATUSES, p.leadStatus)}</b>{p.lostReason ? ` — ${p.lostReason}` : ''}</>
                   : <>Created {fmtRelative(p.createdAt)} · last contact {p.lastContactAt ? fmtRelative(p.lastContactAt) : 'never'}</>}
               </span>
               <span className="flex gap-2">
@@ -211,9 +211,9 @@ export default function PatientDetailPage() {
                   onRowClick={(t) => editors.open.task(t)}
                   empty="No tasks yet."
                   columns={[
-                    { key: 'title', label: 'Task', render: (t) => <span className={t.status === 'DONE' ? 'text-[#8A8DA8] line-through' : 'font-semibold'}>{t.title}</span> },
+                    { key: 'title', label: 'Task', render: (t) => <span className={t.status === 'DONE' ? 'text-mist-500 line-through' : 'font-semibold'}>{t.title}</span> },
                     { key: 'taskType', label: 'Type', render: (t) => labelOf(TASK_TYPES, t.taskType) },
-                    { key: 'dueAt', label: 'Due', nowrap: true, render: (t) => <span className={t.overdue ? 'font-semibold text-[#B42318]' : ''}>{fmtDateTime(t.dueAt)}</span> },
+                    { key: 'dueAt', label: 'Due', nowrap: true, render: (t) => <span className={t.overdue ? 'font-semibold text-danger-600' : ''}>{fmtDateTime(t.dueAt)}</span> },
                     { key: 'assignedName', label: 'Assignee' },
                     {
                       key: 'actions',
@@ -291,13 +291,13 @@ export default function PatientDetailPage() {
               ['Location', p.preferredLocation],
               ['Next follow-up', p.nextFollowUp ? fmtDate(p.nextFollowUp) : null],
             ]} />
-            {p.reasonForVisit && <p className="m-0 mt-3 rounded-lg bg-[#F7F8FB] px-3 py-2 text-[13px] text-[#43476A]">{p.reasonForVisit}</p>}
+            {p.reasonForVisit && <p className="m-0 mt-3 rounded-lg bg-mist-25 px-3 py-2 text-[13px] text-mist-700">{p.reasonForVisit}</p>}
             {p.tags && (
               <div className="mt-3 flex flex-wrap gap-1">
                 {p.tags.split(',').map((t) => t.trim()).filter(Boolean).map((t) => <Pill key={t} tone="ink">{t}</Pill>)}
               </div>
             )}
-            {p.notes && <p className="m-0 mt-3 whitespace-pre-line text-[13px] text-[#43476A]">{p.notes}</p>}
+            {p.notes && <p className="m-0 mt-3 whitespace-pre-line text-[13px] text-mist-700">{p.notes}</p>}
           </Card>
           <Card title="EHR link">
             <DetailGrid items={[
@@ -316,8 +316,8 @@ export default function PatientDetailPage() {
                 }
               }}>Queue for EHR creation</Button>
             )}
-            <p className="m-0 mt-2 text-[12px] text-[#687699]">
-              Queued records are pushed to your EHR automatically once the <Link to="/app/crm/integrations" className="font-semibold text-[#0A7A82]">EHR integration</Link> is live.
+            <p className="m-0 mt-2 text-[12px] text-mist-500">
+              Queued records are pushed to your EHR automatically once the <Link to="/app/crm/integrations" className="font-semibold text-brand-700">EHR integration</Link> is live.
             </p>
           </Card>
           {isAdmin && (
@@ -407,14 +407,14 @@ function Composer({ patient, onSaved }) {
   }
 
   return (
-    <div className="rounded-[12px] border border-[#EAEBF4] bg-[#FBFBFD] p-3">
+    <div className="rounded-[12px] border border-mist-200 bg-mist-25 p-3">
       <div className="flex flex-wrap gap-1.5">
         {COMPOSER_TYPES.map((t) => (
           <button
             key={t.value}
             type="button"
             onClick={() => setType(t.value)}
-            className={`rounded-full px-3 py-1 text-[12px] font-semibold transition ${type === t.value ? 'bg-[#0A7A82] text-white' : 'bg-white text-[#4C5076] ring-1 ring-[#E0E2E9] hover:bg-[#F3FAFA]'}`}
+            className={`rounded-full px-3 py-1 text-[12px] font-semibold transition ${type === t.value ? 'bg-brand-600 text-white' : 'bg-white text-mist-700 ring-1 ring-mist-200 hover:bg-brand-50'}`}
           >
             {t.label}
           </button>
@@ -429,7 +429,7 @@ function Composer({ patient, onSaved }) {
         onChange={(e) => setBody(e.target.value)}
         rows={3}
         placeholder={isCall ? 'What was discussed? (optional)' : type === 'NOTE' ? 'Add an internal note… (avoid detailed clinical notes — those belong in the EHR)' : 'Message summary…'}
-        className="mt-2 w-full rounded-lg border border-[#CDCED8] bg-white px-3 py-2 text-sm outline-none focus:border-[#0A7A82] focus:ring-2 focus:ring-[#0A7A82]/15"
+        className="mt-2 w-full rounded-lg border border-mist-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15"
       />
       <div className="mt-2 flex items-center justify-between gap-2">
         <span className="text-[12px] font-semibold text-warn">{error}</span>
