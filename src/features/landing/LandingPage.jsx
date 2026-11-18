@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Logo, Wordmark } from '../../shared/ui/Logo'
+import { Wordmark } from '../../shared/ui/Logo'
 
 export default function LandingPage() {
   return (
@@ -14,7 +14,6 @@ export default function LandingPage() {
 
       <header className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
-          <Logo className="h-9 w-9" />
           <Wordmark light />
         </div>
         <Link

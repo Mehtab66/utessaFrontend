@@ -125,6 +125,11 @@ export default function VerifyPage() {
             ))}
           </div>
         </div>
+        <img
+          src="/login.webp"
+          alt=""
+          className="auth-visual-image"
+        />
       </aside>
 
       <style>{`
@@ -398,9 +403,8 @@ export default function VerifyPage() {
           inset: 0;
           width: 100%;
           height: 100%;
-          object-fit: contain;
+          object-fit: cover;
           object-position: center center;
-          transform: scale(1.14);
           filter: saturate(1.08) contrast(1.04) drop-shadow(0 18px 25px rgba(0,0,0,0.45));
           z-index: 0;
         }

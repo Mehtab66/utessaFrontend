@@ -1,22 +1,25 @@
+/* Utessa brand logo — files live in /public/brand. */
+
+/** Square app icon (navy tile with the color cross). */
 export function Logo({ className = 'h-8 w-8', ...props }) {
-  return (
-    <svg viewBox="0 0 120 120" className={className} fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
-      <rect x="47.5" y="19" width="25" height="25" rx="5" fill="#5CE1E6" />
-      <rect x="19" y="47.5" width="25" height="25" rx="5" fill="#C9CDF2" />
-      <rect x="47.5" y="47.5" width="25" height="25" rx="5" fill="#FFD23F" />
-      <rect x="76" y="47.5" width="25" height="25" rx="5" fill="#8FEAEE" />
-      <rect x="47.5" y="76" width="25" height="25" rx="5" fill="#3BC4CA" />
-    </svg>
-  )
+  return <img src="/brand/utessa-icon.png" alt="" aria-hidden="true" draggable="false" className={`object-contain ${className}`} {...props} />
 }
 
-export function Wordmark({ light = false, className = '' }) {
-  return (
-    <span className={`inline-flex items-center gap-2.5 no-underline ${className}`}>
-      <Logo className="h-8 w-8 flex-none" />
-      <span className={`text-[21px] font-semibold tracking-[-0.01em] ${light ? 'text-white' : 'text-[#1B1F4B]'}`}>
-        <b className={`font-extrabold ${light ? 'text-[#5CE1E6]' : 'text-[#3BC4CA]'}`}>U</b>tessa
+/**
+ * Full logo: icon + "Utessa" wordmark.
+ * `light` is for dark backgrounds — the navy lettering would disappear there,
+ * so it pairs the icon with white text instead.
+ */
+export function Wordmark({ light = false, className = 'h-9' }) {
+  if (light) {
+    return (
+      <span className="inline-flex items-center gap-2.5 no-underline">
+        <Logo className="h-9 w-9 flex-none" />
+        <span className="text-[22px] font-bold tracking-[-0.01em] text-white">
+          <b className="font-extrabold text-[#5CE1E6]">U</b>tessa
+        </span>
       </span>
-    </span>
-  )
+    )
+  }
+  return <img src="/brand/utessa-logo.png" alt="Utessa" draggable="false" className={`w-auto object-contain ${className}`} />
 }

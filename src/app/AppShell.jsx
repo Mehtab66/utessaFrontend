@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../shared/auth/AuthContext'
-import { Logo } from '../shared/ui/Logo'
+import { Logo, Wordmark } from '../shared/ui/Logo'
 import { enabledModuleIds, navForRole, permissionsFor, roleLabel, serviceAllowed } from '../shared/security/roles'
 import { workspace, WORKSPACE_CHANGED } from '../features/workspace/workspaceApi'
 import UiIcon from '../shared/ui/Icon'
@@ -106,7 +106,7 @@ const MAIN_SECTIONS = [
 
 /*
  * Always-on tools — every practice gets these, whatever modules were picked.
- * Users choose which ones sit on the rail (Customize menu); the rest live under "More".
+ * Each user picks which ones sit on the rail (Personalize sidebar); the rest open from "Tools".
  */
 const CORE_TOOLS = [
   { id: 'my-work', label: 'My work', icon: 'checkSquare', to: '/app/my-work', hint: 'Your tasks across every module' },
@@ -121,7 +121,7 @@ const CORE_TOOLS = [
 const CORE_BY_ID = Object.fromEntries(CORE_TOOLS.map(t => [t.id, t]))
 const DEFAULT_PINNED = ['my-work', 'calendar', 'notes', 'board']
 
-/* Page titles used by Favorites */
+/* Page titles used by Shortcuts */
 const PAGE_LABELS = {
   '/app': 'Home',
   ...Object.fromEntries(CORE_TOOLS.map(t => [t.to, t.label === 'Apps' ? 'Apps & modules' : t.label])),
@@ -161,32 +161,34 @@ export default function AppShell() {
   const [activeSection, setActiveSection] = useState(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [summary, setSummary] = useState(null)
-  const [moreOpen, setMoreOpen] = useState(false)
-  const [favOpen, setFavOpen] = useState(false)
-  const [customizeOpen, setCustomizeOpen] = useState(false)
+  const [toolsOpen, setToolsOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const [personalizeOpen, setPersonalizeOpen] = useState(false)
   const [pinned, setPinned] = useState(DEFAULT_PINNED)
-  const [favorites, setFavorites] = useState([])
+  const [saved, setSaved] = useState([])
+  const [recent, setRecent] = useState([])
 
   const profileRef = useRef(null)
   const notifRef = useRef(null)
   const createRef = useRef(null)
-  const moreRef = useRef(null)
-  const favRef = useRef(null)
+  const toolsRef = useRef(null)
+  const shortcutsRef = useRef(null)
 
-  /* Per-user rail preferences (which tools are pinned, favorite pages) */
+  /* Per-user rail preferences (pinned tools, saved shortcuts, recently viewed pages) */
   const prefKey = user?.userId ? `utessa.rail.${user.userId}` : null
   useEffect(() => {
     if (!prefKey) return
     setPinned(readPref(`${prefKey}.pinned`, DEFAULT_PINNED).filter(id => CORE_BY_ID[id]))
-    setFavorites(readPref(`${prefKey}.favorites`, []))
+    setSaved(readPref(`${prefKey}.shortcuts`, []))
+    setRecent(readPref(`${prefKey}.recent`, []))
   }, [prefKey])
   function savePinned(next) {
     setPinned(next)
     if (prefKey) writePref(`${prefKey}.pinned`, next)
   }
-  function saveFavorites(next) {
-    setFavorites(next)
-    if (prefKey) writePref(`${prefKey}.favorites`, next)
+  function saveShortcuts(next) {
+    setSaved(next)
+    if (prefKey) writePref(`${prefKey}.shortcuts`, next)
   }
 
   /* Outside-click closes dropdowns */
@@ -195,8 +197,8 @@ export default function AppShell() {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false)
       if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false)
       if (createRef.current && !createRef.current.contains(e.target)) setCreateOpen(false)
-      if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false)
-      if (favRef.current && !favRef.current.contains(e.target)) setFavOpen(false)
+      if (toolsRef.current && !toolsRef.current.contains(e.target)) setToolsOpen(false)
+      if (shortcutsRef.current && !shortcutsRef.current.contains(e.target)) setShortcutsOpen(false)
     }
     document.addEventListener('mousedown', h)
     return () => document.removeEventListener('mousedown', h)
@@ -236,7 +238,23 @@ export default function AppShell() {
   }, [location.pathname])
 
   /* Close rail popovers on navigation */
-  useEffect(() => { setMoreOpen(false); setFavOpen(false) }, [location.pathname])
+  useEffect(() => { setToolsOpen(false); setShortcutsOpen(false) }, [location.pathname])
+
+  /* Recently viewed trail for Shortcuts */
+  useEffect(() => {
+    if (!prefKey) return undefined
+    const path = location.pathname
+    const t = setTimeout(() => {
+      const label = PAGE_LABELS[path] || document.querySelector('main h1')?.textContent?.trim() || 'Page'
+      const section = document.querySelector('[data-section-label]')?.getAttribute('data-section-label') || 'Workspace'
+      setRecent(prev => {
+        const next = [{ to: path, label, section }, ...prev.filter(r => r.to !== path)].slice(0, 8)
+        writePref(`${prefKey}.recent`, next)
+        return next
+      })
+    }, 600)
+    return () => clearTimeout(t)
+  }, [location.pathname, prefKey])
 
   /* Workspace counters for real notifications */
   const loadSummary = useCallback(async () => {
@@ -276,7 +294,7 @@ export default function AppShell() {
   const pinnedTools = pinned.map(id => CORE_BY_ID[id]).filter(Boolean)
   const moreTools = CORE_TOOLS.filter(t => !pinned.includes(t.id))
   const activeTool = CORE_BY_ID[activeSection]
-  const moreActive = !!activeTool && !pinned.includes(activeTool.id)
+  const toolsActive = !!activeTool && !pinned.includes(activeTool.id)
   const crmItems = sections.find(sec => sec.title === 'CRM')?.items.map(item => ({
     ...item,
     end: item.to === '/app/crm' || !['/app/crm/patients', '/app/crm/opportunities'].includes(item.to),
@@ -304,9 +322,9 @@ export default function AppShell() {
   const notifications = buildNotifications(summary)
   const myWorkBadge = summary ? (summary.overdue || 0) + (summary.dueToday || 0) : 0
 
-  /* Favorites — star any page to keep it one click away */
+  /* Shortcuts — save any page, plus an automatic "recently viewed" trail */
   const currentPath = location.pathname
-  const isFavorite = favorites.some(f => f.to === currentPath)
+  const isSaved = saved.some(f => f.to === currentPath)
   function currentPageLabel() {
     if (PAGE_LABELS[currentPath]) return PAGE_LABELS[currentPath]
     const item = sections.flatMap(sec => sec.items).filter(i => currentPath === i.to || currentPath.startsWith(`${i.to}/`))
@@ -314,10 +332,11 @@ export default function AppShell() {
     const heading = document.querySelector('main h1')?.textContent?.trim()
     return heading || item?.label || 'Page'
   }
-  function toggleFavorite() {
-    if (isFavorite) saveFavorites(favorites.filter(f => f.to !== currentPath))
-    else saveFavorites([...favorites, { to: currentPath, label: currentPageLabel(), section: activeMeta?.label || activeTool?.label || 'Workspace' }].slice(-12))
+  function toggleShortcut() {
+    if (isSaved) saveShortcuts(saved.filter(f => f.to !== currentPath))
+    else saveShortcuts([...saved, { to: currentPath, label: currentPageLabel(), section: activeMeta?.label || 'Workspace' }].slice(-12))
   }
+  const recentOthers = recent.filter(r => r.to !== currentPath && !saved.some(f => f.to === r.to)).slice(0, 5)
   const createActions = [
     { label: 'Task', to: '/app/my-work?new=1' },
     { label: 'Calendar event', to: '/app/calendar?new=1' },
@@ -336,11 +355,8 @@ export default function AppShell() {
       <header className="flex h-[56px] flex-none items-center gap-3 bg-[#f6f7fb] px-4">
 
         {/* Left: Logo + wordmark */}
-        <div className="flex shrink-0 items-center gap-2.5 pr-3">
-          <Logo className="h-9 w-9 flex-none" />
-          <span className="text-[19px] font-bold tracking-[-0.01em] text-[#1B1F4B]">
-            <b className="font-extrabold text-[#3BC4CA]">U</b>tessa
-          </span>
+        <div className="flex shrink-0 items-center pr-3">
+          <Wordmark className="h-9" />
         </div>
 
         {/* Center: Global search (patients, leads, opportunities, partners) */}
@@ -549,7 +565,7 @@ export default function AppShell() {
 
           <span className="my-1 h-px w-10 shrink-0 bg-[#e0e2e9]" />
 
-          {/* Always-on tools the user pinned (Customize menu) */}
+          {/* Always-on tools the user pinned (Personalize sidebar) */}
           <div className="flex w-full flex-col items-center gap-1.5">
             {pinnedTools.map(tool => (
               <RailButton
@@ -562,49 +578,72 @@ export default function AppShell() {
               />
             ))}
 
-            {/* Favorites */}
-            <div className="relative" ref={favRef}>
-              <RailButton icon="star" label="Favorites" active={favOpen} onClick={() => { setFavOpen(o => !o); setMoreOpen(false) }} />
-              {favOpen && (
-                <RailPopover title="Favorites">
-                  {favorites.length ? favorites.map(f => (
-                    <div key={f.to} className="group/fav flex items-center rounded-lg hover:bg-[#f6f7fb]">
-                      <button type="button" onClick={() => navigate(f.to)} className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2 text-left">
-                        <UiIcon name="star" className="h-4 w-4 text-[#f5a524]" fill="#f5a524" />
-                        <span className="min-w-0">
-                          <span className="block truncate text-sm text-[#171d39]">{f.label}</span>
-                          <span className="block truncate text-[11px] text-[#9aaac8]">{f.section}</span>
-                        </span>
-                      </button>
-                      <button type="button" onClick={() => saveFavorites(favorites.filter(x => x.to !== f.to))} className="mr-1 rounded-md p-1.5 text-[#9aaac8] opacity-0 hover:bg-white hover:text-[#171d39] group-hover/fav:opacity-100" aria-label={`Remove ${f.label} from favorites`}>
-                        <UiIcon name="x" className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  )) : (
-                    <p className="px-3 py-4 text-center text-[13px] leading-relaxed text-[#687699]">
-                      No favorites yet.<br />Click the <UiIcon name="star" className="inline h-3.5 w-3.5 align-[-2px]" /> on any page to add it here.
-                    </p>
-                  )}
+            {/* Shortcuts — saved pages + recently viewed */}
+            <div className="relative" ref={shortcutsRef}>
+              <RailButton icon="bookmark" label="Shortcuts" active={shortcutsOpen} onClick={() => { setShortcutsOpen(o => !o); setToolsOpen(false) }} />
+              {shortcutsOpen && (
+                <RailPopover width={288}>
+                  <div className="flex items-center justify-between px-3 pb-1.5 pt-2">
+                    <p className="m-0 text-[13px] font-bold text-[#171d39]">Shortcuts</p>
+                    <button
+                      type="button"
+                      onClick={toggleShortcut}
+                      className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11.5px] font-semibold text-[#007f9b] hover:bg-[#e6f4f7]"
+                    >
+                      <UiIcon name={isSaved ? 'check' : 'plus'} className="h-3.5 w-3.5" />
+                      {isSaved ? 'This page saved' : 'Save this page'}
+                    </button>
+                  </div>
+                  <ShortcutGroup title="Saved" empty="Save pages you open often — they show up here.">
+                    {saved.map(f => (
+                      <ShortcutRow key={f.to} item={f} icon="bookmark" onOpen={() => navigate(f.to)} onRemove={() => saveShortcuts(saved.filter(x => x.to !== f.to))} />
+                    ))}
+                  </ShortcutGroup>
+                  <ShortcutGroup title="Recently viewed" empty="Pages you visit will appear here.">
+                    {recentOthers.map(r => (
+                      <ShortcutRow key={r.to} item={r} icon="history" onOpen={() => navigate(r.to)} />
+                    ))}
+                  </ShortcutGroup>
                 </RailPopover>
               )}
             </div>
 
-            {/* More */}
-            <div className="relative" ref={moreRef}>
-              <RailButton icon="more" label="More" active={moreOpen || moreActive} onClick={() => { setMoreOpen(o => !o); setFavOpen(false) }} />
-              {moreOpen && (
-                <RailPopover>
-                  {moreTools.map(tool => (
-                    <button key={tool.id} type="button" onClick={() => navigate(tool.to)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-[#f6f7fb] ${activeSection === tool.id ? 'bg-[#f6f7fb]' : ''}`}>
-                      <UiIcon name={tool.icon} className="h-[18px] w-[18px] text-[#676879]" />
-                      <span className="text-sm text-[#171d39]">{tool.id === 'modules' ? 'Apps & modules' : tool.label}</span>
+            {/* Tools — launcher for everything not on the rail */}
+            <div className="relative" ref={toolsRef}>
+              <RailButton icon="grid" label="Tools" active={toolsOpen || toolsActive} onClick={() => { setToolsOpen(o => !o); setShortcutsOpen(false) }} />
+              {toolsOpen && (
+                <RailPopover width={340}>
+                  <div className="flex items-center justify-between px-3 pb-2 pt-2">
+                    <p className="m-0 text-[13px] font-bold text-[#171d39]">Workspace tools</p>
+                    <button
+                      type="button"
+                      onClick={() => { setToolsOpen(false); setPersonalizeOpen(true) }}
+                      className="inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11.5px] font-semibold text-[#007f9b] hover:bg-[#e6f4f7]"
+                    >
+                      <UiIcon name="edit" className="h-3.5 w-3.5" />
+                      Personalize sidebar
                     </button>
-                  ))}
-                  {moreTools.length > 0 && <div className="my-1.5 h-px bg-[#e0e2e9]" />}
-                  <button type="button" onClick={() => { setMoreOpen(false); setCustomizeOpen(true) }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left hover:bg-[#f6f7fb]">
-                    <UiIcon name="settings" className="h-[18px] w-[18px] text-[#676879]" />
-                    <span className="text-sm text-[#171d39]">Customize menu</span>
-                  </button>
+                  </div>
+                  {moreTools.length ? (
+                    <div className="grid grid-cols-2 gap-1.5 p-1">
+                      {moreTools.map(tool => (
+                        <button
+                          key={tool.id}
+                          type="button"
+                          onClick={() => navigate(tool.to)}
+                          className={`flex flex-col items-start gap-1.5 rounded-xl border p-3 text-left transition hover:border-[#9ddedc] hover:bg-[#f8fcfc] ${activeSection === tool.id ? 'border-[#9ddedc] bg-[#f8fcfc]' : 'border-[#eef0f6]'}`}
+                        >
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e6f4f7] text-[#007f9b]">
+                            <UiIcon name={tool.icon} className="h-4 w-4" />
+                          </span>
+                          <span className="text-[13px] font-semibold text-[#171d39]">{tool.id === 'modules' ? 'Apps & modules' : tool.label}</span>
+                          <span className="text-[11px] leading-snug text-[#9aaac8]">{tool.hint}</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="px-3 py-4 text-center text-[13px] text-[#687699]">Every tool is already on your sidebar.</p>
+                  )}
                 </RailPopover>
               )}
             </div>
@@ -612,7 +651,7 @@ export default function AppShell() {
         </nav>
 
         {/* ── Main content card ─────────────────────────────────────────── */}
-        <div className="flex flex-1 overflow-hidden p-3">
+        <div className="flex flex-1 overflow-hidden py-3 pr-3">
           <div className="flex flex-1 flex-col overflow-hidden rounded-xl border border-[#e0e2e9] bg-white shadow-sm">
 
             {/* Inner top bar: workspace info + trial */}
@@ -625,12 +664,13 @@ export default function AppShell() {
               </div>
               <button
                 type="button"
-                onClick={toggleFavorite}
-                title={isFavorite ? 'Remove from favorites' : 'Add this page to favorites'}
-                className={`flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[12px] font-semibold transition ${isFavorite ? 'border-[#f5d18a] bg-[#fff8e8] text-[#a8741e]' : 'border-[#e0e2e9] text-[#676879] hover:bg-[#f6f7fb]'}`}
+                onClick={toggleShortcut}
+                data-section-label={activeMeta?.label || 'Workspace'}
+                title={isSaved ? 'Remove from your shortcuts' : 'Save this page to your shortcuts'}
+                className={`flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-[12px] font-semibold transition ${isSaved ? 'border-[#9ddedc] bg-[#e6f4f7] text-[#007f9b]' : 'border-[#e0e2e9] text-[#676879] hover:bg-[#f6f7fb]'}`}
               >
-                <UiIcon name="star" className="h-4 w-4" fill={isFavorite ? '#f5a524' : 'none'} />
-                {isFavorite ? 'Favorited' : 'Favorite'}
+                <UiIcon name="bookmark" className="h-4 w-4" fill={isSaved ? '#007f9b' : 'none'} />
+                {isSaved ? 'Saved' : 'Save shortcut'}
               </button>
             </div>
 
@@ -680,11 +720,11 @@ export default function AppShell() {
         </div>
       </div>
 
-      {customizeOpen && (
-        <CustomizeMenu
+      {personalizeOpen && (
+        <PersonalizeSidebar
           pinned={pinned}
-          onClose={() => setCustomizeOpen(false)}
-          onSave={(next) => { savePinned(next); setCustomizeOpen(false) }}
+          onClose={() => setPersonalizeOpen(false)}
+          onSave={(next) => { savePinned(next); setPersonalizeOpen(false) }}
         />
       )}
 
@@ -721,8 +761,8 @@ function RailButton({ icon, label, active, badge, onClick }) {
   )
 }
 
-/* Flyout beside the rail button; opens upward when there isn't room below (like monday's More menu). */
-function RailPopover({ title, children }) {
+/* Flyout beside the rail button; opens upward when there isn't room below. */
+function RailPopover({ width = 256, children }) {
   const ref = useRef(null)
   const [top, setTop] = useState(null)
   useLayoutEffect(() => {
@@ -736,18 +776,48 @@ function RailPopover({ title, children }) {
   return (
     <div
       ref={ref}
-      style={{ top: top ?? 0, visibility: top == null ? 'hidden' : 'visible' }}
-      className="fixed left-[86px] z-50 w-64 rounded-2xl border border-[#e0e2e9] bg-white p-1.5 shadow-xl"
+      style={{ top: top ?? 0, width, visibility: top == null ? 'hidden' : 'visible' }}
+      className="fixed left-[86px] z-50 rounded-2xl border border-[#e0e2e9] bg-white p-1.5 shadow-xl"
     >
-      {title && <p className="px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[#9aaac8]">{title}</p>}
       {children}
     </div>
   )
 }
 
-function CustomizeMenu({ pinned, onClose, onSave }) {
+function ShortcutGroup({ title, empty, children }) {
+  const items = Array.isArray(children) ? children.filter(Boolean) : children ? [children] : []
+  return (
+    <div className="px-1 pb-1.5">
+      <p className="m-0 px-2 pb-1 pt-1.5 text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#9aaac8]">{title}</p>
+      {items.length ? items : <p className="m-0 px-2 py-2 text-[12px] text-[#9aaac8]">{empty}</p>}
+    </div>
+  )
+}
+
+function ShortcutRow({ item, icon, onOpen, onRemove }) {
+  return (
+    <div className="group/sc flex items-center rounded-lg hover:bg-[#f6f7fb]">
+      <button type="button" onClick={onOpen} className="flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1.5 text-left">
+        <UiIcon name={icon} className="h-4 w-4 shrink-0 text-[#007f9b]" />
+        <span className="min-w-0">
+          <span className="block truncate text-[13px] text-[#171d39]">{item.label}</span>
+          <span className="block truncate text-[11px] text-[#9aaac8]">{item.section}</span>
+        </span>
+      </button>
+      {onRemove && (
+        <button type="button" onClick={onRemove} className="mr-1 rounded-md p-1.5 text-[#9aaac8] opacity-0 hover:bg-white hover:text-[#171d39] group-hover/sc:opacity-100" aria-label={`Remove ${item.label} from shortcuts`}>
+          <UiIcon name="x" className="h-3.5 w-3.5" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+/* Pick which tools sit on the rail: "On your sidebar" (ordered) vs "Available in Tools". */
+function PersonalizeSidebar({ pinned, onClose, onSave }) {
   const [draft, setDraft] = useState(pinned)
-  const toggle = (id) => setDraft(d => (d.includes(id) ? d.filter(x => x !== id) : [...d, id]))
+  const add = (id) => setDraft(d => [...d, id])
+  const remove = (id) => setDraft(d => d.filter(x => x !== id))
   const move = (id, dir) => setDraft(d => {
     const i = d.indexOf(id)
     const j = i + dir
@@ -756,55 +826,74 @@ function CustomizeMenu({ pinned, onClose, onSave }) {
     ;[next[i], next[j]] = [next[j], next[i]]
     return next
   })
+  const onRail = draft.map(id => CORE_BY_ID[id]).filter(Boolean)
+  const available = CORE_TOOLS.filter(t => !draft.includes(t.id))
+  const name = (t) => (t.id === 'modules' ? 'Apps & modules' : t.label)
+
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[#151940]/40 px-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <div className="border-b border-[#f0f1f7] px-5 py-4">
-          <h2 className="m-0 text-lg font-bold text-[#171d39]">Customize menu</h2>
-          <p className="m-0 mt-0.5 text-[13px] text-[#687699]">Choose which tools sit on your left menu. The rest stay under More. Your modules always show.</p>
+      <div role="dialog" aria-modal="true" className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div className="flex items-start justify-between gap-3 border-b border-[#f0f1f7] px-6 py-4">
+          <div>
+            <h2 className="m-0 text-lg font-bold text-[#171d39]">Personalize sidebar</h2>
+            <p className="m-0 mt-0.5 text-[13px] text-[#687699]">Keep the tools you use most one click away. Anything you remove stays available under Tools. Your modules always show.</p>
+          </div>
+          <button type="button" onClick={onClose} className="rounded-lg p-1.5 text-[#9aaac8] hover:bg-[#f6f7fb] hover:text-[#171d39]" aria-label="Close">
+            <UiIcon name="x" className="h-4 w-4" />
+          </button>
         </div>
-        <ul className="m-0 max-h-[60vh] list-none overflow-y-auto p-2">
-          {[...draft.map(id => CORE_BY_ID[id]).filter(Boolean), ...CORE_TOOLS.filter(t => !draft.includes(t.id))].map(tool => {
-            const on = draft.includes(tool.id)
-            const idx = draft.indexOf(tool.id)
-            return (
-              <li key={tool.id} className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-[#f6f7fb]">
-                <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${on ? 'bg-[#e6f4f7] text-[#007f9b]' : 'bg-[#f1f2f7] text-[#9aaac8]'}`}>
-                  <UiIcon name={tool.icon} className="h-[18px] w-[18px]" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold text-[#171d39]">{tool.id === 'modules' ? 'Apps & modules' : tool.label}</span>
-                  <span className="block text-[12px] text-[#9aaac8]">{tool.hint}</span>
-                </span>
-                {on && (
-                  <span className="flex">
-                    <button type="button" onClick={() => move(tool.id, -1)} disabled={idx === 0} className="rounded-md p-1 text-[#9aaac8] hover:bg-white hover:text-[#171d39] disabled:opacity-30" aria-label={`Move ${tool.label} up`}>
-                      <UiIcon name="chevronUp" className="h-4 w-4" />
-                    </button>
-                    <button type="button" onClick={() => move(tool.id, 1)} disabled={idx === draft.length - 1} className="rounded-md p-1 text-[#9aaac8] hover:bg-white hover:text-[#171d39] disabled:opacity-30" aria-label={`Move ${tool.label} down`}>
-                      <UiIcon name="chevronDown" className="h-4 w-4" />
-                    </button>
+
+        <div className="grid min-h-0 flex-1 gap-4 overflow-y-auto p-5 md:grid-cols-2">
+          <section className="rounded-xl bg-[#f6f7fb] p-3">
+            <p className="m-0 mb-2 flex items-center justify-between text-[12px] font-bold uppercase tracking-[0.1em] text-[#687699]">
+              On your sidebar <span className="rounded-full bg-white px-2 text-[11px]">{onRail.length}</span>
+            </p>
+            <ol className="m-0 list-none space-y-1.5 p-0">
+              {onRail.map((tool, i) => (
+                <li key={tool.id} className="flex items-center gap-2 rounded-lg border border-[#e0e2e9] bg-white px-2.5 py-2">
+                  <span className="w-4 text-center text-[11px] font-bold text-[#9aaac8]">{i + 1}</span>
+                  <UiIcon name={tool.icon} className="h-4 w-4 text-[#007f9b]" />
+                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-[#171d39]">{name(tool)}</span>
+                  <button type="button" onClick={() => move(tool.id, -1)} disabled={i === 0} className="rounded p-1 text-[#9aaac8] hover:text-[#171d39] disabled:opacity-30" aria-label={`Move ${tool.label} up`}>
+                    <UiIcon name="chevronUp" className="h-3.5 w-3.5" />
+                  </button>
+                  <button type="button" onClick={() => move(tool.id, 1)} disabled={i === onRail.length - 1} className="rounded p-1 text-[#9aaac8] hover:text-[#171d39] disabled:opacity-30" aria-label={`Move ${tool.label} down`}>
+                    <UiIcon name="chevronDown" className="h-3.5 w-3.5" />
+                  </button>
+                  <button type="button" onClick={() => remove(tool.id)} className="rounded p-1 text-[#9aaac8] hover:text-[#C4321F]" aria-label={`Remove ${tool.label} from sidebar`}>
+                    <UiIcon name="x" className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              ))}
+              {!onRail.length && <li className="px-2 py-4 text-center text-[12.5px] text-[#9aaac8]">Nothing pinned — everything lives under Tools.</li>}
+            </ol>
+          </section>
+
+          <section className="p-1">
+            <p className="m-0 mb-2 text-[12px] font-bold uppercase tracking-[0.1em] text-[#687699]">Available in Tools</p>
+            <ul className="m-0 list-none space-y-1.5 p-0">
+              {available.map(tool => (
+                <li key={tool.id} className="flex items-center gap-2.5 rounded-lg border border-dashed border-[#d5d8e4] px-2.5 py-2">
+                  <UiIcon name={tool.icon} className="h-4 w-4 text-[#9aaac8]" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[13px] font-semibold text-[#171d39]">{name(tool)}</span>
+                    <span className="block truncate text-[11px] text-[#9aaac8]">{tool.hint}</span>
                   </span>
-                )}
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={on}
-                  aria-label={`Show ${tool.label} on the menu`}
-                  onClick={() => toggle(tool.id)}
-                  className={`relative h-5 w-9 shrink-0 rounded-full transition ${on ? 'bg-[#007f9b]' : 'bg-[#d5d8e4]'}`}
-                >
-                  <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${on ? 'left-[18px]' : 'left-0.5'}`} />
-                </button>
-              </li>
-            )
-          })}
-        </ul>
-        <div className="flex items-center justify-between gap-2 border-t border-[#f0f1f7] px-5 py-3">
-          <button type="button" onClick={() => setDraft(DEFAULT_PINNED)} className="text-[13px] font-semibold text-[#687699] hover:text-[#171d39]">Reset to default</button>
+                  <button type="button" onClick={() => add(tool.id)} className="inline-flex items-center gap-1 rounded-md border border-[#9ddedc] px-2 py-1 text-[11.5px] font-semibold text-[#007f9b] hover:bg-[#e6f4f7]">
+                    <UiIcon name="plus" className="h-3 w-3" /> Pin
+                  </button>
+                </li>
+              ))}
+              {!available.length && <li className="px-2 py-4 text-center text-[12.5px] text-[#9aaac8]">All tools are pinned.</li>}
+            </ul>
+          </section>
+        </div>
+
+        <div className="flex items-center justify-between gap-2 border-t border-[#f0f1f7] px-6 py-3">
+          <button type="button" onClick={() => setDraft(DEFAULT_PINNED)} className="text-[13px] font-semibold text-[#687699] hover:text-[#171d39]">Restore defaults</button>
           <div className="flex gap-2">
             <button type="button" onClick={onClose} className="rounded-lg border border-[#d5d8e4] px-4 py-2 text-sm font-semibold text-[#171d39] hover:bg-[#f6f7fb]">Cancel</button>
-            <button type="button" onClick={() => onSave(draft)} className="rounded-lg bg-[#007f9b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#006a82]">Save</button>
+            <button type="button" onClick={() => onSave(draft)} className="rounded-lg bg-[#007f9b] px-4 py-2 text-sm font-semibold text-white hover:bg-[#006a82]">Save sidebar</button>
           </div>
         </div>
       </div>
