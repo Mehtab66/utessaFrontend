@@ -39,6 +39,12 @@ import LoginsPage from '../features/platform/LoginsPage'
 import { serviceAllowed } from '../shared/security/roles'
 import { useAuth } from '../shared/auth/AuthContext'
 import PracticeSetupPage from '../features/modules/PracticeSetupPage'
+import MyWorkPage from '../features/workspace/MyWorkPage'
+import CalendarPage from '../features/workspace/CalendarPage'
+import NotesPage from '../features/workspace/NotesPage'
+import TeamBoardPage from '../features/workspace/TeamBoardPage'
+import TeamPage from '../features/workspace/TeamPage'
+import ModulesPage from '../features/workspace/ModulesPage'
 
 function FeatureRoute({ permission, element }) {
   const { user } = useAuth()
@@ -74,6 +80,13 @@ export default function AppRouter() {
           <Route path="/app" element={<AppShell />}>
             <Route index element={<HomePage />} />
             <Route path="inbox" element={<InboxPage />} />
+            {/* Always-on workspace — available whatever modules the practice picked */}
+            <Route path="my-work" element={<MyWorkPage />} />
+            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="notes" element={<NotesPage />} />
+            <Route path="board" element={<TeamBoardPage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="modules" element={<ModulesPage />} />
             <Route path="providers" element={<FeatureRoute permission="creds" element={<ProvidersPage />} />} />
             <Route path="staff" element={<FeatureRoute permission="staff" element={<StaffPage />} />} />
             <Route path="vendors" element={<FeatureRoute permission="vendors" element={<VendorsPage />} />} />

@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Icon from '../../shared/ui/Icon'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../shared/auth/AuthContext'
 import { permissionsFor } from '../../shared/security/roles'
 import { LEAD_SOURCES, LEAD_STATUSES, OPEN_LEAD_STATUSES, PRIORITIES, crm, labelOf } from './crmApi'
@@ -45,6 +45,16 @@ export default function PatientListPage({ mode = 'LEAD' }) {
   const { data, loading, error, reload } = useAsync(() => crm.patients(params), [mode, status, priority, source, owner, followUp, debouncedQ])
   const rows = data || []
   const editors = useCrmEditors({ toast, onSaved: (kind, res) => (kind === 'patient' && res?.id && !rows.some((r) => r.id === res.id) ? navigate(`/app/crm/patients/${res.id}`) : reload()) })
+
+  // "New → Patient lead" from the top bar lands here with ?new=1
+  const location = useLocation()
+  useEffect(() => {
+    if (new URLSearchParams(location.search).get('new') === '1') {
+      editors.open.patient(null, isLead ? {} : { lifecycleStage: 'PATIENT', leadStatus: 'CONVERTED' })
+      navigate(location.pathname, { replace: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search])
 
   const counts = useMemo(() => {
     const c = {}

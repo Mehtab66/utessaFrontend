@@ -92,6 +92,94 @@ function resolveEnabledServices(enabledServices) {
   return normalized
 }
 
+/**
+ * Module catalog — the four products a practice can pick at signup.
+ * The sidebar, home dashboard and the Apps & modules page all read from here,
+ * so a module the practice did not choose never shows up anywhere.
+ */
+export const MODULES = [
+  {
+    id: 'crm',
+    name: 'CRM',
+    fullName: 'Patient CRM',
+    icon: 'heartUser',
+    home: '/app/crm',
+    accent: '#3BC4CA',
+    tagline: 'Leads, calls, referrals, appointments and follow-ups in one patient record.',
+    features: ['Caller-ID screen pop', 'Lead → patient pipeline', 'Referral tracking', 'Recall & no-show recovery'],
+  },
+  {
+    id: 'ops',
+    name: 'Operations',
+    fullName: 'Practice operations',
+    icon: 'building',
+    home: '/app/providers',
+    accent: '#8B93F0',
+    tagline: 'Providers, credentials, staff, vendors with BAAs and the document vault.',
+    features: ['License expiry alerts', 'Staff onboarding', 'Vendor BAA tracking', 'Document vault'],
+  },
+  {
+    id: 'mkt',
+    name: 'Marketing',
+    fullName: 'Digital marketing',
+    icon: 'megaphone',
+    home: '/app/provider-leads',
+    accent: '#F5A524',
+    tagline: 'Provider outreach, email campaigns, social posts and AI agents.',
+    features: ['CMS provider search', 'Email campaigns', 'Social scheduling', 'AI outreach agents'],
+  },
+  {
+    id: 'tc',
+    name: 'Time Clock',
+    fullName: 'Time clock',
+    icon: 'clock',
+    home: '/app/timeclock',
+    accent: '#34C38F',
+    tagline: 'Clock in/out, timesheets, PTO and payroll export.',
+    features: ['Web & mobile punch', 'Timesheet approval', 'PTO requests', 'Payroll export'],
+  },
+]
+
+export const MODULE_BY_ID = Object.fromEntries(MODULES.map((m) => [m.id, m]))
+
+/** NAV_SECTIONS title → module id */
+export const SECTION_MODULE = {
+  CRM: 'crm',
+  Operations: 'ops',
+  'Marketing & outreach': 'mkt',
+  'Time clock': 'tc',
+}
+
+/** Module ids this practice turned on (falls back to all only when the server sent nothing). */
+export function enabledModuleIds(enabledServices) {
+  const on = new Set(resolveEnabledServices(enabledServices))
+  // Catalog order (CRM, Operations, Marketing, Time clock), not the server's unordered set
+  return MODULES.map((m) => m.id).filter((id) => on.has(id))
+}
+
+export function isModuleEnabled(enabledServices, moduleId) {
+  return enabledModuleIds(enabledServices).includes(moduleId)
+}
+
+/** Can this role turn modules on/off? Mirrors backend RoleGuard "settings". */
+export function canManageModules(role) {
+  return ['OWNER', 'ADMIN'].includes(normalizeRole(role))
+}
+
+/**
+ * Always-on workspace — every practice gets these, whatever modules were chosen
+ * (the same idea as HubSpot / monday / Zoho's core workspace tools).
+ */
+export const WORKSPACE_NAV = [
+  { id: 'home', label: 'Home', to: '/app', icon: 'home', end: true },
+  { id: 'my-work', label: 'My work', to: '/app/my-work', icon: 'checkSquare' },
+  { id: 'inbox', label: 'Inbox', to: '/app/inbox', icon: 'mail' },
+  { id: 'calendar', label: 'Calendar', to: '/app/calendar', icon: 'calendar' },
+  { id: 'notes', label: 'Notes', to: '/app/notes', icon: 'note' },
+  { id: 'board', label: 'Team board', to: '/app/board', icon: 'board' },
+  { id: 'team', label: 'Team', to: '/app/team', icon: 'users' },
+]
+
 /** Full practice sidebar — aligned with Practice-CRM wireframe */
 export const NAV_SECTIONS = [
   {

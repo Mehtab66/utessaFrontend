@@ -67,7 +67,7 @@ export default function WelcomePage() {
           <div className="welcome-header">
             <p className="welcome-kicker">Almost there</p>
             <h1>Welcome, <span>{firstName}</span></h1>
-            <p className="welcome-subtitle">Three quick questions so we can tailor your practice checklist. Everything stays unlocked either way.</p>
+            <p className="welcome-subtitle">Pick the modules you want — your sidebar and dashboard will show only those. You can add more any time from Apps &amp; modules.</p>
           </div>
 
           <div className="welcome-form-content">
@@ -99,7 +99,7 @@ export default function WelcomePage() {
             </div>
 
             <p className="welcome-options-label">
-              What do you want to set up first? <span>(pick any)</span>
+              Which modules do you want? <span>(pick one or more)</span>
             </p>
 
             <div className="welcome-service-grid">
@@ -121,6 +121,9 @@ export default function WelcomePage() {
               })}
             </div>
 
+            {selected.length === 0 && (
+              <p className="welcome-error" role="alert">Pick at least one module to continue.</p>
+            )}
             {error && (
               <p className="welcome-error" role="alert">{error}</p>
             )}
@@ -138,7 +141,7 @@ export default function WelcomePage() {
                 type="button"
                 className="auth-primary-btn welcome-submit"
                 onClick={() => finish(false)}
-                disabled={submitting}
+                disabled={submitting || selected.length === 0}
               >
                 {submitting ? 'Opening dashboard…' : 'Go to dashboard'}
               </button>
@@ -161,7 +164,6 @@ export default function WelcomePage() {
             ))}
           </div>
         </div>
-        <img src="/login.webp" alt="" className="auth-visual-image" />
       </aside>
 
       <style>{`
@@ -458,7 +460,7 @@ export default function WelcomePage() {
           overflow: hidden;
           border-radius: 24px;
           min-height: 560px;
-          background: #17242F url('/Connected Teal Network with Central Team.png') center/cover no-repeat;
+          background: #17242F;
           box-shadow:
             inset 0 80px 90px -50px rgba(3,10,17,0.82),
             inset 0 -120px 150px rgba(2,8,14,0.82),
