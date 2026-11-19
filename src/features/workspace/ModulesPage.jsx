@@ -74,9 +74,9 @@ export default function ModulesPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="m-0 text-[18px] font-bold text-navy">{m.fullName}</h2>
                       {on ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-success-50 px-2 py-0.5 text-[11px] font-bold text-success-600"><Icon name="check" className="h-3 w-3" strokeWidth={3} /> Active</span>
+                        <span className="inline-flex items-center gap-1 rounded-md bg-success-50 px-2 py-0.5 text-[11px] font-bold text-success-600"><Icon name="check" className="h-3 w-3" strokeWidth={3} /> Active</span>
                       ) : (
-                        <span className="rounded-full bg-mist-50 px-2 py-0.5 text-[11px] font-bold text-mist-500">Not added</span>
+                        <span className="rounded-md bg-mist-50 px-2 py-0.5 text-[11px] font-bold text-mist-500">Not added</span>
                       )}
                     </div>
                     <p className="m-0 mt-1 text-[13.5px] text-mist-600">{m.tagline}</p>

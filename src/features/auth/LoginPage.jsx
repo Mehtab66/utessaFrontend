@@ -310,7 +310,7 @@ export default function LoginPage() {
           height: 52px;
           margin-top: 14px;
           border: 0;
-          border-radius: 11px;
+          border-radius: 8px;
           background: #1B1F4B;
           color: white;
           font-family: var(--font-sans);

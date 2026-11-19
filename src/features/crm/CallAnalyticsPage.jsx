@@ -130,8 +130,8 @@ export default function CallAnalyticsPage() {
                         <span className="font-semibold text-navy">{f.label}</span>
                         <span className="font-mono text-navy">{f.count}{i > 0 && <span className="ml-2 text-mist-500">{f.pctOfPrevious}%</span>}</span>
                       </div>
-                      <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-mist-50">
-                        <i className="block h-full rounded-full bg-brand-600" style={{ width: `${(f.count / base) * 100}%`, opacity: 1 - i * 0.15 }} />
+                      <div className="mt-1 h-2.5 overflow-hidden rounded-sm bg-mist-50">
+                        <i className="block h-full rounded-sm bg-brand-600" style={{ width: `${(f.count / base) * 100}%`, opacity: 1 - i * 0.15 }} />
                       </div>
                     </div>
                   )
@@ -144,7 +144,7 @@ export default function CallAnalyticsPage() {
                   {d.reasons.map((r) => (
                     <div key={r.label} className="grid grid-cols-[minmax(0,1.3fr)_minmax(80px,1.4fr)_auto] items-center gap-2.5 text-[13px]">
                       <span className="truncate font-medium text-navy" title={r.label}>{r.label}</span>
-                      <span className="h-2.5 overflow-hidden rounded-full bg-mist-50"><i className="block h-full rounded-full bg-iris-700" style={{ width: `${r.pct}%` }} /></span>
+                      <span className="h-2.5 overflow-hidden rounded-sm bg-mist-50"><i className="block h-full rounded-sm bg-iris-700" style={{ width: `${r.pct}%` }} /></span>
                       <span className="font-mono text-navy">{r.count} · {r.pct}%</span>
                     </div>
                   ))}
@@ -178,7 +178,7 @@ export default function CallAnalyticsPage() {
               </table>
             </div>
             <div className="mt-2 flex items-center gap-2 text-[11.5px] text-mist-600">
-              Fewer <span className="h-2.5 w-24 rounded-full" style={{ background: 'linear-gradient(90deg,#F4F5FA,#1E8E94)' }} /> More calls per hour
+              Fewer <span className="h-2.5 w-24 rounded-sm" style={{ background: 'linear-gradient(90deg,#F4F5FA,#1E8E94)' }} /> More calls per hour
             </div>
           </Card>
 

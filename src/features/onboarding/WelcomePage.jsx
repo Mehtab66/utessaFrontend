@@ -437,7 +437,7 @@ export default function WelcomePage() {
           width: 100%;
           height: 52px;
           border: 0;
-          border-radius: 11px;
+          border-radius: 8px;
           background: #1B1F4B;
           color: white;
           font-family: var(--font-sans);

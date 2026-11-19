@@ -11,6 +11,7 @@ import {
   Alert, Button, ConfirmModal, DataTable, EnumPill, FilterSelect, Kpi, PageHeader, Pill, PromptModal, SearchInput,
   Tabs, Toolbar, fmtDate, fmtRelative, useAsync, useCrmRefs, useDebounced, useToast,
 } from './ui'
+import Select from '../../shared/ui/Select'
 
 export default function ReferralsPage() {
   const [params, setParams] = useSearchParams()
@@ -119,15 +120,15 @@ function ReferralQueue({ state, editors, toast }) {
             label: 'Status',
             sortValue: (r) => REFERRAL_STATUSES.findIndex((s) => s.value === r.status),
             render: (r) => (
-              <select
+              <Select
                 value={r.status}
                 onClick={(e) => e.stopPropagation()}
                 onChange={(e) => changeStatus(r, e.target.value)}
-                className="rounded-full border border-mist-200 bg-white px-2 py-1 text-[12px] font-semibold text-navy"
+                className="rounded-lg border border-mist-200 bg-white px-2 py-1 text-[12px] font-semibold text-navy"
                 aria-label="Change referral status"
               >
                 {REFERRAL_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-              </select>
+              </Select>
             ),
           },
           { key: 'insurancePayer', label: 'Payer / auth', render: (r) => [r.insurancePayer, r.authorizationNumber && `#${r.authorizationNumber}`].filter(Boolean).join(' · ') || '—' },

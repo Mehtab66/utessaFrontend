@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Icon from '../../shared/ui/Icon'
 import { workspace } from './workspaceApi'
+import Select from '../../shared/ui/Select'
 
 /* Shared building blocks for the always-on workspace pages. */
 
@@ -29,10 +30,10 @@ export function SelectField({ label, value, onChange, options, className = '', e
   return (
     <label className={`block text-[12.5px] font-semibold text-navy ${className}`}>
       {label}
-      <select className={INPUT} value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
+      <Select className={INPUT} value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
         {emptyLabel && <option value="">{emptyLabel}</option>}
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
+      </Select>
     </label>
   )
 }
@@ -44,8 +45,8 @@ export function Toggle({ checked, onChange, label, hint }) {
         <span className="block text-[13px] font-semibold text-navy">{label}</span>
         {hint && <span className="block text-[11.5px] text-mist-500">{hint}</span>}
       </span>
-      <span className={`relative h-5 w-9 shrink-0 rounded-full transition ${checked ? 'bg-brand-600' : 'bg-mist-200'}`}>
-        <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${checked ? 'left-[18px]' : 'left-0.5'}`} />
+      <span className={`relative h-5 w-9 shrink-0 rounded-md transition ${checked ? 'bg-brand-600' : 'bg-mist-200'}`}>
+        <span className={`absolute top-0.5 h-4 w-4 rounded-[4px] bg-white shadow transition-all ${checked ? 'left-[18px]' : 'left-0.5'}`} />
       </span>
     </button>
   )
@@ -100,12 +101,12 @@ export function Chip({ active, onClick, children, count }) {
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition ${
+      className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12.5px] font-semibold transition ${
         active ? 'border-ink-950 bg-ink-950 text-white' : 'border-mist-200 bg-white text-mist-600 hover:border-mist-300'
       }`}
     >
       {children}
-      {count != null && <span className={`rounded-full px-1.5 text-[11px] ${active ? 'bg-white/20' : 'bg-mist-50'}`}>{count}</span>}
+      {count != null && <span className={`rounded-md px-1.5 text-[11px] ${active ? 'bg-white/20' : 'bg-mist-50'}`}>{count}</span>}
     </button>
   )
 }

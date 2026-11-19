@@ -49,7 +49,7 @@ export function StatusPill({ children, tone = 'mute' }) {
     trial: 'bg-sun-50 text-brand-950',
   }
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-semibold ${tones[tone] || tones.mute}`}>
+    <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-[12px] font-semibold ${tones[tone] || tones.mute}`}>
       {children}
     </span>
   )
@@ -70,9 +70,9 @@ export function Bars({ rows, colors = ['#1E8E94', '#EDFBFC', '#FFD23F', '#0A2E32
       {rows.map((row, i) => (
         <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_minmax(80px,1.4fr)_auto] items-center gap-2 text-sm">
           <span className="truncate font-medium text-brand-950">{row.label}</span>
-          <span className="h-2.5 overflow-hidden rounded-full bg-mist-50">
+          <span className="h-2.5 overflow-hidden rounded-sm bg-mist-50">
             <i
-              className="block h-full rounded-full"
+              className="block h-full rounded-sm"
               style={{
                 width: `${Math.max(row.value ? 4 : 0, (row.value / max) * 100)}%`,
                 background: colors[i % colors.length],

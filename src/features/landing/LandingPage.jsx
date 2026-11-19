@@ -18,7 +18,7 @@ export default function LandingPage() {
         </div>
         <Link
           to="/login"
-          className="rounded-xl px-4 py-2 text-sm font-semibold text-lcyan transition hover:text-white"
+          className="rounded-lg px-4 py-2 text-sm font-semibold text-lcyan transition hover:text-white"
         >
           Sign in
         </Link>
@@ -38,13 +38,13 @@ export default function LandingPage() {
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link
               to="/signup"
-              className="rounded-xl bg-yellow px-6 py-3.5 text-[15px] font-bold text-navy transition hover:brightness-105"
+              className="rounded-lg bg-yellow px-6 py-3.5 text-[15px] font-bold text-navy transition hover:brightness-105"
             >
               Start free 14-day trial
             </Link>
             <Link
               to="/login"
-              className="rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-[15px] font-bold text-white backdrop-blur transition hover:bg-white/10"
+              className="rounded-lg border border-white/25 bg-white/5 px-6 py-3.5 text-[15px] font-bold text-white backdrop-blur transition hover:bg-white/10"
             >
               Sign in
             </Link>

@@ -106,12 +106,12 @@ export default function PracticeSetupPage() {
                   <div className="mt-1 text-sm leading-relaxed text-mist-700">{module.description}</div>
                 </div>
                 <span
-                  className={`inline-flex h-6 w-11 items-center rounded-full border transition ${
+                  className={`inline-flex h-6 w-11 items-center rounded-md border transition ${
                     active ? 'border-brand-600 bg-brand-600' : 'border-mist-300 bg-mist-100'
                   }`}
                 >
                   <span
-                    className={`ml-1 h-4 w-4 rounded-full bg-white transition ${active ? 'translate-x-4' : 'translate-x-0'}`}
+                    className={`ml-1 h-4 w-4 rounded-[4px] bg-white transition ${active ? 'translate-x-4' : 'translate-x-0'}`}
                   />
                 </span>
               </div>
@@ -136,7 +136,7 @@ export default function PracticeSetupPage() {
         <button
           type="button"
           onClick={() => setEnabled(['crm', 'ops', 'mkt', 'tc'])}
-          className="rounded-xl border border-mist-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-mist-25"
+          className="rounded-lg border border-mist-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-mist-25"
         >
           Add all
         </button>
@@ -144,7 +144,7 @@ export default function PracticeSetupPage() {
         <button
           type="button"
           onClick={() => setEnabled([])}
-          className="rounded-xl border border-mist-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-mist-25"
+          className="rounded-lg border border-mist-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink-950 hover:bg-mist-25"
         >
           Remove all
         </button>
@@ -153,7 +153,7 @@ export default function PracticeSetupPage() {
           type="button"
           onClick={save}
           disabled={saving || loading}
-          className="rounded-xl bg-ink-950 px-5 py-2.5 text-sm font-bold text-white hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-lg bg-ink-950 px-5 py-2.5 text-sm font-bold text-white hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving ? 'Saving…' : 'Save modules'}
         </button>

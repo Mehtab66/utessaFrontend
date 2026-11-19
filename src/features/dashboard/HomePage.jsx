@@ -134,7 +134,7 @@ export default function HomePage() {
           <h1 className="m-0 mt-1 text-[30px] font-semibold tracking-[-0.02em] text-ink-950">{greeting()}, {firstName}</h1>
           <div className="mt-3 flex flex-wrap gap-2">
             {myModules.map((m) => (
-              <Link key={m.id} to={m.home} className="inline-flex items-center gap-1.5 rounded-full border border-mist-200 bg-white px-3 py-1 text-[12px] font-semibold text-mist-600 no-underline transition hover:border-brand-200">
+              <Link key={m.id} to={m.home} className="inline-flex items-center gap-1.5 rounded-lg border border-mist-200 bg-white px-3 py-1 text-[12px] font-semibold text-mist-600 no-underline transition hover:border-brand-200">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: m.accent }} />
                 {m.name}
               </Link>
@@ -150,7 +150,7 @@ export default function HomePage() {
           <button type="button" onClick={() => setEditing(true)} className="flex h-10 items-center gap-2 rounded-lg border border-mist-200 bg-white px-3.5 text-[14px] font-medium text-ink-950 transition hover:bg-mist-50">
             <Icon name="edit" className="h-4 w-4" />
             Edit dashboard
-            {hiddenCount > 0 && <span className="rounded-full bg-mist-50 px-1.5 text-[11px] text-mist-500">{hiddenCount} hidden</span>}
+            {hiddenCount > 0 && <span className="rounded-md bg-mist-50 px-1.5 text-[11px] text-mist-500">{hiddenCount} hidden</span>}
           </button>
         )}
       </div>
@@ -256,7 +256,7 @@ export default function HomePage() {
         <div className="grid gap-5 lg:grid-cols-2">
           {/* Needs attention */}
           {show('attention') && (
-            <Widget {...wprops('attention')} icon="alert" title="Needs attention" right={<span className="rounded-full bg-brand-50 px-2.5 py-1 text-[12px] font-semibold text-brand-700">Live</span>}>
+            <Widget {...wprops('attention')} icon="alert" title="Needs attention" right={<span className="rounded-md bg-brand-50 px-2.5 py-1 text-[12px] font-semibold text-brand-700">Live</span>}>
               <ul className="m-0 list-none p-0">
                 {attention.map((item) => (
                   <li key={item.title} className="flex gap-3 border-b border-info-50 py-3 last:border-0">

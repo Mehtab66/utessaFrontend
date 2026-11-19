@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Select from './Select'
 
 export function ResourceWorkspace({
   title,
@@ -95,7 +96,7 @@ export function ResourceWorkspace({
           <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="m-0 text-[24px] font-semibold tracking-[-0.02em] text-ink-950">{title}</h1>
             {!loading && (
-              <span className="rounded-full bg-mist-100 px-2.5 py-0.5 text-[12.5px] font-medium text-mist-700">{rows.length}</span>
+              <span className="rounded-md bg-mist-100 px-2.5 py-0.5 text-[12.5px] font-medium text-mist-700">{rows.length}</span>
             )}
           </div>
           <p className="mt-1 max-w-3xl text-[13.5px] text-mist-600">{subtitle}</p>
@@ -325,7 +326,7 @@ function Field({ field, value, onChange }) {
     >
       {field.label}
       {field.type === 'select' ? (
-        <select
+        <Select
           className="mt-1 w-full rounded-lg border border-mist-300 bg-white px-3 py-2.5 text-sm font-normal"
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
@@ -334,7 +335,7 @@ function Field({ field, value, onChange }) {
           {(field.options || []).map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
-        </select>
+        </Select>
       ) : field.type === 'textarea' ? (
         <textarea
           className="mt-1 w-full rounded-lg border border-mist-300 bg-white px-3 py-2.5 text-sm font-normal"
@@ -401,7 +402,7 @@ export function StatusPill({ children, tone = 'gray' }) {
     teal: 'bg-brand-50 text-brand-700',
   }
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-1 text-[12px] font-semibold ${tones[tone] || tones.gray}`}>
+    <span className={`inline-flex rounded-md px-2.5 py-1 text-[12px] font-semibold ${tones[tone] || tones.gray}`}>
       {children}
     </span>
   )

@@ -235,7 +235,7 @@ export default function PlatformHome() {
       <PageHeader
         title="Utessa at a glance"
         subtitle="Totals across every organization. Patient records, leads and documents never appear in this console."
-        right={<span className="rounded-full bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-950">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
+        right={<span className="rounded-lg bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-950">{asOf ? `As of ${asOf}` : loading ? 'Loading…' : ''}</span>}
       />
 
       {error && (

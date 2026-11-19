@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import {
-  APPT_MODES, APPT_STATUSES, APPT_TYPES, CONTACT_METHODS, LANGUAGES, LEAD_SOURCES, LEAD_STATUSES, LIFECYCLES,
+  APPT_MODES, APPT_STATUSES, APPT_TYPES, CONTACT_METHODS, LANGUAGES, LEAD_SOURCES, LEAD_STATUSES, LIFECYCLES, OPEN_LEAD_STATUSES,
   OPP_STAGES, PARTNER_STATUSES, PARTNER_TYPES, PRIORITIES, REFERRAL_STATUSES, TARGET_METRICS, TASK_STATUSES,
   TASK_TYPES, crm,
 } from './crmApi'
@@ -9,7 +9,8 @@ import { Button, FormModal, fromLocalInput, nullify, toLocalInput, useCrmRefs } 
 const yesNo = (v) => v === true || v === 'true'
 
 /* ─── Patient / lead ───────────────────────────────────────────────────── */
-const patientSections = (isEdit) => [
+/* A brand-new lead always starts as a Lead in an open status — it reaches Patients only by being converted. */
+const patientSections = (isEdit, isNewLead = false) => [
   {
     title: 'Patient / caller',
     fields: [
@@ -26,8 +27,8 @@ const patientSections = (isEdit) => [
   {
     title: 'Pipeline',
     fields: [
-      { name: 'lifecycleStage', label: 'Record type', type: 'select', options: LIFECYCLES, noEmpty: true },
-      { name: 'leadStatus', label: 'Lead status', type: 'select', options: LEAD_STATUSES, noEmpty: true },
+      { name: 'lifecycleStage', label: 'Record type', type: 'select', options: LIFECYCLES, noEmpty: true, show: () => !isNewLead },
+      { name: 'leadStatus', label: 'Lead status', type: 'select', options: isNewLead ? LEAD_STATUSES.filter((s) => OPEN_LEAD_STATUSES.includes(s.value)) : LEAD_STATUSES, noEmpty: true },
       { name: 'priority', label: 'Priority', type: 'select', options: PRIORITIES, noEmpty: true },
       { name: 'ownerUserId', label: 'Assigned to', type: 'member' },
       { name: 'nextFollowUp', label: isEdit ? 'Schedule a follow-up on' : 'First follow-up on', type: 'date', hint: 'Creates a follow-up call task for the assignee.' },
@@ -372,7 +373,7 @@ export function useCrmEditors({ onSaved, toast } = {}) {
         open={kind === 'patient'}
         title={isEdit ? `Edit ${state?.row?.fullName}` : state?.initial?.lifecycleStage === 'PATIENT' ? 'Add patient' : 'New patient lead'}
         subtitle="Only the first name is required — capture what the caller shares."
-        sections={patientSections(isEdit)}
+        sections={patientSections(isEdit, !isEdit && state?.initial?.lifecycleStage !== 'PATIENT')}
         initial={state?.initial}
         onClose={close}
         onSubmit={(v) => submitPatient(v)}

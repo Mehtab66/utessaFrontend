@@ -88,7 +88,7 @@ function useCrmCounts(enabled, pathname) {
 function Count({ c, active }) {
   if (!c?.n) return null
   const tone = c.danger ? 'bg-danger-100 text-danger-700' : active ? 'bg-brand-100 text-brand-800' : 'bg-mist-100 text-mist-700'
-  return <span className={`rounded-full px-1.5 py-px text-[11px] font-semibold leading-4 ${tone}`}>{c.n}</span>
+  return <span className={`rounded-md px-1.5 py-px text-[11px] font-semibold leading-4 ${tone}`}>{c.n}</span>
 }
 
 /* ── Trial card (shared with the plain section bar) ────────────────────── */
@@ -100,8 +100,8 @@ export function TrialCard({ daysLeft, total = 14, onUpgrade }) {
       <span className={`whitespace-nowrap text-[12.5px] ${urgent ? 'text-danger-700' : 'text-sun-700'}`}>
         <b className="font-semibold">{daysLeft} day{daysLeft === 1 ? '' : 's'}</b> left
       </span>
-      <span className={`h-1 w-11 overflow-hidden rounded-full ${urgent ? 'bg-danger-100' : 'bg-sun-100'}`} aria-hidden="true">
-        <span className={`block h-full rounded-full ${urgent ? 'bg-danger-500' : 'bg-sun-400'}`} style={{ width: `${pct}%` }} />
+      <span className={`h-1 w-11 overflow-hidden rounded-sm ${urgent ? 'bg-danger-100' : 'bg-sun-100'}`} aria-hidden="true">
+        <span className={`block h-full rounded-sm ${urgent ? 'bg-danger-500' : 'bg-sun-400'}`} style={{ width: `${pct}%` }} />
       </span>
       <button type="button" onClick={onUpgrade} className="rounded-md bg-brand-600 px-2.5 py-1 text-[12px] font-semibold text-white transition-colors hover:bg-brand-700">
         Upgrade
@@ -152,8 +152,8 @@ function ModuleSwitcher({ current, modules }) {
         <UiIcon name="chevronDown" className={`h-3.5 w-3.5 text-mist-500 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div role="menu" className="absolute left-0 top-11 z-50 w-56 rounded-xl border border-mist-200 bg-white p-1.5 shadow-[0_16px_32px_-12px_rgba(17,20,58,0.22)]">
-          <p className="m-0 px-2.5 pb-1 pt-1.5 text-[12px] font-semibold text-mist-600">Switch module</p>
+        <div role="menu" className="menu-surface absolute left-0 top-11 z-50 w-60">
+          <p className="menu-label m-0">Switch module</p>
           {modules.map((m) => {
             const isCurrent = m.id === current.id
             return (
@@ -162,7 +162,8 @@ function ModuleSwitcher({ current, modules }) {
                 type="button"
                 role="menuitem"
                 onClick={() => { setOpen(false); navigate(m.to) }}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13.5px] transition-colors ${isCurrent ? 'bg-mist-50 font-semibold text-ink-950' : 'text-ink-950 hover:bg-mist-50'}`}
+                data-current={isCurrent || undefined}
+                className="menu-item"
               >
                 <span className="h-3 w-3 rounded-[4px]" style={{ backgroundColor: m.color }} />
                 {m.label}
@@ -198,18 +199,18 @@ function GroupTab({ group, active, counts, onSelect, isActivePage }) {
         } ${open && !active ? 'bg-mist-25 text-ink-950' : ''}`}
       >
         {group.label}
-        {alert > 0 && <span className="rounded-full bg-danger-100 px-1.5 text-[11px] font-semibold text-danger-700">{alert}</span>}
+        {alert > 0 && <span className="rounded-md bg-danger-100 px-1.5 text-[11px] font-semibold text-danger-700">{alert}</span>}
         <UiIcon name="chevronDown" className={`h-3 w-3 text-mist-400 transition-transform ${open ? 'rotate-180' : ''}`} />
-        {active && <span className="absolute inset-x-2.5 bottom-0 h-[3px] rounded-t-full bg-brand-600" />}
+        {active && <span className="absolute inset-x-2.5 bottom-0 h-[3px] rounded-t-sm bg-brand-600" />}
       </button>
       {open && (
         <div
           role="menu"
           onMouseEnter={show}
           onMouseLeave={hide}
-          className="absolute left-0 top-full z-50 mt-1 w-[300px] rounded-xl border border-mist-200 bg-white p-1.5 shadow-[0_16px_32px_-12px_rgba(17,20,58,0.22)]"
+          className="menu-surface absolute left-0 top-full z-50 mt-1 w-60"
         >
-          <p className="m-0 px-2.5 pb-1 pt-1.5 text-[12px] font-semibold text-mist-600">{group.label}</p>
+          <p className="menu-label m-0">{group.label}</p>
           {group.items.map((item) => {
             const [icon, desc] = PAGE_META[item.id] || ['dot', '']
             const current = isActivePage(item)
@@ -220,19 +221,14 @@ function GroupTab({ group, active, counts, onSelect, isActivePage }) {
                 to={item.to}
                 end={item.end ?? true}
                 role="menuitem"
+                title={c?.n && c.hint ? `${c.n} ${c.hint} · ${desc}` : desc}
                 onClick={() => setOpen(false)}
-                className={`flex items-start gap-3 rounded-lg px-2.5 py-2 no-underline transition-colors ${current ? 'bg-brand-50' : 'hover:bg-mist-50'}`}
+                data-current={current || undefined}
+                className="menu-item"
               >
-                <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${c?.danger ? 'bg-danger-50 text-danger-600' : 'bg-brand-50 text-brand-700'}`}>
-                  <UiIcon name={icon} className="h-4 w-4" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-950">
-                    {item.label}
-                    <Count c={c} active={current} />
-                  </span>
-                  {desc && <span className="block text-[12px] leading-snug text-mist-600">{c?.n && c.hint ? `${c.n} ${c.hint} · ${desc}` : desc}</span>}
-                </span>
+                <UiIcon name={icon} />
+                <span className="flex-1">{item.label}</span>
+                <Count c={c} active={current} />
               </NavLink>
             )
           })}
@@ -276,7 +272,7 @@ export default function ModuleNav({ module, items, modules, daysLeft, trialTotal
   const grouped = groups.length > 1
 
   const pill = (active) =>
-    `flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[13px] no-underline transition-colors ${
+    `flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border px-3 py-1 text-[13px] no-underline transition-colors ${
       active ? 'border-brand-200 bg-white font-semibold text-brand-800 shadow-[0_1px_2px_rgba(17,20,58,0.06)]' : 'border-transparent font-medium text-mist-600 hover:bg-white hover:text-ink-950'
     }`
 

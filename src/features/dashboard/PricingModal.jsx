@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import Select from '../../shared/ui/Select'
 
 const BANDS = [
   { min: 1,   max: 10,  label: '1–10 users',    crm: 149,  ops: 99,   mkt: 149  },
@@ -219,7 +220,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                 <h4 className="mb-2 text-xs font-semibold text-mist-500">Practice Size</h4>
                 <div>
                   <label className="mb-1 block text-xs font-semibold text-mist-600">Number of users</label>
-                  <select
+                  <Select
                     value={sizeBand}
                     onChange={(e) => setSizeBand(Number(e.target.value))}
                     className="h-9 w-full rounded-lg border border-mist-200 bg-white px-3 text-sm font-semibold text-ink-950 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
@@ -227,7 +228,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                     {SIZE_OPTIONS.map((o) => (
                       <option key={o.value} value={o.value}>{o.label} users</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 {selectedSvcs.includes('tc') && (
@@ -368,7 +369,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
 
                 {/* Discount pill */}
                 <div className="mt-4">
-                  <span className="inline-block rounded-full bg-sun-300 px-3 py-1 text-xs font-bold text-ink-900">
+                  <span className="inline-block rounded-lg bg-sun-300 px-3 py-1 text-xs font-bold text-ink-900">
                     {quote.disc > 0
                       ? `${Math.round(quote.disc * 100)}% bundle discount`
                       : selectedSvcs.length > 0
@@ -414,7 +415,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                   type="button"
                   onClick={() => setStep('checkout')}
                   disabled={!selectedSvcs.length || quote.isCustom}
-                  className="w-full rounded-xl bg-brand-600 py-2.5 text-center text-xs font-bold text-white shadow transition hover:bg-brand-700 disabled:opacity-50"
+                  className="w-full rounded-lg bg-brand-600 py-2.5 text-center text-xs font-bold text-white shadow transition hover:bg-brand-700 disabled:opacity-50"
                 >
                   Continue to payment
                 </button>
@@ -484,7 +485,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
                 type="button"
                 disabled={!autoRenew}
                 onClick={() => setStep('done')}
-                className="rounded-xl bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700 disabled:opacity-50"
+                className="rounded-lg bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700 disabled:opacity-50"
               >
                 Start subscription
               </button>
@@ -506,7 +507,7 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-xl bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700"
+                className="rounded-lg bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700"
               >
                 Back to dashboard
               </button>

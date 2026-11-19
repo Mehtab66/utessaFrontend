@@ -199,7 +199,7 @@ export default function CalendarPage() {
                 {dayItems.map((it) => (
                   <li key={it.id}>
                     <button type="button" onClick={() => open(it)} className="flex w-full gap-3 rounded-xl border border-mist-100 p-2.5 text-left transition hover:border-mist-200 hover:bg-mist-25">
-                      <span className="w-1 shrink-0 rounded-full" style={{ backgroundColor: it.color }} />
+                      <span className="w-1 shrink-0 rounded-md" style={{ backgroundColor: it.color }} />
                       <span className="min-w-0">
                         <span className="block truncate text-[13px] font-semibold text-navy">{it.title}</span>
                         <span className="block text-[11.5px] text-mist-500">

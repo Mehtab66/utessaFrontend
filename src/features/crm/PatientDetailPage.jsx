@@ -414,7 +414,7 @@ function Composer({ patient, onSaved }) {
             key={t.value}
             type="button"
             onClick={() => setType(t.value)}
-            className={`rounded-full px-3 py-1 text-[12px] font-semibold transition ${type === t.value ? 'bg-brand-600 text-white' : 'bg-white text-mist-700 ring-1 ring-mist-200 hover:bg-brand-50'}`}
+            className={`rounded-lg px-3 py-1 text-[12px] font-semibold transition ${type === t.value ? 'bg-brand-600 text-white' : 'bg-white text-mist-700 ring-1 ring-mist-200 hover:bg-brand-50'}`}
           >
             {t.label}
           </button>

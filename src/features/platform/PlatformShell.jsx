@@ -71,7 +71,7 @@ export default function PlatformShell() {
                         }
                         setOpenDropdown(section.title)
                       }}
-                      className={`flex cursor-pointer items-center gap-1 rounded-full border px-3 py-2.5 text-[13px] font-medium leading-none transition-all duration-200 ${
+                      className={`flex cursor-pointer items-center gap-1 rounded-lg border px-3 py-2.5 text-[13px] font-medium leading-none transition-all duration-200 ${
                         isActive
                           ? 'border-brand-600 bg-brand-600 text-white shadow-[0_10px_22px_rgba(15,127,134,0.18)]'
                           : 'border-transparent bg-transparent text-brand-950 hover:bg-brand-50 hover:text-brand-950'
@@ -141,7 +141,7 @@ export default function PlatformShell() {
                 type="button"
                 aria-label="Toggle navigation menu"
                 onClick={() => setMenuOpen((value) => !value)}
-                className="inline-flex items-center justify-center rounded-full border border-mist-200 bg-white px-3 py-2 text-sm font-semibold text-brand-950 transition hover:border-brand-100 hover:bg-brand-50 lg:hidden"
+                className="inline-flex items-center justify-center rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm font-semibold text-brand-950 transition hover:border-brand-100 hover:bg-brand-50 lg:hidden"
               >
                 Menu
               </button>
@@ -149,7 +149,7 @@ export default function PlatformShell() {
               <button
                 type="button"
                 onClick={logout}
-                className="hidden rounded-full border border-mist-200 bg-white px-3 py-2 text-sm font-semibold text-brand-950 transition hover:border-brand-100 hover:bg-brand-50 lg:inline-flex"
+                className="hidden rounded-lg border border-mist-200 bg-white px-3 py-2 text-sm font-semibold text-brand-950 transition hover:border-brand-100 hover:bg-brand-50 lg:inline-flex"
               >
                 Sign out
               </button>
@@ -193,7 +193,7 @@ export default function PlatformShell() {
                       setMenuOpen(false)
                       logout()
                     }}
-                    className="flex w-full items-center justify-center rounded-xl border border-mist-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-950 hover:bg-brand-50"
+                    className="flex w-full items-center justify-center rounded-lg border border-mist-200 bg-white px-3 py-2.5 text-sm font-semibold text-brand-950 hover:bg-brand-50"
                   >
                     Sign out
                   </button>

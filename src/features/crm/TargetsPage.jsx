@@ -67,8 +67,8 @@ export default function TargetsPage() {
                 <span className="font-mono text-[24px] font-semibold text-navy">{money ? fmtMoney(t.achieved) : Number(t.achieved)}</span>
                 <span className="text-[13px] text-mist-500">of {money ? fmtMoney(t.targetValue) : Number(t.targetValue)} · <b className="text-navy">{t.percent}%</b></span>
               </div>
-              <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-mist-50">
-                <i className="block h-full rounded-full transition-all" style={{ width: `${Math.min(100, t.percent)}%`, background: color }} />
+              <div className="mt-2 h-2.5 overflow-hidden rounded-sm bg-mist-50">
+                <i className="block h-full rounded-sm transition-all" style={{ width: `${Math.min(100, t.percent)}%`, background: color }} />
               </div>
               <p className="m-0 mt-2 text-[12px] text-mist-500">{fmtDate(t.periodStart)} – {fmtDate(t.periodEnd)}</p>
               {t.notes && <p className="m-0 mt-1 text-[12.5px] text-mist-700">{t.notes}</p>}

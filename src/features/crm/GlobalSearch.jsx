@@ -92,16 +92,16 @@ export default function GlobalSearch({ enabled = true }) {
         }}
         placeholder={enabled ? 'Search patients, leads, phone, MRN, opportunities…' : 'Search…'}
         aria-label="Global search"
-        className="h-10 w-full rounded-full border border-mist-200 bg-mist-50 pl-10 pr-16 text-[13.5px] text-ink-950 placeholder-mist-500 outline-none transition hover:border-mist-300 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-400/15"
+        className="h-10 w-full rounded-lg border border-mist-200 bg-mist-50 pl-10 pr-16 text-[13.5px] text-ink-950 placeholder-mist-500 outline-none transition hover:border-mist-300 focus:border-brand-400 focus:bg-white focus:ring-4 focus:ring-brand-400/15"
       />
       <kbd className="pointer-events-none absolute right-3 hidden items-center gap-0.5 rounded-md border border-mist-200 bg-white px-1.5 py-0.5 font-sans text-[11px] font-semibold text-mist-600 sm:inline-flex">
         {isMac ? '⌘' : 'Ctrl'} K
       </kbd>
       {open && enabled && q.trim().length >= 2 && (
-        <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-2xl border border-mist-200 bg-white shadow-xl">
+        <div className="menu-panel absolute left-0 right-0 top-12 z-50">
           {loading && results.length === 0 && <p className="m-0 px-4 py-3 text-[13px] text-mist-500">Searching…</p>}
           {!loading && results.length === 0 && <p className="m-0 px-4 py-3 text-[13px] text-mist-500">No matches for “{q}”.</p>}
-          <ul className="m-0 max-h-80 list-none overflow-y-auto p-1">
+          <ul className="m-0 max-h-80 list-none overflow-y-auto p-1.5">
             {results.map((r, i) => {
               const [tone, label] = TYPE[r.type] || TYPE.LEAD
               return (
@@ -110,7 +110,8 @@ export default function GlobalSearch({ enabled = true }) {
                     type="button"
                     onMouseEnter={() => setActive(i)}
                     onClick={() => go(r)}
-                    className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left ${i === active ? 'bg-brand-50' : ''}`}
+                    data-active={i === active || undefined}
+                    className="menu-item justify-between"
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-[13px] font-semibold text-ink-950">{r.title}</span>

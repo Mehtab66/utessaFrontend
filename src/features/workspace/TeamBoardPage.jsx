@@ -67,7 +67,7 @@ export default function TeamBoardPage() {
           <Avatar name={user?.fullName} tone="blue" />
           <div className="min-w-0 flex-1">
             {!composerOpen ? (
-              <button type="button" onClick={() => setComposerOpen(true)} className="w-full rounded-xl border border-mist-200 bg-mist-25 px-4 py-2.5 text-left text-[13.5px] text-mist-500 transition hover:border-mist-300">
+              <button type="button" onClick={() => setComposerOpen(true)} className="w-full rounded-lg border border-mist-200 bg-mist-25 px-4 py-2.5 text-left text-[13.5px] text-mist-500 transition hover:border-mist-300">
                 Share an update with the team…
               </button>
             ) : (
@@ -92,7 +92,7 @@ export default function TeamBoardPage() {
                       key={c.value}
                       type="button"
                       onClick={() => setDraft((d) => ({ ...d, category: c.value }))}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-semibold transition ${draft.category === c.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-mist-200 text-mist-600 hover:border-mist-300'}`}
+                      className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[12px] font-semibold transition ${draft.category === c.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-mist-200 text-mist-600 hover:border-mist-300'}`}
                     >
                       <Icon name={c.icon} className="h-3.5 w-3.5" />{c.label}
                     </button>
@@ -132,7 +132,7 @@ export default function TeamBoardPage() {
                     <p className="m-0 text-[13.5px] font-semibold text-navy">{p.authorName || 'Team member'}</p>
                     <p className="m-0 text-[11.5px] text-mist-500">{timeAgo(p.createdAt)}</p>
                   </div>
-                  {p.pinned && <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700"><Icon name="pin" className="h-3 w-3" /> Pinned</span>}
+                  {p.pinned && <span className="inline-flex items-center gap-1 rounded-md bg-brand-50 px-2 py-0.5 text-[11px] font-bold text-brand-700"><Icon name="pin" className="h-3 w-3" /> Pinned</span>}
                   <Pill tone={cat.tone} dot>{cat.label}</Pill>
                   {p.canManage && (
                     <div className="flex gap-1">

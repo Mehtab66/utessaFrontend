@@ -116,9 +116,9 @@ export default function NotesPage() {
                 {n.body && <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed text-mist-800">{n.body}</p>}
                 <footer className="mt-3 flex items-center gap-2 text-[11px] text-mist-500">
                   {n.shared ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 font-semibold"><Icon name="users" className="h-3 w-3" /> Shared</span>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-white/70 px-2 py-0.5 font-semibold"><Icon name="users" className="h-3 w-3" /> Shared</span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/70 px-2 py-0.5 font-semibold"><Icon name="lock" className="h-3 w-3" /> Private</span>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-white/70 px-2 py-0.5 font-semibold"><Icon name="lock" className="h-3 w-3" /> Private</span>
                   )}
                   {!n.mine && <span>by {n.ownerName}</span>}
                   <span className="ml-auto">{timeAgo(n.updatedAt)}</span>

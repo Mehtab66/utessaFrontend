@@ -10,6 +10,7 @@ import {
   Alert, Avatar, Button, Card, EnumPill, Field, Loading, PageHeader, Pill, ageFrom, formatPhone, fmtDate, fmtDateTime, fmtRelative,
   useAsync, useToast,
 } from './ui'
+import Select from '../../shared/ui/Select'
 
 const LINES = [
   { value: 'MAIN', label: 'Main line' },
@@ -383,9 +384,9 @@ function Keypad({ number, setNumber, line, setLine, disabled, onIncoming, onOutg
       </div>
       <label className="mt-3 block text-[12px] font-bold text-mist-800" htmlFor="line">
         Line
-        <select id="line" value={line} onChange={(e) => setLine(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-mist-300 bg-white px-3 text-[13px] font-normal text-navy">
+        <Select id="line" value={line} onChange={(e) => setLine(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-mist-300 bg-white px-3 text-[13px] font-normal text-navy">
           {LINES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
-        </select>
+        </Select>
       </label>
     </aside>
   )

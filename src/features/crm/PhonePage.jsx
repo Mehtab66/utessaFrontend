@@ -10,6 +10,7 @@ import {
   Alert, Avatar, Button, Card, DataTable, Field, Loading, Modal, PatientPicker, Pill, SearchInput, Segmented,
   fmtDateTime, fmtRelative, useAsync, useCrmRefs, useDebounced, useToast,
 } from './ui'
+import Select from '../../shared/ui/Select'
 
 const SECTIONS = [
   { id: 'calls', label: 'Calls', icon: 'phone' },
@@ -66,15 +67,15 @@ export default function PhonePage() {
           <>
             <label className="text-[12px] font-semibold text-mist-800">
               Status
-              <select value={o.myPrefs.presence} onChange={(e) => savePrefs({ presence: e.target.value })} className="ml-2 h-9 rounded-lg border border-mist-200 bg-white px-2 text-[13px] font-normal">
+              <Select value={o.myPrefs.presence} onChange={(e) => savePrefs({ presence: e.target.value })} className="ml-2 h-9 rounded-lg border border-mist-200 bg-white px-2 text-[13px] font-normal">
                 {PRESENCE.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-              </select>
+              </Select>
             </label>
             <label className="text-[12px] font-semibold text-mist-800">
               Calling from
-              <select value={o.myPrefs.line} onChange={(e) => savePrefs({ line: e.target.value })} className="ml-2 h-9 rounded-lg border border-mist-200 bg-white px-2 text-[13px] font-normal">
+              <Select value={o.myPrefs.line} onChange={(e) => savePrefs({ line: e.target.value })} className="ml-2 h-9 rounded-lg border border-mist-200 bg-white px-2 text-[13px] font-normal">
                 {lines.map((l) => <option key={l.id} value={l.id}>{l.label}{l.number ? ` · ${l.number}` : ''}</option>)}
-              </select>
+              </Select>
             </label>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-[12px] font-semibold text-mist-800">Taking calls from</span>
@@ -86,7 +87,7 @@ export default function PhonePage() {
                     type="button"
                     aria-pressed={on}
                     onClick={() => savePrefs({ queues: on ? myQueues.filter((x) => x !== q) : [...myQueues, q] })}
-                    className={`min-h-8 rounded-full border px-3 text-[12.5px] font-medium transition ${on ? 'border-ink-950 bg-ink-950 text-white' : 'border-mist-300 bg-white text-navy hover:border-mist-400'}`}
+                    className={`min-h-8 rounded-lg border px-3 text-[12.5px] font-medium transition ${on ? 'border-ink-950 bg-ink-950 text-white' : 'border-mist-300 bg-white text-navy hover:border-mist-400'}`}
                   >
                     {q}
                   </button>
@@ -120,7 +121,7 @@ export default function PhonePage() {
               >
                 <Icon name={s.icon} />
                 <span className="flex-1 whitespace-nowrap">{s.label}</span>
-                {n > 0 && <span className="min-w-5 rounded-full bg-danger-600 px-1.5 text-center text-[11px] font-semibold text-white">{n}</span>}
+                {n > 0 && <span className="min-w-5 rounded-md bg-danger-600 px-1.5 text-center text-[11px] font-semibold text-white">{n}</span>}
               </button>
             )
           })}
@@ -416,7 +417,7 @@ function TextsSection({ overview, params, toast, onChanged, onDetails }) {
                 <div className="mb-2 flex flex-wrap items-center gap-1.5">
                   <span className="text-[12px] text-mist-600">Quick replies:</span>
                   {QUICK_REPLIES.map(([label, text]) => (
-                    <button key={label} type="button" onClick={() => setDraft(text.replace('{first}', first))} className="min-h-7 rounded-full border border-mist-300 px-2.5 text-[12px] text-navy hover:border-brand-600">{label}</button>
+                    <button key={label} type="button" onClick={() => setDraft(text.replace('{first}', first))} className="min-h-7 rounded-lg border border-mist-300 px-2.5 text-[12px] text-navy hover:border-brand-600">{label}</button>
                   ))}
                 </div>
                 <div className="flex gap-2">
@@ -932,7 +933,7 @@ function HandlingSection({ overview, toast, onSaved }) {
         {HANDLING_TABS.map((t) => (
           <button key={t.value} type="button" onClick={() => setTab(t.value)} className={`relative px-3 pb-2.5 pt-1.5 text-[13px] font-medium ${tab === t.value ? 'text-navy' : 'text-mist-500 hover:text-mist-700'}`}>
             {t.label}
-            {tab === t.value && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full bg-brand-600" />}
+            {tab === t.value && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-sm bg-brand-600" />}
           </button>
         ))}
       </div>
@@ -971,15 +972,15 @@ function HandlingSection({ overview, toast, onSaved }) {
                 {(p.menu || []).map((m, i) => (
                   <tr key={`${m.key}-${i}`} className="border-t border-mist-100">
                     <td className="py-2">
-                      <select className={input} value={m.key} onChange={(e) => setP2('menu', p.menu.map((x, j) => (j === i ? { ...x, key: e.target.value } : x)))}>
+                      <Select className={input} value={m.key} onChange={(e) => setP2('menu', p.menu.map((x, j) => (j === i ? { ...x, key: e.target.value } : x)))}>
                         {['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].map((k) => <option key={k} value={k}>{k}</option>)}
-                      </select>
+                      </Select>
                     </td>
                     <td className="pr-2"><input className={`${input} w-full`} value={m.label} onChange={(e) => setP2('menu', p.menu.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} /></td>
                     <td className="pr-2">
-                      <select className={`${input} w-full`} value={m.dest} onChange={(e) => setP2('menu', p.menu.map((x, j) => (j === i ? { ...x, dest: e.target.value } : x)))}>
+                      <Select className={`${input} w-full`} value={m.dest} onChange={(e) => setP2('menu', p.menu.map((x, j) => (j === i ? { ...x, dest: e.target.value } : x)))}>
                         {destOptions.map((d) => <option key={d} value={d}>{d}</option>)}
-                      </select>
+                      </Select>
                     </td>
                     <td><Button size="sm" variant="ghost" onClick={() => setP2('menu', p.menu.filter((_, j) => j !== i))}>Remove</Button></td>
                   </tr>
@@ -1010,7 +1011,7 @@ function HandlingSection({ overview, toast, onSaved }) {
                       const on = (q.members || []).includes(m.userId)
                       return (
                         <button key={m.userId} type="button" aria-pressed={on} onClick={() => upd('members', on ? q.members.filter((x) => x !== m.userId) : [...(q.members || []), m.userId])}
-                          className={`min-h-8 rounded-full border px-3 text-[12.5px] ${on ? 'border-brand-600 bg-brand-50 text-brand-900' : 'border-mist-300 text-navy'}`}>
+                          className={`min-h-8 rounded-lg border px-3 text-[12.5px] ${on ? 'border-brand-600 bg-brand-50 text-brand-900' : 'border-mist-300 text-navy'}`}>
                           {m.fullName}
                         </button>
                       )

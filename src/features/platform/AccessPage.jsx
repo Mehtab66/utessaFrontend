@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { usePlatformApi } from './usePlatformApi'
 import { EmptyNote, PageHeader, Panel, StatusPill } from './ui'
+import Select from '../../shared/ui/Select'
 
 const initialUsers = [
   {
@@ -235,7 +236,7 @@ export default function AccessPage() {
 
           <label className="flex flex-col gap-1.5 text-[12px] font-semibold text-mist-700">
             Sign-in status
-            <select
+            <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="min-h-[42px] rounded-[10px] border border-mist-200 bg-mist-50 px-3 text-sm font-normal text-ink-900"
@@ -245,12 +246,12 @@ export default function AccessPage() {
               <option value="Locked">Locked</option>
               <option value="Invited">Invited</option>
               <option value="Disabled">Disabled</option>
-            </select>
+            </Select>
           </label>
 
           <label className="flex flex-col gap-1.5 text-[12px] font-semibold text-mist-700">
             Organization
-            <select
+            <Select
               value={orgFilter}
               onChange={(e) => setOrgFilter(e.target.value)}
               className="min-h-[42px] rounded-[10px] border border-mist-200 bg-mist-50 px-3 text-sm font-normal text-ink-900"
@@ -261,7 +262,7 @@ export default function AccessPage() {
                   {org.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
         </div>
 

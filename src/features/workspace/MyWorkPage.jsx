@@ -151,7 +151,7 @@ export default function MyWorkPage() {
                 <header className="mb-3 flex items-center gap-2 px-1">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLUMN_ACCENT[col.value] }} />
                   <h2 className="m-0 text-[13px] font-semibold text-mist-600">{col.label}</h2>
-                  <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-mist-500 ring-1 ring-mist-100">{items.length}</span>
+                  <span className="rounded-md bg-white px-2 py-0.5 text-[11px] font-semibold text-mist-500 ring-1 ring-mist-100">{items.length}</span>
                 </header>
                 <div className="flex flex-1 flex-col gap-2.5">
                   {items.map((t) => (

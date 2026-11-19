@@ -7,6 +7,7 @@ import {
   Alert, Button, Card, DataTable, EnumPill, Field, FilterSelect, Kpi, Loading, Modal, PageHeader, Pill, SearchInput,
   Toolbar, fmtDate, fmtDateTime, fmtRelative, useAsync, useDebounced, useToast,
 } from './ui'
+import Select from '../../shared/ui/Select'
 
 const SOURCE_LABEL = { UTESSA: 'Marked in Utessa', EHR: 'From EHR', UPLOAD: 'File upload' }
 
@@ -493,14 +494,14 @@ function ImportModal({ open, onClose, onDone }) {
                   <tr key={c.key} className="border-t border-mist-200">
                     <td className="px-3 py-2 font-semibold text-navy">{c.label}{c.req && <span className="text-danger-600"> *</span>}</td>
                     <td className="px-3 py-2">
-                      <select
+                      <Select
                         value={map[c.key] ?? ''}
                         onChange={(e) => setMap((m) => ({ ...m, [c.key]: e.target.value === '' ? '' : Number(e.target.value) }))}
                         className="h-9 w-full max-w-xs rounded-lg border border-mist-300 bg-white px-2 text-[13px]"
                       >
                         <option value="">My file doesn’t have this</option>
                         {headers.map((h, i) => <option key={`${h}-${i}`} value={i}>{h || `Column ${i + 1}`}</option>)}
-                      </select>
+                      </Select>
                     </td>
                     <td className="px-3 py-2 font-mono text-[12.5px] text-mist-600">{map[c.key] === undefined || map[c.key] === '' ? '—' : data[0]?.[map[c.key]] || '—'}</td>
                   </tr>

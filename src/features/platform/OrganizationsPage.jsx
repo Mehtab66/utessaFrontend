@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DataTable, EmptyNote, Kpi, PageHeader, StatusPill, statusTone } from './ui'
 import { usePlatformApi } from './usePlatformApi'
+import Select from '../../shared/ui/Select'
 
 export default function OrganizationsPage() {
   const navigate = useNavigate()
@@ -54,7 +55,7 @@ export default function OrganizationsPage() {
         </label>
         <label className="flex min-w-[160px] flex-col gap-1 text-[12px] font-semibold text-mist-700">
           Status
-          <select
+          <Select
             className="min-h-[42px] rounded-[10px] border border-mist-200 bg-mist-50 px-3 text-sm font-normal text-ink-900"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -63,7 +64,7 @@ export default function OrganizationsPage() {
             <option value="Trial">Trial</option>
             <option value="Active">Active</option>
             <option value="Onboarding">Onboarding</option>
-          </select>
+          </Select>
         </label>
       </div>
 

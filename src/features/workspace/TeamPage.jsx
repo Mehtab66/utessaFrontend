@@ -57,7 +57,7 @@ export default function TeamPage() {
                   <span className="flex h-14 w-14 items-center justify-center rounded-2xl text-[17px] font-bold text-white ring-4 ring-white" style={{ backgroundColor: tone }}>{initials}</span>
                   <div className="mt-2.5 flex items-center gap-2">
                     <h3 className="m-0 truncate text-[15px] font-bold text-navy">{m.fullName}</h3>
-                    {m.you && <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[10.5px] font-bold text-brand-700">You</span>}
+                    {m.you && <span className="rounded-md bg-brand-50 px-2 py-0.5 text-[10.5px] font-bold text-brand-700">You</span>}
                   </div>
                   <p className="m-0 text-[12.5px] font-semibold" style={{ color: tone }}>{roleLabel(m.role)}</p>
                   <div className="mt-3 space-y-1.5 text-[12.5px] text-mist-600">

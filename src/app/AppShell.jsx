@@ -341,11 +341,11 @@ export default function AppShell() {
   }
   const recentOthers = recent.filter(r => r.to !== currentPath && !saved.some(f => f.to === r.to)).slice(0, 5)
   const createActions = [
-    { label: 'Task', to: '/app/my-work?new=1' },
-    { label: 'Calendar event', to: '/app/calendar?new=1' },
-    { label: 'Note', to: '/app/notes?new=1' },
-    { label: 'Team post', to: '/app/board?new=1' },
-    ...(canSearchCrm ? [{ label: 'Patient lead', to: '/app/crm/leads?new=1' }] : []),
+    { label: 'Task', icon: 'checkSquare', to: '/app/my-work?new=1' },
+    { label: 'Calendar event', icon: 'calendar', to: '/app/calendar?new=1' },
+    { label: 'Note', icon: 'note', to: '/app/notes?new=1' },
+    { label: 'Team post', icon: 'board', to: '/app/board?new=1' },
+    ...(canSearchCrm ? [{ label: 'Patient lead', icon: 'userPlus', to: '/app/crm/leads?new=1' }] : []),
   ]
 
   return (
@@ -378,14 +378,16 @@ export default function AppShell() {
               New
             </button>
             {createOpen && (
-              <div className="absolute right-0 top-12 z-50 w-52 rounded-2xl border border-mist-200 bg-white py-1 shadow-xl">
+              <div className="menu-surface absolute right-0 top-12 z-50 w-56" role="menu">
                 {createActions.map(a => (
                   <button
                     key={a.label}
                     type="button"
                     onClick={() => { setCreateOpen(false); navigate(a.to) }}
-                    className="w-full px-4 py-2.5 text-left text-sm text-ink-950 hover:bg-mist-50"
+                    role="menuitem"
+                    className="menu-item"
                   >
+                    <UiIcon name={a.icon} />
                     {a.label}
                   </button>
                 ))}
@@ -420,7 +422,7 @@ export default function AppShell() {
             </button>
 
             {notifOpen && (
-              <div className="absolute right-0 top-11 z-50 w-72 rounded-2xl border border-mist-200 bg-white shadow-xl">
+              <div className="menu-panel absolute right-0 top-11 z-50 w-80">
                 <div className="border-b border-mist-100 px-4 py-3">
                   <p className="text-sm font-bold text-ink-950">Notifications</p>
                 </div>
@@ -508,15 +510,16 @@ export default function AppShell() {
             </button>
 
             {profileOpen && (
-              <div className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-mist-200 bg-white shadow-xl">
+              <div className="menu-panel absolute right-0 top-12 z-50 w-60" role="menu">
                 <div className="border-b border-mist-100 px-4 py-3">
                   <p className="text-sm font-semibold text-ink-950">{user.fullName}</p>
                   <p className="text-xs text-mist-500">{roleLabel(user.role)}</p>
                 </div>
                 <ul className="py-1">
-                  {[{ label: 'Team', to: '/app/team' }, { label: 'Apps & modules', to: '/app/modules' }, { label: 'Settings', to: '/app/setup' }].map(item => (
-                    <li key={item.label}>
-                      <button type="button" onClick={() => { setProfileOpen(false); navigate(item.to) }} className="w-full px-4 py-2.5 text-left text-sm text-ink-950 hover:bg-mist-50">
+                  {[{ label: 'Team', icon: 'users', to: '/app/team' }, { label: 'Apps & modules', icon: 'apps', to: '/app/modules' }, { label: 'Settings', icon: 'settings', to: '/app/setup' }].map(item => (
+                    <li key={item.label} className="px-1.5">
+                      <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); navigate(item.to) }} className="menu-item">
+                        <UiIcon name={item.icon} />
                         {item.label}
                       </button>
                     </li>
@@ -526,7 +529,7 @@ export default function AppShell() {
                   <button
                     type="button"
                     onClick={logout}
-                    className="w-full rounded-xl border border-danger-100 bg-danger-50 py-2 text-sm font-semibold text-danger-600 hover:bg-danger-100"
+                    className="w-full rounded-lg border border-danger-100 bg-danger-50 py-2 text-sm font-semibold text-danger-600 hover:bg-danger-100"
                   >
                     Sign out
                   </button>
@@ -805,14 +808,14 @@ function SectionBar({ title, items, daysLeft, trialTotal, onUpgrade, saved, onTo
                   <UiIcon name="chevronDown" className={`h-3.5 w-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {moreOpen && (
-                  <div className="absolute left-0 top-10 z-40 min-w-[220px] rounded-xl border border-mist-200 bg-white p-1.5 shadow-[0_16px_32px_-12px_rgba(17,20,58,0.22)]">
+                  <div className="menu-surface absolute left-0 top-10 z-40 min-w-[220px]">
                     {hidden.map((item) => (
                       <NavLink
                         key={item.id}
                         to={item.to}
                         end={item.end ?? true}
                         className={({ isActive: a }) =>
-                          `block rounded-lg px-3 py-2 text-[13.5px] no-underline transition-colors ${a ? 'bg-brand-50 font-semibold text-brand-700' : 'text-ink-950 hover:bg-mist-50'}`
+                          `menu-item ${a ? 'bg-brand-50 font-semibold text-brand-700' : ''}`
                         }
                       >
                         {item.label}
@@ -866,7 +869,7 @@ function RailItem({ label, accent = '#1E8E94', active, badge, onClick, children 
         {label}
       </span>
       {badge > 0 && (
-        <span className="absolute right-2 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-danger-500 px-1 text-[10px] font-bold text-white ring-2 ring-mist-50">
+        <span className="absolute right-2 top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-md bg-danger-500 px-1 text-[10px] font-bold text-white ring-2 ring-mist-50">
           {badge}
         </span>
       )}
@@ -898,7 +901,7 @@ function RailPopover({ width = 256, children }) {
     <div
       ref={ref}
       style={{ top: top ?? 0, width, visibility: top == null ? 'hidden' : 'visible' }}
-      className="fixed left-[86px] z-50 rounded-2xl border border-mist-200 bg-white p-1.5 shadow-xl"
+      className="menu-surface fixed left-[86px] z-50"
     >
       {children}
     </div>
@@ -967,7 +970,7 @@ function PersonalizeSidebar({ pinned, onClose, onSave }) {
         <div className="grid min-h-0 flex-1 gap-4 overflow-y-auto p-5 md:grid-cols-2">
           <section className="rounded-xl bg-mist-50 p-3">
             <p className="m-0 mb-2 flex items-center justify-between text-[12.5px] font-semibold text-mist-700">
-              On your sidebar <span className="rounded-full bg-white px-2 text-[11px]">{onRail.length}</span>
+              On your sidebar <span className="rounded-md bg-white px-2 text-[11px]">{onRail.length}</span>
             </p>
             <ol className="m-0 list-none space-y-1.5 p-0">
               {onRail.map((tool, i) => (
@@ -1056,9 +1059,9 @@ function BootScreen({ progress, label, detail }) {
         </div>
         <h1 className="text-[22px] font-bold text-ink-950">{label}</h1>
         {detail && <p className="mt-1 text-sm text-mist-500">{detail}</p>}
-        <div className="mx-auto mt-6 h-2.5 overflow-hidden rounded-full bg-mist-200">
+        <div className="mx-auto mt-6 h-2.5 overflow-hidden rounded-sm bg-mist-200">
           <div
-            className="h-full rounded-full bg-brand-600 transition-[width] duration-100 ease-out"
+            className="h-full rounded-sm bg-brand-600 transition-[width] duration-100 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

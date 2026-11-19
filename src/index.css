@@ -260,5 +260,95 @@ textarea {
 }
 .sidebar-scroll::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
+  border-radius: 3px;
+}
+
+/*
+ * ═══ Dropdown menus ═══════════════════════════════════════════════════════
+ * One look for every menu and dropdown list in the app: white surface, rounded
+ * corners, a soft layered shadow (no hard border), roomy rows with a gentle hover.
+ *   .menu-surface  list-style menu (padding around rows)
+ *   .menu-panel    same surface for richer panels with their own sections
+ *   .menu-item     a row: optional icon + label
+ */
+.menu-surface,
+.menu-panel {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(17, 20, 58, 0.05),
+    0 4px 10px -2px rgba(17, 20, 58, 0.07),
+    0 18px 40px -10px rgba(17, 20, 58, 0.2);
+}
+.menu-surface {
+  padding: 6px;
+}
+.menu-panel {
+  overflow: hidden;
+}
+.menu-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--color-ink-950);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.menu-item:hover,
+.menu-item[data-active="true"] {
+  background: var(--color-mist-50);
+}
+.menu-item[aria-selected="true"],
+.menu-item[data-current="true"] {
+  font-weight: 600;
+}
+.menu-item > svg:first-child {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-ink-800);
+}
+.menu-item[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.menu-label {
+  padding: 6px 12px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-mist-600);
+}
+.menu-divider {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--color-mist-100);
+}
+
+/*
+ * ═══ Data tables: grid lines ══════════════════════════════════════════════
+ * Every data table shows a line between each row and each column. The outer
+ * edges are left to the card around the table, so its border doesn't double up.
+ */
+table.border-collapse th,
+table.border-collapse td {
+  border: 1px solid var(--color-mist-200);
+}
+table.border-collapse tr > :first-child {
+  border-left: 0;
+}
+table.border-collapse tr > :last-child {
+  border-right: 0;
+}
+table.border-collapse > :first-child > tr:first-child > * {
+  border-top: 0;
+}
+table.border-collapse > :last-child > tr:last-child > * {
+  border-bottom: 0;
 }

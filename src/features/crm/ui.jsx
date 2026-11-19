@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../../shared/ui/Icon'
 import { crm, labelOf, toneOf } from './crmApi'
+import Select from '../../shared/ui/Select'
 
 /* ═══════════════════════════════════════════════════════════════════════
    Formatting
@@ -193,7 +194,7 @@ const DOTS = {
 
 export function Pill({ tone = 'gray', children, dot = false, className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[12px] font-semibold ${TONES[tone] || TONES.gray} ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1 text-[12px] font-semibold ${TONES[tone] || TONES.gray} ${className}`}>
       {dot && <span className={`h-1.5 w-1.5 rounded-full ${DOTS[tone] || DOTS.gray}`} />}
       {children}
     </span>
@@ -241,7 +242,7 @@ export function PageHeader({ eyebrow, title, subtitle, actions, count }) {
         <div className="flex flex-wrap items-center gap-2.5">
           <h1 className="m-0 text-[24px] font-semibold tracking-[-0.02em] text-ink-950">{title}</h1>
           {count != null && count !== '' && (
-            <span className="rounded-full bg-mist-100 px-2.5 py-0.5 text-[12.5px] font-medium text-mist-700">{count}</span>
+            <span className="rounded-md bg-mist-100 px-2.5 py-0.5 text-[12.5px] font-medium text-mist-700">{count}</span>
           )}
         </div>
         {subtitle && <p className="mt-1 max-w-3xl text-[13.5px] text-mist-600">{subtitle}</p>}
@@ -364,11 +365,11 @@ export function Tabs({ tabs, value, onChange }) {
           >
             {t.label}
             {t.count != null && (
-              <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[11px] ${active ? 'bg-brand-50 text-brand-700' : 'bg-mist-100 text-mist-500'}`}>
+              <span className={`ml-1.5 rounded-md px-1.5 py-0.5 text-[11px] ${active ? 'bg-brand-50 text-brand-700' : 'bg-mist-100 text-mist-500'}`}>
                 {t.count}
               </span>
             )}
-            {active && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-full bg-brand-600" />}
+            {active && <span className="absolute bottom-0 left-2 right-2 h-0.5 rounded-t-sm bg-brand-600" />}
           </button>
         )
       })}
@@ -430,7 +431,7 @@ export function FilterSelect({ value, onChange, options, allLabel = 'All', label
   const showValue = !isAll || allLabel == null || !label
   return (
     <label
-      className={`relative inline-flex h-8 max-w-[260px] cursor-pointer items-center gap-1 rounded-full border px-3 text-[12.5px] transition-colors focus-within:ring-4 focus-within:ring-brand-400/15 ${
+      className={`relative inline-flex h-8 max-w-[260px] cursor-pointer items-center gap-1 rounded-lg border px-3 text-[12.5px] transition-colors focus-within:ring-4 focus-within:ring-brand-400/15 ${
         filtering
           ? 'border-brand-200 bg-brand-50 text-brand-800'
           : isAll && allLabel != null
@@ -441,7 +442,7 @@ export function FilterSelect({ value, onChange, options, allLabel = 'All', label
       {label && <span className="shrink-0 font-medium">{label}{showValue ? ':' : ''}</span>}
       {showValue && <span className="truncate font-semibold">{current}</span>}
       <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 opacity-70" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-      <select
+      <Select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-label={label || allLabel || 'Filter'}
@@ -451,7 +452,7 @@ export function FilterSelect({ value, onChange, options, allLabel = 'All', label
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
         ))}
-      </select>
+      </Select>
     </label>
   )
 }
@@ -719,10 +720,10 @@ export function Field({ field, value, values, onChange, team = [], partners = []
         : (typeof field.options === 'function' ? field.options(values) : field.options) || []
     const normalized = options.map((o) => (typeof o === 'string' ? { value: o, label: o } : o))
     control = (
-      <select className={INPUT} value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
+      <Select className={INPUT} value={value ?? ''} onChange={(e) => onChange(e.target.value)}>
         {!field.noEmpty && <option value="">{field.emptyLabel || (field.type === 'member' ? 'Unassigned' : '—')}</option>}
         {normalized.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
+      </Select>
     )
   } else if (field.type === 'textarea') {
     control = <textarea className={INPUT} rows={field.rows || 3} value={value ?? ''} placeholder={field.placeholder} onChange={(e) => onChange(e.target.value)} />
@@ -803,13 +804,13 @@ export function PatientPicker({ value, label, onChange, lifecycle }) {
         onChange={(e) => setQuery(e.target.value)}
       />
       {open && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-64 overflow-y-auto rounded-xl border border-mist-200 bg-white shadow-xl">
+        <div className="menu-surface absolute left-0 right-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto">
           {results.length === 0 && <p className="m-0 px-3 py-3 text-[13px] text-mist-500">No matches</p>}
           {results.map((p) => (
             <button
               key={p.id}
               type="button"
-              className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px] hover:bg-brand-50"
+              className="menu-item justify-between"
               onClick={() => {
                 onChange(p.id)
                 setCurrent(`${p.fullName}${p.phone ? ` · ${p.phone}` : ''}`)
@@ -875,10 +876,10 @@ export function PromptModal({ open, title, label, required, confirmLabel = 'Conf
       <label className="block text-[12.5px] font-semibold text-navy">
         {label}
         {options ? (
-          <select className={INPUT} value={value} onChange={(e) => setValue(e.target.value)}>
+          <Select className={INPUT} value={value} onChange={(e) => setValue(e.target.value)}>
             <option value="">Select…</option>
             {options.map((o) => <option key={o} value={o}>{o}</option>)}
-          </select>
+          </Select>
         ) : (
           <textarea className={INPUT} rows={3} value={value} onChange={(e) => setValue(e.target.value)} />
         )}
@@ -985,8 +986,8 @@ export function BarList({ rows, color = '#1E8E94', format = (v) => v }) {
       {rows.map((row) => (
         <div key={row.label} className="grid grid-cols-[minmax(0,1.1fr)_minmax(80px,1.6fr)_auto] items-center gap-2.5 text-[13px]">
           <span className="truncate font-medium text-navy" title={row.label}>{row.label}</span>
-          <span className="h-2 overflow-hidden rounded-full bg-mist-100">
-            <i className="block h-full rounded-full" style={{ width: `${row.value ? Math.max(4, (row.value / max) * 100) : 0}%`, background: row.color || color }} />
+          <span className="h-2 overflow-hidden rounded-sm bg-mist-100">
+            <i className="block h-full rounded-sm" style={{ width: `${row.value ? Math.max(4, (row.value / max) * 100) : 0}%`, background: row.color || color }} />
           </span>
           <b className="min-w-[3ch] text-right font-mono font-semibold text-ink-950">{format(row.value)}</b>
         </div>

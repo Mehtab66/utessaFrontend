@@ -44,7 +44,8 @@ export default function PatientListPage({ mode = 'LEAD' }) {
   }
   const { data, loading, error, reload } = useAsync(() => crm.patients(params), [mode, status, priority, source, owner, followUp, debouncedQ])
   const rows = data || []
-  const editors = useCrmEditors({ toast, onSaved: (kind, res) => (kind === 'patient' && res?.id && !rows.some((r) => r.id === res.id) ? navigate(`/app/crm/patients/${res.id}`) : reload()) })
+  // A new lead stays on the Patient leads list (it shows up at the top); other new records open their profile.
+  const editors = useCrmEditors({ toast, onSaved: (kind, res) => (kind === 'patient' && res?.id && !rows.some((r) => r.id === res.id) && !(isLead && res.lifecycleStage === 'LEAD') ? navigate(`/app/crm/patients/${res.id}`) : reload()) })
 
   // "New → Patient lead" from the top bar lands here with ?new=1
   const location = useLocation()

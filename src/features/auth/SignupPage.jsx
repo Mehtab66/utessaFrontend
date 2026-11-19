@@ -415,7 +415,7 @@ export default function SignupPage() {
           height: 50px;
           width: 100%;
           border: 1px solid #DEE1EE;
-          border-radius: 11px;
+          border-radius: 8px;
           background: #fff;
           color: #1B1F4B;
           font: inherit;
@@ -570,7 +570,7 @@ export default function SignupPage() {
           height: 52px;
           margin-top: 12px;
           border: 0;
-          border-radius: 11px;
+          border-radius: 8px;
           background: #1B1F4B;
           color: white;
           font: inherit;
@@ -665,7 +665,7 @@ export default function SignupPage() {
           align-items: center;
           gap: 8px;
           padding: 8px 12px;
-          border-radius: 999px;
+          border-radius: 6px;
           background: rgba(255,255,255,0.88);
           color: #1B1F4B;
           font-size: 13px;
