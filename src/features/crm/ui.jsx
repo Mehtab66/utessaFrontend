@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../../shared/ui/Icon'
 import { crm, labelOf, toneOf } from './crmApi'
 import Select from '../../shared/ui/Select'
+import LogoLoader from '../../shared/ui/LogoLoader'
 
 /* ═══════════════════════════════════════════════════════════════════════
    Formatting
@@ -321,12 +322,7 @@ export function Empty({ title = 'Nothing here yet', children, action }) {
 }
 
 export function Loading({ label = 'Loading…' }) {
-  return (
-    <div className="flex items-center gap-2 px-1 py-8 text-sm text-mist-700">
-      <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-50 border-t-brand-600" />
-      {label}
-    </div>
-  )
+  return <LogoLoader label={label} className="px-1 py-8" />
 }
 
 const AVATAR_TONES = {

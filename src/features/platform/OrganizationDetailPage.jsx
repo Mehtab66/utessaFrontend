@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { DataTable, EmptyNote, Kpi, PageHeader, Panel, StatusPill, statusTone } from './ui'
 import { usePlatformApi } from './usePlatformApi'
+import LogoLoader from '../../shared/ui/LogoLoader'
 
 function fmtDate(value) {
   if (!value) return '—'
@@ -20,7 +21,7 @@ export default function OrganizationDetailPage() {
     return (
       <div>
         <PageHeader title="Organization" subtitle="Loading practice details…" />
-        <EmptyNote>Fetching organization profile and members…</EmptyNote>
+        <LogoLoader label="Fetching organization profile and members…" className="py-10" />
       </div>
     )
   }

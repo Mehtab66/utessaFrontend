@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { api } from '../../shared/api/client'
 import { useAuth } from '../../shared/auth/AuthContext'
 import { Logo, Wordmark } from '../../shared/ui/Logo'
+import LogoLoader from '../../shared/ui/LogoLoader'
 
 const SERVICES = [
   { id: 'crm', name: 'CRM', desc: 'Patient leads, call tracking, referral CRM, pipelines and contact history.', chip: 'bg-cyan' },
@@ -19,17 +20,16 @@ export default function WelcomePage() {
   const [selected, setSelected] = useState(['crm'])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  // Set while "Go to dashboard" / "Skip for now" finishes, so the already-onboarded redirect below
+  // doesn't race our own navigation and drop the first-dashboard animation flag.
+  const [finishing, setFinishing] = useState(false)
 
   if (loading) {
-    return (
-      <div className="grid min-h-screen place-items-center bg-bg text-muted">
-        Loading your workspace…
-      </div>
-    )
+    return <LogoLoader fullScreen label="Loading your workspace…" />
   }
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (user?.superAdmin) return <Navigate to="/platform" replace />
-  if (user?.onboardingDone) return <Navigate to="/app" replace />
+  if (user?.onboardingDone && !finishing) return <Navigate to="/app" replace />
 
   const firstName = (user?.fullName || 'there').split(/\s+/)[0]
 
@@ -47,9 +47,11 @@ export default function WelcomePage() {
           ? { orgType: null, ehrName: null, enabledServices: null }
           : { orgType, ehrName, enabledServices: selected },
       })
+      setFinishing(true)
       setSessionUser(me)
-      navigate('/app', { state: { bootDashboard: true } })
+      navigate('/app', { state: { firstDashboard: true } })
     } catch (err) {
+      setFinishing(false)
       setError(err.message || 'Could not save preferences.')
     } finally {
       setSubmitting(false)

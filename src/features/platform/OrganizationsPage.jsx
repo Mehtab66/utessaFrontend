@@ -69,6 +69,7 @@ export default function OrganizationsPage() {
       </div>
 
       <DataTable
+        loading={loading}
         empty={loading ? 'Loading organizations…' : 'No organizations match these filters.'}
         onRowClick={(row) => navigate(`/platform/organizations/${row.id}`)}
         columns={[

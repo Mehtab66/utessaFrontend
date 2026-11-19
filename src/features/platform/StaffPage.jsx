@@ -16,6 +16,7 @@ export default function StaffPage() {
         </p>
       )}
       <DataTable
+        loading={loading}
         empty={loading ? 'Loading staff…' : 'No platform staff yet.'}
         columns={[
           {

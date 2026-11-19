@@ -1,3 +1,4 @@
+import LogoLoader from '../../shared/ui/LogoLoader'
 export function PageHeader({ title, subtitle, right }) {
   return (
     <div className="mb-6 rounded-[16px] border border-mist-200 bg-white p-5">
@@ -107,7 +108,7 @@ export function Cols({ rows }) {
   )
 }
 
-export function DataTable({ columns, rows, empty = 'No rows yet.', onRowClick }) {
+export function DataTable({ columns, rows, empty = 'No rows yet.', onRowClick, loading = false }) {
   return (
     <div className="overflow-hidden rounded-[14px] border border-mist-200 bg-white">
       <div className="overflow-x-auto">
@@ -127,7 +128,7 @@ export function DataTable({ columns, rows, empty = 'No rows yet.', onRowClick })
           <tbody>
             {!rows.length && (
               <tr>
-                <td colSpan={columns.length} className="px-3 py-8 text-center text-sm text-mist-500">{empty}</td>
+                <td colSpan={columns.length} className="px-3 py-8 text-center text-sm text-mist-500">{loading ? <LogoLoader label={empty} /> : empty}</td>
               </tr>
             )}
             {rows.map((row) => (

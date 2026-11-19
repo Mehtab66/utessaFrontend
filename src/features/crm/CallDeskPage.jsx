@@ -11,6 +11,7 @@ import {
   useAsync, useToast,
 } from './ui'
 import Select from '../../shared/ui/Select'
+import { LogoMark } from '../../shared/ui/LogoLoader'
 
 const LINES = [
   { value: 'MAIN', label: 'Main line' },
@@ -305,7 +306,7 @@ function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
       <div className="mt-4 rounded-[10px] bg-mist-50 p-4">
         {looking && (
           <p className="m-0 flex items-center gap-2 text-[14px] text-navy">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand-50 border-t-brand-600" />
+            <LogoMark size={22} />
             Checking patients and leads for this number…
           </p>
         )}

@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react'
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../shared/auth/AuthContext'
-import { Logo, Wordmark } from '../../shared/ui/Logo'
+import { Wordmark } from '../../shared/ui/Logo'
+import LogoLoader from '../../shared/ui/LogoLoader'
 import { PLATFORM_NAV } from './platformNav'
 
 export default function PlatformShell() {
@@ -212,12 +213,5 @@ export default function PlatformShell() {
 }
 
 function Boot({ label }) {
-  return (
-    <div className="grid min-h-screen place-items-center bg-white px-4">
-      <div className="w-full max-w-md rounded-[18px] border border-mist-200 bg-white p-8 text-center shadow-[0_10px_24px_rgba(17,24,39,0.06)]">
-        <Logo className="mx-auto mb-5 h-12 w-12" />
-        <h1 className="text-[22px] font-bold text-ink-950">{label}</h1>
-      </div>
-    </div>
-  )
+  return <LogoLoader fullScreen label={label} />
 }

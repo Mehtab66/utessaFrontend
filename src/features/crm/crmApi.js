@@ -49,6 +49,7 @@ export const crm = {
   patient: (id) => api(`${BASE}/patients/${id}`),
   createPatient: (body, allowDuplicate = false) =>
     api(`${BASE}/patients${qs({ allowDuplicate: allowDuplicate || undefined })}`, { method: 'POST', body }),
+  importLeads: (body) => api(`${BASE}/patients/import`, { method: 'POST', body }),
   updatePatient: (id, body) => api(`${BASE}/patients/${id}`, { method: 'PUT', body }),
   deletePatient: (id) => api(`${BASE}/patients/${id}`, { method: 'DELETE' }),
   patientStatus: (id, body) => api(`${BASE}/patients/${id}/status`, { method: 'PATCH', body }),

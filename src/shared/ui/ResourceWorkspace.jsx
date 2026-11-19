@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Select from './Select'
+import LogoLoader from './LogoLoader'
 
 export function ResourceWorkspace({
   title,
@@ -138,7 +139,7 @@ export function ResourceWorkspace({
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-3 py-8 text-sm text-mist-700">Loading…</td>
+                  <td colSpan={columns.length + 1} className="px-3 py-8"><LogoLoader label="Loading…" /></td>
                 </tr>
               )}
               {!loading && rows.length === 0 && (

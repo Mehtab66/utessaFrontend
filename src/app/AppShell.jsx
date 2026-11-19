@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, Navigate, Outlet, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../shared/auth/AuthContext'
-import { Logo, Wordmark } from '../shared/ui/Logo'
+import { Wordmark } from '../shared/ui/Logo'
+import LogoLoader from '../shared/ui/LogoLoader'
 import { enabledModuleIds, navForRole, permissionsFor, roleLabel, serviceAllowed } from '../shared/security/roles'
 import { workspace, WORKSPACE_CHANGED } from '../features/workspace/workspaceApi'
 import UiIcon from '../shared/ui/Icon'
 import PricingModal from '../features/dashboard/PricingModal'
 import GlobalSearch from '../features/crm/GlobalSearch'
 import ModuleNav, { SaveShortcutButton, TrialCard } from './ModuleNav'
+import DashboardLoader from './DashboardLoader'
+
+/* The first-dashboard loader plays once per user, right after signup. */
+const welcomeSeenKey = (userId) => `utessa.welcomeLoaderSeen.${userId || 'me'}`
 
 /* ─── Icons ─────────────────────────────────────────────────────────────── */
 function IconDiamond({ className = 'w-4 h-4' }) {
@@ -154,8 +159,10 @@ export default function AppShell() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const [booting, setBooting] = useState(() => Boolean(location.state?.bootDashboard))
-  const [bootProgress, setBootProgress] = useState(0)
+  const [welcomeLoader, setWelcomeLoader] = useState(() => {
+    if (!location.state?.firstDashboard) return false
+    try { return !localStorage.getItem(welcomeSeenKey(user?.userId)) } catch { return true }
+  })
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [pricingOpen, setPricingOpen] = useState(false)
@@ -205,24 +212,16 @@ export default function AppShell() {
     return () => document.removeEventListener('mousedown', h)
   }, [])
 
-  /* Boot animation */
+  /* Signup → dashboard: mark the loader as seen and clear the one-time navigation flag,
+     so a refresh or a later login never plays it again. */
   useEffect(() => {
-    if (!booting) return undefined
-    const started = Date.now()
-    const timer = setInterval(() => {
-      const pct = Math.min(100, Math.round(((Date.now() - started) / 1400) * 100))
-      setBootProgress(pct)
-      if (pct >= 100) {
-        clearInterval(timer)
-        setTimeout(() => {
-          setBooting(false)
-          if (location.state?.bootDashboard)
-            navigate(location.pathname, { replace: true, state: {} })
-        }, 180)
-      }
-    }, 40)
-    return () => clearInterval(timer)
-  }, [booting, location.pathname, location.state, navigate])
+    if (!location.state?.firstDashboard && !location.state?.bootDashboard) return
+    if (location.state?.firstDashboard) {
+      try { localStorage.setItem(welcomeSeenKey(user?.userId), '1') } catch { /* private mode: fine */ }
+    }
+    navigate(location.pathname, { replace: true, state: {} })
+  }, [location.pathname, location.state, navigate, user?.userId])
+  const finishWelcomeLoader = useCallback(() => setWelcomeLoader(false), [])
 
   /* Auto-detect active section from URL */
   useEffect(() => {
@@ -303,19 +302,10 @@ export default function AppShell() {
   const subItems = activeSection === 'crm' ? crmItems : activeSubItems
   const activeMeta = MAIN_SECTIONS.find(s => s.id === activeSection)
 
-  if (loading) return <BootScreen progress={35} label="Checking your secure session…" />
+  if (loading) return <BootScreen label="Checking your secure session…" />
   if (!isAuthenticated) return <Navigate to="/login" replace />
   if (user?.superAdmin) return <Navigate to="/platform" replace />
   if (user && !user.onboardingDone) return <Navigate to="/welcome" replace />
-  if (booting) {
-    return (
-      <BootScreen
-        progress={bootProgress}
-        label="Loading your practice dashboard…"
-        detail={`${user.organizationName} · ${roleLabel(user.role)}`}
-      />
-    )
-  }
 
   const trialEnd = user?.trialEndsAt ? new Date(user.trialEndsAt) : null
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 0
@@ -351,6 +341,7 @@ export default function AppShell() {
   return (
     /* Page shell — gray canvas */
     <div className="flex h-screen flex-col overflow-hidden bg-mist-50 text-ink-950">
+      {welcomeLoader && <DashboardLoader onDone={finishWelcomeLoader} />}
 
       {/* ══════════════════════════════════════════════════════════════════
           TOP NAVBAR  (matches Monday CRM header)
@@ -1050,23 +1041,6 @@ function buildNotifications(summary) {
 }
 
 /* ─── Boot screen ───────────────────────────────────────────────────────── */
-function BootScreen({ progress, label, detail }) {
-  return (
-    <div className="grid min-h-screen place-items-center bg-mist-50 px-4">
-      <div className="w-full max-w-md text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center">
-          <Logo className="h-12 w-12 animate-pulse-soft" />
-        </div>
-        <h1 className="text-[22px] font-bold text-ink-950">{label}</h1>
-        {detail && <p className="mt-1 text-sm text-mist-500">{detail}</p>}
-        <div className="mx-auto mt-6 h-2.5 overflow-hidden rounded-sm bg-mist-200">
-          <div
-            className="h-full rounded-sm bg-brand-600 transition-[width] duration-100 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <p className="mt-3 font-mono text-xs text-mist-500">{progress}%</p>
-      </div>
-    </div>
-  )
+function BootScreen({ label }) {
+  return <LogoLoader fullScreen label={label} />
 }

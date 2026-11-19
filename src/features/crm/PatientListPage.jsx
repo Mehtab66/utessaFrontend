@@ -5,6 +5,7 @@ import { useAuth } from '../../shared/auth/AuthContext'
 import { permissionsFor } from '../../shared/security/roles'
 import { LEAD_SOURCES, LEAD_STATUSES, OPEN_LEAD_STATUSES, PRIORITIES, crm, labelOf } from './crmApi'
 import { useCrmEditors } from './CrmEditors'
+import LeadImportModal from './LeadImportModal'
 import {
   Alert, Avatar, Button, ConfirmModal, DataTable, EnumPill, FilterSelect, PageHeader, Pill, PromptModal, SearchInput,
   Segmented, Toolbar, fmtDate, fmtRelative, formatPhone, useAsync, useCrmRefs, useDebounced, useToast,
@@ -31,6 +32,7 @@ export default function PatientListPage({ mode = 'LEAD' }) {
   const [selected, setSelected] = useState([])
   const [bulk, setBulk] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [importing, setImporting] = useState(false)
   const debouncedQ = useDebounced(q)
 
   const params = {
@@ -132,6 +134,7 @@ export default function PatientListPage({ mode = 'LEAD' }) {
           : 'Converted and existing patients with their chart link, insurance and EHR sync status.'}
         actions={
           <>
+            {isLead && <Button variant="secondary" onClick={() => setImporting(true)}><Icon name="upload" /> Import</Button>}
             <Button variant="secondary" onClick={exportCsv} disabled={!rows.length}>Export CSV</Button>
             <Button onClick={() => editors.open.patient(null, isLead ? {} : { lifecycleStage: 'PATIENT', leadStatus: 'CONVERTED' })}>
               <Icon name="plus" /> {isLead ? 'New lead' : 'Add patient'}
@@ -218,6 +221,11 @@ export default function PatientListPage({ mode = 'LEAD' }) {
         }}
       />
       {editors.node}
+      <LeadImportModal
+        open={importing}
+        onClose={() => setImporting(false)}
+        onDone={(res) => { toast(`${res.created} lead${res.created === 1 ? '' : 's'} imported`); reload() }}
+      />
       {toastNode}
     </div>
   )
