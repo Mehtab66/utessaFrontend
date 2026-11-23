@@ -89,7 +89,7 @@ export default function TasksPage() {
             ) : '—'),
           },
           { key: 'taskType', label: 'Type', render: (t) => labelOf(TASK_TYPES, t.taskType) },
-          { key: 'priority', label: 'Priority', render: (t) => <EnumPill list={PRIORITIES} value={t.priority} />, sortValue: (t) => PRIORITIES.findIndex((p) => p.value === t.priority) },
+          { key: 'priority', label: 'Priority', toneList: PRIORITIES, render: (t) => <EnumPill list={PRIORITIES} value={t.priority} />, sortValue: (t) => PRIORITIES.findIndex((p) => p.value === t.priority) },
           {
             key: 'dueAt',
             label: 'Due',

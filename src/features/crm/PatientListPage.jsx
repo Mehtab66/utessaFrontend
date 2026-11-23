@@ -103,9 +103,9 @@ export default function PatientListPage({ mode = 'LEAD' }) {
       ),
     },
     isLead
-      ? { key: 'leadStatus', label: 'Status', render: (r) => <EnumPill list={LEAD_STATUSES} value={r.leadStatus} />, sortValue: (r) => LEAD_STATUSES.findIndex((s) => s.value === r.leadStatus) }
+      ? { key: 'leadStatus', label: 'Status', toneList: LEAD_STATUSES, render: (r) => <EnumPill list={LEAD_STATUSES} value={r.leadStatus} />, sortValue: (r) => LEAD_STATUSES.findIndex((s) => s.value === r.leadStatus) }
       : { key: 'mrn', label: 'MRN', render: (r) => r.mrn || '—' },
-    { key: 'priority', label: 'Priority', render: (r) => <EnumPill list={PRIORITIES} value={r.priority} />, sortValue: (r) => PRIORITIES.findIndex((s) => s.value === r.priority) },
+    { key: 'priority', label: 'Priority', toneList: PRIORITIES, render: (r) => <EnumPill list={PRIORITIES} value={r.priority} />, sortValue: (r) => PRIORITIES.findIndex((s) => s.value === r.priority) },
     isLead ? { key: 'source', label: 'Source', render: (r) => r.source || '—' } : { key: 'dateOfBirth', label: 'DOB', render: (r) => fmtDate(r.dateOfBirth), nowrap: true },
     { key: 'interestedService', label: isLead ? 'Interest' : 'Service', render: (r) => r.interestedService || '—' },
     { key: 'insurancePayer', label: 'Insurance', render: (r) => (r.insurancePayer ? <span>{r.insurancePayer}{r.insuranceVerified && <Icon name="check" title="Verified" className="ml-1 inline h-3.5 w-3.5 text-brand-800" strokeWidth={2.4} />}</span> : '—') },

@@ -136,7 +136,7 @@ export default function RecallsPage() {
               </div>
             ),
           },
-          { key: 'status', label: 'Status', render: (r) => <EnumPill list={RECALL_STATUSES} value={r.status} /> },
+          { key: 'status', label: 'Status', toneList: RECALL_STATUSES, render: (r) => <EnumPill list={RECALL_STATUSES} value={r.status} /> },
           {
             key: 'actions',
             label: '',

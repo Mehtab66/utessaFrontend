@@ -193,6 +193,17 @@ const DOTS = {
   ink: 'bg-iris-700',
 }
 
+// Accent strip colour for fully coloured table cells (matches DOTS).
+const ACCENTS = {
+  green: 'var(--color-brand-800)',
+  amber: 'var(--color-sun-600)',
+  red: 'var(--color-danger-600)',
+  blue: 'var(--color-info-700)',
+  gray: 'var(--color-mist-400)',
+  teal: 'var(--color-brand-600)',
+  ink: 'var(--color-iris-700)',
+}
+
 export function Pill({ tone = 'gray', children, dot = false, className = '' }) {
   return (
     <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2.5 py-1 text-[12px] font-semibold ${TONES[tone] || TONES.gray} ${className}`}>
@@ -541,7 +552,8 @@ export function DataTable({ columns, rows, loading, empty = 'No records yet.', o
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={`border-b border-mist-100 px-3 py-3 text-[13.5px] text-ink-950 ${col.align === 'right' ? 'text-right' : ''} ${col.nowrap ? 'whitespace-nowrap' : ''}`}
+                    className={`border-b border-mist-100 px-3 py-3 text-[13.5px] text-ink-950 ${col.align === 'right' ? 'text-right' : ''} ${col.nowrap ? 'whitespace-nowrap' : ''} ${col.toneList && row[col.key] ? `tone-cell ${TONES[toneOf(col.toneList, row[col.key])] || TONES.gray}` : ''}`}
+                    style={col.toneList && row[col.key] ? { '--tone-accent': ACCENTS[toneOf(col.toneList, row[col.key])] || ACCENTS.gray } : undefined}
                   >
                     {(() => {
                       const v = col.render ? col.render(row) : row[col.key]

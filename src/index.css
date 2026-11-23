@@ -354,6 +354,22 @@ table.border-collapse > :last-child > tr:last-child > * {
 }
 
 /*
+ * Fully coloured status / priority cells: each one reads as its own tile —
+ * a white gutter separates neighbouring cells (rows and columns), and a
+ * coloured strip on the left carries the tone.
+ */
+table.border-collapse td.tone-cell {
+  box-shadow:
+    inset 0 0 0 3px #fff,
+    inset 7px 0 0 0 var(--tone-accent, var(--color-mist-400));
+  padding-left: 16px;
+  transition: filter 0.15s ease;
+}
+table.border-collapse tr:hover td.tone-cell {
+  filter: saturate(1.35) brightness(0.98);
+}
+
+/*
  * ═══ Dashboard loader (first dashboard after signup) ══════════════════════
  * A small dashboard skeleton whose cards fly in one by one, over the real
  * dashboard, which is blurred behind it. Neutral greys only — no tinted backdrop.

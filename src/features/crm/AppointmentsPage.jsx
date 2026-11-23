@@ -111,7 +111,7 @@ export default function AppointmentsPage() {
             { key: 'appointmentType', label: 'Type', render: (a) => labelOf(APPT_TYPES, a.appointmentType) },
             { key: 'mode', label: 'Mode', render: (a) => labelOf(APPT_MODES, a.mode) },
             { key: 'providerName', label: 'Provider' },
-            { key: 'status', label: 'Status', render: (a) => <EnumPill list={APPT_STATUSES} value={a.status} /> },
+            { key: 'status', label: 'Status', toneList: APPT_STATUSES, render: (a) => <EnumPill list={APPT_STATUSES} value={a.status} /> },
             { key: 'ehrSyncStatus', label: 'EHR', render: (a) => <EhrBadge status={a.ehrSyncStatus} /> },
           ]}
         />

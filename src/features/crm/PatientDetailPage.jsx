@@ -193,7 +193,7 @@ export default function PatientDetailPage() {
                     { key: 'startsAt', label: 'When', nowrap: true, render: (a) => fmtDateTime(a.startsAt) },
                     { key: 'title', label: 'Appointment' },
                     { key: 'providerName', label: 'Provider' },
-                    { key: 'status', label: 'Status', render: (a) => <EnumPill list={APPT_STATUSES} value={a.status} /> },
+                    { key: 'status', label: 'Status', toneList: APPT_STATUSES, render: (a) => <EnumPill list={APPT_STATUSES} value={a.status} /> },
                     { key: 'ehrSyncStatus', label: 'EHR', render: (a) => <EhrBadge status={a.ehrSyncStatus} /> },
                   ]}
                 />
@@ -247,7 +247,7 @@ export default function PatientDetailPage() {
                     { key: 'receivedOn', label: 'Received', nowrap: true, render: (r) => fmtDate(r.receivedOn) },
                     { key: 'referralPartnerName', label: 'From', render: (r) => r.referralPartnerName || r.referringProviderName || '—' },
                     { key: 'serviceRequested', label: 'Service' },
-                    { key: 'status', label: 'Status', render: (r) => <EnumPill list={REFERRAL_STATUSES} value={r.status} /> },
+                    { key: 'status', label: 'Status', toneList: REFERRAL_STATUSES, render: (r) => <EnumPill list={REFERRAL_STATUSES} value={r.status} /> },
                     { key: 'authorizationNumber', label: 'Auth #' },
                   ]}
                 />

@@ -114,7 +114,7 @@ function ReferralQueue({ state, editors, toast }) {
           },
           { key: 'referralPartnerName', label: 'Referred by', render: (r) => r.referralPartnerName || r.referringProviderName || '—' },
           { key: 'serviceRequested', label: 'Service', render: (r) => r.serviceRequested || '—' },
-          { key: 'priority', label: 'Priority', render: (r) => <EnumPill list={PRIORITIES} value={r.priority} /> },
+          { key: 'priority', label: 'Priority', toneList: PRIORITIES, render: (r) => <EnumPill list={PRIORITIES} value={r.priority} /> },
           {
             key: 'status',
             label: 'Status',

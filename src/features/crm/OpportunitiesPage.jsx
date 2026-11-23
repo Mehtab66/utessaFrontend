@@ -87,7 +87,7 @@ export default function OpportunitiesPage() {
             { key: 'patientName', label: 'Patient / lead', render: (o) => <Link onClick={(e) => e.stopPropagation()} className="text-brand-700" to={`/app/crm/patients/${o.patientId}`}>{o.patientName}</Link> },
             { key: 'serviceLine', label: 'Service line' },
             { key: 'stage', label: 'Stage', render: (o) => <EnumPill list={OPP_STAGES} value={o.stage} />, sortValue: (o) => OPP_STAGES.findIndex((s) => s.value === o.stage) },
-            { key: 'priority', label: 'Priority', render: (o) => <EnumPill list={PRIORITIES} value={o.priority} /> },
+            { key: 'priority', label: 'Priority', toneList: PRIORITIES, render: (o) => <EnumPill list={PRIORITIES} value={o.priority} /> },
             { key: 'estimatedValue', label: 'Value', align: 'right', render: (o) => fmtMoney(o.estimatedValue), sortValue: (o) => Number(o.estimatedValue) || 0 },
             { key: 'probability', label: 'Prob.', align: 'right', render: (o) => (o.probability != null ? `${o.probability}%` : '—') },
             { key: 'expectedCloseDate', label: 'Decision', nowrap: true, render: (o) => fmtDate(o.expectedCloseDate) },
