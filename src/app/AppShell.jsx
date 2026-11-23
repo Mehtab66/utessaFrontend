@@ -7,6 +7,7 @@ import { enabledModuleIds, navForRole, permissionsFor, roleLabel, serviceAllowed
 import { workspace, WORKSPACE_CHANGED } from '../features/workspace/workspaceApi'
 import UiIcon from '../shared/ui/Icon'
 import PricingModal from '../features/dashboard/PricingModal'
+import { billing } from '../features/billing/billingApi'
 import GlobalSearch from '../features/crm/GlobalSearch'
 import { RingCentralPhoneProvider } from '../features/crm/RingCentralPhone'
 import ModuleNav, { SaveShortcutButton, TrialCard } from './ModuleNav'
@@ -273,6 +274,15 @@ export default function AppShell() {
     return () => window.removeEventListener(WORKSPACE_CHANGED, onChange)
   }, [isAuthenticated, user?.superAdmin, user?.onboardingDone, loadSummary])
 
+  // Billing state from the backend: the trial banner shows only during a real trial.
+  const [entitlements, setEntitlements] = useState(null)
+  useEffect(() => {
+    if (!isAuthenticated || user?.superAdmin || !user?.onboardingDone) return undefined
+    let alive = true
+    billing.entitlements().then((e) => { if (alive) setEntitlements(e) }).catch(() => {})
+    return () => { alive = false }
+  }, [isAuthenticated, user?.superAdmin, user?.onboardingDone, pricingOpen, location.pathname])
+
   const sections = useMemo(() => navForRole(user?.role, user?.enabledServices), [user?.role, user?.enabledServices])
   const enabledIds = enabledModuleIds(user?.enabledServices)
   /* Rail shows Home + only the modules this practice picked (and the role can open) */
@@ -308,7 +318,8 @@ export default function AppShell() {
   if (user?.superAdmin) return <Navigate to="/platform" replace />
   if (user && !user.onboardingDone) return <Navigate to="/welcome" replace />
 
-  const trialEnd = user?.trialEndsAt ? new Date(user.trialEndsAt) : null
+  const showTrial = entitlements ? entitlements.trialActive : false
+  const trialEnd = entitlements?.trialEndsAt ? new Date(entitlements.trialEndsAt) : user?.trialEndsAt ? new Date(user.trialEndsAt) : null
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 0
   const trialStart = user?.trialStartsAt ? new Date(user.trialStartsAt) : null
   const trialTotal = trialStart && trialEnd ? Math.max(1, Math.round((trialEnd - trialStart) / 86400000)) : 14
@@ -510,7 +521,7 @@ export default function AppShell() {
                   <p className="text-xs text-mist-500">{roleLabel(user.role)}</p>
                 </div>
                 <ul className="py-1">
-                  {[{ label: 'Team', icon: 'users', to: '/app/team' }, { label: 'Apps & modules', icon: 'apps', to: '/app/modules' }, { label: 'Settings', icon: 'settings', to: '/app/setup' }].map(item => (
+                  {[{ label: 'Team', icon: 'users', to: '/app/team' }, { label: 'Apps & modules', icon: 'apps', to: '/app/modules' }, { label: 'Billing', icon: 'creditCard', to: '/app/billing' }, { label: 'Settings', icon: 'settings', to: '/app/setup' }].map(item => (
                     <li key={item.label} className="px-1.5">
                       <button type="button" role="menuitem" onClick={() => { setProfileOpen(false); navigate(item.to) }} className="menu-item">
                         <UiIcon name={item.icon} />
@@ -659,7 +670,7 @@ export default function AppShell() {
                 module={activeMeta}
                 items={subItems}
                 modules={railSections.filter(sec => sec.module)}
-                daysLeft={daysLeft}
+                daysLeft={showTrial ? daysLeft : null}
                 trialTotal={trialTotal}
                 onUpgrade={() => setPricingOpen(true)}
                 saved={isSaved}
@@ -669,7 +680,7 @@ export default function AppShell() {
               <SectionBar
                 title={activeMeta?.label || activeTool?.label || 'Workspace'}
                 items={[]}
-                daysLeft={daysLeft}
+                daysLeft={showTrial ? daysLeft : null}
                 trialTotal={trialTotal}
                 onUpgrade={() => setPricingOpen(true)}
                 saved={isSaved}
@@ -698,7 +709,7 @@ export default function AppShell() {
       <PricingModal
         isOpen={pricingOpen}
         onClose={() => setPricingOpen(false)}
-        defaultSizeBand={user?.teamSizeBand ? Number(user.teamSizeBand) : undefined}
+        canManage={['OWNER', 'ADMIN'].includes(String(user?.role || '').toUpperCase())}
       />
     </div>
     </RingCentralPhoneProvider>
@@ -825,7 +836,7 @@ function SectionBar({ title, items, daysLeft, trialTotal, onUpgrade, saved, onTo
       </div>
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <TrialCard daysLeft={daysLeft} total={trialTotal} onUpgrade={onUpgrade} />
+        {daysLeft != null && <TrialCard daysLeft={daysLeft} total={trialTotal} onUpgrade={onUpgrade} />}
         <SaveShortcutButton saved={saved} onToggle={onToggleSave} sectionLabel={sectionLabel} />
       </div>
     </div>

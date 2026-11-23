@@ -45,6 +45,7 @@ import NotesPage from '../features/workspace/NotesPage'
 import TeamBoardPage from '../features/workspace/TeamBoardPage'
 import TeamPage from '../features/workspace/TeamPage'
 import ModulesPage from '../features/workspace/ModulesPage'
+import BillingPage from '../features/billing/BillingPage'
 
 function FeatureRoute({ permission, element }) {
   const { user } = useAuth()
@@ -87,6 +88,7 @@ export default function AppRouter() {
             <Route path="board" element={<TeamBoardPage />} />
             <Route path="team" element={<TeamPage />} />
             <Route path="modules" element={<ModulesPage />} />
+            <Route path="billing" element={<BillingPage />} />
             <Route path="providers" element={<FeatureRoute permission="creds" element={<ProvidersPage />} />} />
             <Route path="staff" element={<FeatureRoute permission="staff" element={<StaffPage />} />} />
             <Route path="vendors" element={<FeatureRoute permission="vendors" element={<VendorsPage />} />} />
