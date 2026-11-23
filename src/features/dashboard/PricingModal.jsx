@@ -1,79 +1,34 @@
-import { useEffect, useMemo, useState } from 'react'
-import Select from '../../shared/ui/Select'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { billing, formatDate, formatMoney, LIVE_STATUSES, MODULE_INFO, newIdempotencyKey } from '../billing/billingApi'
 
-const BANDS = [
-  { min: 1,   max: 10,  label: '1–10 users',    crm: 149,  ops: 99,   mkt: 149  },
-  { min: 11,  max: 25,  label: '11–25 users',   crm: 349,  ops: 249,  mkt: 349  },
-  { min: 26,  max: 40,  label: '26–40 users',   crm: 449,  ops: 349,  mkt: 449  },
-  { min: 41,  max: 75,  label: '41–75 users',   crm: 649,  ops: 499,  mkt: 649  },
-  { min: 76,  max: 150, label: '76–150 users',  crm: 999,  ops: 749,  mkt: 999  },
-  { min: 151, max: 300, label: '151–300 users', crm: 1699, ops: 1149, mkt: 1699 }
-]
+/*
+ * Plans & pricing. Prices come from the backend (GET /api/v1/billing/pricing, read from Stripe) —
+ * nothing is hard-coded here. Without a subscription it starts Stripe Checkout; with one it
+ * previews and applies a plan change on the existing subscription.
+ */
 
-const TC_RATE = 3
-const TC_MIN = 30
-const MONTHLY_UPLIFT = 0.15
-const DISC = { 2: 0.10, 3: 0.15, 4: 0.20 }
+const ORDER = ['crm', 'ops', 'mkt', 'tc']
 
-const SIZE_OPTIONS = [
-  { value: 5,   label: '1–10' },
-  { value: 18,  label: '11–25' },
-  { value: 33,  label: '26–40' },
-  { value: 58,  label: '41–75' },
-  { value: 113, label: '76–150' },
-  { value: 225, label: '151–300' },
-  { value: 301, label: '300+' },
-]
+export default function PricingModal({ isOpen, onClose, canManage = true }) {
+  const [pricing, setPricing] = useState(null)
+  const [sub, setSub] = useState(null)
+  const [ent, setEnt] = useState(null)
+  const [loadError, setLoadError] = useState('')
+  const [modules, setModules] = useState(['crm'])
+  const [seats, setSeats] = useState(0)
+  const [interval, setInterval] = useState('MONTHLY')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  const [preview, setPreview] = useState(null)
+  const [done, setDone] = useState(null)
+  // One key per user action; reused if the same action is retried.
+  const keyRef = useRef({ action: null, key: null })
 
-const SVCS = [
-  {
-    id: 'crm',
-    name: 'CRM',
-    color: '#5CE1E6',
-    desc: 'Patient leads, call tracking, referral CRM, pipelines and contact history.',
-  },
-  {
-    id: 'ops',
-    name: 'Operations',
-    color: '#C9CDF2',
-    desc: 'Documents, dashboard, vendor management with BAA flags, role-based access and audit log.',
-  },
-  {
-    id: 'mkt',
-    name: 'Marketing & Outreach',
-    color: '#FFD23F',
-    desc: 'Review requests and monitoring, email campaigns, social posting and text campaigns.',
-  },
-  {
-    id: 'tc',
-    name: 'Time Clock',
-    color: '#3BC4CA',
-    desc: 'Clock in and out, timesheets, mobile app and payroll export.',
-  },
-]
-
-function money(n) {
-  return '$' + Math.round(n).toLocaleString('en-US')
-}
-
-function findBand(users) {
-  for (let i = 0; i < BANDS.length; i++) {
-    if (users >= BANDS[i].min && users <= BANDS[i].max) return BANDS[i]
+  const keyFor = (action) => {
+    if (keyRef.current.action !== action) keyRef.current = { action, key: newIdempotencyKey() }
+    return keyRef.current.key
   }
-  return null
-}
 
-export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
-  const [selectedSvcs, setSelectedSvcs] = useState(['crm', 'ops'])
-  const [sizeBand, setSizeBand] = useState(defaultSizeBand ?? 5)
-  const [staff, setStaff] = useState(10)
-  const [billing, setBilling] = useState('annual') // 'annual' | 'monthly'
-  const [showPromo, setShowPromo] = useState(false)
-  const [promoCode, setPromoCode] = useState('')
-  const [step, setStep] = useState('choose') // 'choose' | 'checkout' | 'done'
-  const [autoRenew, setAutoRenew] = useState(false)
-
-  // Close on Escape
   useEffect(() => {
     function onKeyDown(e) {
       if (e.key === 'Escape' && isOpen) onClose()
@@ -82,435 +37,288 @@ export default function PricingModal({ isOpen, onClose, defaultSizeBand }) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [isOpen, onClose])
 
-  // Reset step when modal opens
   useEffect(() => {
-    if (isOpen) {
-      setStep('choose')
-      setAutoRenew(false)
+    if (!isOpen) return
+    let alive = true
+    setError('')
+    setPreview(null)
+    setDone(null)
+    setLoadError('')
+    ;(async () => {
+      try {
+        const [p, e] = await Promise.all([billing.pricing(), billing.entitlements()])
+        let s = null
+        if (canManage) {
+          try {
+            s = await billing.subscription()
+          } catch {
+            s = null
+          }
+        }
+        if (!alive) return
+        setPricing(p)
+        setEnt(e)
+        setSub(s)
+        const live = s && LIVE_STATUSES.includes(s.status) && s.items?.length
+        if (live) {
+          const current = s.items.filter((i) => i.key !== 'seat' && i.status !== 'SCHEDULED_ADD').map((i) => i.key)
+          setModules(current.length ? current : ['crm'])
+          setSeats(s.seats?.purchased ?? 0)
+          setInterval(s.interval || 'MONTHLY')
+        } else {
+          setModules(['crm'])
+          setSeats(Math.max(e?.members ?? 0, 0))
+          setInterval('MONTHLY')
+        }
+      } catch (err) {
+        if (alive) setLoadError(err.message || 'Could not load plans.')
+      }
+    })()
+    return () => {
+      alive = false
     }
-  }, [isOpen])
+  }, [isOpen, canManage])
 
-  const toggleSvc = (id) => {
-    setSelectedSvcs((prev) =>
-      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
-    )
-  }
+  const hasSubscription = !!(sub && LIVE_STATUSES.includes(sub.status) && sub.items?.length)
+  const members = ent?.members ?? 0
+  const yearly = interval === 'YEARLY'
+  const currency = pricing?.currency || 'usd'
 
-  // Quote calculation
   const quote = useMemo(() => {
-    const isCustom = sizeBand > 300
-    const b = findBand(sizeBand)
-    const lines = []
-    let list = 0
-
-    if (b && selectedSvcs.length && !isCustom) {
-      selectedSvcs.forEach((s) => {
-        const each = s === 'tc' ? Math.max(TC_MIN, TC_RATE * staff) : b[s]
-        const amt = each
-        const svcMeta = SVCS.find((x) => x.id === s)
-        lines.push({
-          key: s,
-          name: svcMeta?.name || s,
-          color: svcMeta?.color || '#5CE1E6',
-          amount: amt,
-          note: s === 'tc' ? `${staff} staff` : b.label,
-        })
-        list += amt
-      })
-    }
-
-    const disc = DISC[selectedSvcs.length] || 0
-    const net = list * (1 - disc) * (billing === 'monthly' ? 1 + MONTHLY_UPLIFT : 1)
-    const bandLabel = SIZE_OPTIONS.find(o => o.value === sizeBand)?.label || b?.label || ''
-
-    return { b, lines, list, disc, net, isCustom, bandLabel }
-  }, [sizeBand, staff, selectedSvcs, billing])
+    if (!pricing) return null
+    const lines = ORDER.filter((k) => modules.includes(k)).map((k) => {
+      const p = pricing.modules.find((m) => m.key === k)
+      const price = yearly ? p.yearly : p.monthly
+      return { key: k, name: MODULE_INFO[k]?.name || p.label, amount: price.amount, note: yearly ? 'per year' : 'per month' }
+    })
+    const seat = yearly ? pricing.seatYearly : pricing.seatMonthly
+    if (seats > 0) lines.push({ key: 'seat', name: `Team members × ${seats}`, amount: seat.amount * seats, note: `${formatMoney(seat.amount, currency)} each` })
+    const total = lines.reduce((s, l) => s + l.amount, 0)
+    // What the same plan would cost on the other cycle, for the yearly saving hint.
+    const monthlyTotal = ORDER.filter((k) => modules.includes(k))
+      .reduce((s, k) => s + pricing.modules.find((m) => m.key === k).monthly.amount, 0) + pricing.seatMonthly.amount * seats
+    const yearlyTotal = ORDER.filter((k) => modules.includes(k))
+      .reduce((s, k) => s + pricing.modules.find((m) => m.key === k).yearly.amount, 0) + pricing.seatYearly.amount * seats
+    return { lines, total, saving: Math.max(0, monthlyTotal * 12 - yearlyTotal) }
+  }, [pricing, modules, seats, yearly, currency])
 
   if (!isOpen) return null
 
+  const toggle = (k) => {
+    setPreview(null)
+    setModules((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]))
+  }
+
+  const change = { modules, seats, interval }
+
+  async function startCheckout() {
+    setBusy(true)
+    setError('')
+    try {
+      const res = await billing.startCheckout(change, keyFor(`checkout:${JSON.stringify(change)}`))
+      window.location.assign(res.checkoutUrl)
+    } catch (err) {
+      setError(err.message)
+      setBusy(false)
+    }
+  }
+
+  async function runPreview() {
+    setBusy(true)
+    setError('')
+    try {
+      setPreview(await billing.preview(change))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function confirmChange() {
+    setBusy(true)
+    setError('')
+    const body = { ...change, previewToken: preview.previewToken }
+    const key = keyFor(`change:${preview.previewToken}`)
+    try {
+      let res
+      if (preview.changeType === 'INTERVAL') res = await billing.changeCycle({ interval, timing: preview.timing, previewToken: preview.previewToken }, key)
+      else if (preview.changeType === 'DOWNGRADE') res = await billing.downgrade({ ...body, timing: preview.timing }, key)
+      else res = await billing.upgrade(body, key)
+      if (res.result === 'PAYMENT_REQUIRED' && res.paymentUrl) {
+        setDone({ text: 'Your card needs attention. The change is applied as soon as the payment goes through.', url: res.paymentUrl })
+      } else if (res.result === 'SCHEDULED') {
+        setDone({ text: `Done — your plan changes on ${formatDate(res.effectiveAt)}. You keep everything until then.` })
+      } else {
+        setDone({ text: 'Your plan has been updated.' })
+      }
+      setPreview(null)
+      if (res.subscription) setSub(res.subscription)
+    } catch (err) {
+      setError(err.message)
+      if (err.status === 409) setPreview(null)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const trialActive = ent?.trialActive
+  const changed = hasSubscription && sub && (
+    interval !== sub.interval
+    || seats !== (sub.seats?.purchased ?? 0)
+    || [...modules].sort().join() !== sub.items.filter((i) => i.key !== 'seat' && i.status !== 'SCHEDULED_ADD').map((i) => i.key).sort().join()
+  )
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-5 font-sans text-ink-950">
-      <div
-        className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header bar */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/55 p-3 backdrop-blur-sm sm:p-5 font-sans text-ink-950" onClick={onClose}>
+      <div className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Plans and pricing">
         <div className="flex items-center justify-between border-b border-mist-200 bg-mist-50 px-6 py-4">
-          <div className="flex items-center gap-2">
-            <svg viewBox="0 0 24 24" className="h-5 w-5 text-brand-700" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 4h12l4 5.5L12 21 2 9.5 6 4z" />
-              <path d="M2 9.5h20" />
-              <path d="M10 4l-2.5 5.5L12 21l4.5-11.5L14 4" />
-            </svg>
-            <h2 className="text-base font-bold text-ink-900">Utessa Plans & Pricing</h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1 text-mist-500 transition hover:bg-mist-100 hover:text-ink-950"
-            aria-label="Close"
-          >
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
+          <h2 className="text-base font-bold text-ink-900">Utessa Plans & Pricing</h2>
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-1.5 text-mist-600 hover:bg-mist-100">✕</button>
         </div>
 
-        {/* Modal body */}
-        {step === 'choose' && (
-          <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_310px]">
-            {/* Left: configuration form */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-base font-bold tracking-tight text-ink-950">Choose your plan</h3>
-                <p className="mt-0.5 text-xs text-mist-500">
-                  Select the services you need. Your practice setup, data, and users stay exactly as they are.
-                </p>
-              </div>
+        {loadError && <p className="m-0 px-6 py-8 text-sm font-semibold text-danger-700">{loadError}</p>}
+        {!loadError && !pricing && <p className="m-0 px-6 py-8 text-sm text-mist-600">Loading prices…</p>}
 
-              {/* Service tiles */}
+        {pricing && quote && (
+          <div className="grid gap-0 md:grid-cols-[minmax(0,1fr)_320px]">
+            {/* ── choose ── */}
+            <div className="space-y-5 p-6">
+              {trialActive && !hasSubscription && (
+                <div className="rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-[13px] text-brand-900">
+                  You're on the free trial until <b>{formatDate(ent.trialEndsAt)}</b> with every module. Pick your plan now —
+                  you won't be charged until the trial ends.
+                </div>
+              )}
+              {hasSubscription && (
+                <div className="rounded-xl border border-mist-200 bg-mist-50 px-4 py-3 text-[13px] text-ink-800">
+                  Current plan: <b>{sub.items.filter((i) => i.key !== 'seat').map((i) => MODULE_INFO[i.key]?.name || i.key).join(', ')}</b>
+                  {' · '}{sub.seats?.purchased ?? 0} seat{(sub.seats?.purchased ?? 0) === 1 ? '' : 's'} · {sub.interval?.toLowerCase()}
+                  {sub.status !== 'active' && sub.status !== 'trialing' ? ` · ${sub.status.replace('_', ' ')}` : ''}
+                </div>
+              )}
+
               <div>
-                <h4 className="mb-2 text-xs font-semibold text-mist-500">Services</h4>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {SVCS.map((svc) => {
-                    const isSelected = selectedSvcs.includes(svc.id)
+                <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-mist-500">Modules</h4>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {ORDER.map((k) => {
+                    const p = pricing.modules.find((m) => m.key === k)
+                    const on = modules.includes(k)
                     return (
-                      <button
-                        key={svc.id}
-                        type="button"
-                        onClick={() => toggleSvc(svc.id)}
-                        className={`group relative flex items-start gap-3 rounded-xl border p-3.5 text-left transition ${
-                          isSelected
-                            ? 'border-brand-600 bg-brand-50 ring-1 ring-brand-600'
-                            : 'border-mist-200 bg-white hover:border-mist-300'
-                        }`}
-                      >
-                        <span
-                          className="h-7 w-7 shrink-0 rounded-lg opacity-80"
-                          style={{ backgroundColor: svc.color }}
-                        />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[13.5px] font-semibold text-ink-950">{svc.name}</span>
-                            <span
-                              className={`flex h-4.5 w-4.5 items-center justify-center rounded-full text-[11px] font-bold ${
-                                isSelected ? 'bg-brand-600 text-white' : 'border border-mist-200 text-transparent'
-                              }`}
-                            >
-                              ✓
-                            </span>
-                          </div>
-                          <p className="mt-0.5 text-[11.5px] leading-relaxed text-mist-500">{svc.desc}</p>
-                        </div>
+                      <button key={k} type="button" onClick={() => toggle(k)} aria-pressed={on}
+                        className={`rounded-xl border p-3 text-left transition ${on ? 'border-brand-500 bg-brand-50 shadow-[inset_0_0_0_1px_#1E8E94]' : 'border-mist-200 bg-white hover:border-mist-300'}`}>
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="flex items-center gap-2 text-[14px] font-semibold text-ink-900">
+                            <span className="h-2.5 w-2.5 rounded-full" style={{ background: MODULE_INFO[k].color }} />
+                            {MODULE_INFO[k].name}
+                          </span>
+                          <span className="text-[13px] font-semibold text-ink-800">
+                            {formatMoney(yearly ? p.yearly.amount : p.monthly.amount, currency)}<span className="font-normal text-mist-500">/{yearly ? 'yr' : 'mo'}</span>
+                          </span>
+                        </span>
+                        <span className="mt-1 block text-[12px] leading-snug text-mist-600">{MODULE_INFO[k].desc}</span>
                       </button>
                     )
                   })}
                 </div>
-
-                {selectedSvcs.length >= 2 && (
-                  <div className="mt-3 flex items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-700">
-                    <span>✓</span>
-                    Bundle discount: {Math.round(quote.disc * 100)}% off for {selectedSvcs.length} services.
-                  </div>
-                )}
               </div>
 
-              {/* Size configuration */}
-              <div className="border-t border-mist-200 pt-4">
-                <h4 className="mb-2 text-xs font-semibold text-mist-500">Practice Size</h4>
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-mist-600">Number of users</label>
-                  <Select
-                    value={sizeBand}
-                    onChange={(e) => setSizeBand(Number(e.target.value))}
-                    className="h-9 w-full rounded-lg border border-mist-200 bg-white px-3 text-sm font-semibold text-ink-950 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-                  >
-                    {SIZE_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label} users</option>
-                    ))}
-                  </Select>
-                </div>
-
-                {selectedSvcs.includes('tc') && (
-                  <div className="mt-3 max-w-[220px]">
-                    <label className="mb-1 block text-xs font-semibold text-mist-600">
-                      Staff who clock in <span className="font-normal text-mist-500">(Time Clock)</span>
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={staff}
-                      onChange={(e) => setStaff(Math.max(1, parseInt(e.target.value) || 0))}
-                      className="h-9 w-full rounded-lg border border-mist-200 bg-white px-3 text-sm font-semibold text-ink-950 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
-                    />
+                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-mist-500">Team members</h4>
+                  <div className="flex items-center gap-2">
+                    <button type="button" aria-label="Fewer seats" onClick={() => { setPreview(null); setSeats((s) => Math.max(members, s - 1)) }} className="h-9 w-9 rounded-lg border border-mist-300 text-lg">−</button>
+                    <input type="number" min={members} max={10000} value={seats} aria-label="Paid team member seats"
+                      onChange={(e) => { setPreview(null); setSeats(Math.max(0, Math.min(10000, Number(e.target.value) || 0))) }}
+                      className="h-9 w-20 rounded-lg border border-mist-300 text-center text-[15px] font-semibold" />
+                    <button type="button" aria-label="More seats" onClick={() => { setPreview(null); setSeats((s) => s + 1) }} className="h-9 w-9 rounded-lg border border-mist-300 text-lg">+</button>
                   </div>
-                )}
-              </div>
-
-              {/* Billing Toggle */}
-              <div className="border-t border-mist-200 pt-4">
-                <h4 className="mb-2 text-xs font-semibold text-mist-500">Billing Cycle</h4>
-                <div className="inline-flex rounded-xl border border-mist-200 bg-mist-50 p-1">
-                  <button
-                    type="button"
-                    onClick={() => setBilling('annual')}
-                    className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
-                      billing === 'annual' ? 'bg-white text-ink-950 shadow-sm' : 'text-mist-500 hover:text-ink-950'
-                    }`}
-                  >
-                    Annual, save 13%
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBilling('monthly')}
-                    className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
-                      billing === 'monthly' ? 'bg-white text-ink-950 shadow-sm' : 'text-mist-500 hover:text-ink-950'
-                    }`}
-                  >
-                    Monthly
-                  </button>
+                  <p className="m-0 mt-1.5 text-[12px] text-mist-600">
+                    {formatMoney(yearly ? pricing.seatYearly.amount : pricing.seatMonthly.amount, currency)} per member / {yearly ? 'year' : 'month'}. The owner is free.
+                    {members > 0 ? ` You have ${members} team member${members === 1 ? '' : 's'} now.` : ''}
+                  </p>
                 </div>
-
-                {/* Breakdown line items */}
-                <div className="mt-4 overflow-hidden rounded-xl border border-mist-200">
-                  {quote.isCustom ? (
-                    <div className="p-4 text-xs text-mist-600">
-                      Organizations with more than 300 users receive custom volume pricing, dedicated onboarding, and enterprise SLA.
-                    </div>
-                  ) : !selectedSvcs.length ? (
-                    <div className="p-4 text-center text-xs text-mist-500">Please select at least one service above.</div>
-                  ) : (
-                    <div className="divide-y divide-mist-200 text-xs">
-                      {quote.lines.map((l) => (
-                        <div key={l.key} className="flex items-center justify-between px-3.5 py-2.5">
-                          <span className="flex items-center gap-2 font-medium text-ink-950">
-                            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: l.color }} />
-                            {l.name} <span className="text-mist-500">· {l.note}</span>
-                          </span>
-                          <span className="font-semibold text-ink-950">{money(l.amount)}</span>
-                        </div>
-                      ))}
-                      <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-mist-500">
-                        <span>Subtotal</span>
-                        <span>{money(quote.list)}</span>
-                      </div>
-                      {quote.disc > 0 && (
-                        <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-brand-700">
-                          <span>Bundle discount ({Math.round(quote.disc * 100)}%)</span>
-                          <span>−{money(quote.list * quote.disc)}</span>
-                        </div>
-                      )}
-                      {billing === 'monthly' && (
-                        <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-mist-500">
-                          <span>Monthly billing (+15%)</span>
-                          <span>+{money(quote.net - quote.list * (1 - quote.disc))}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between bg-mist-50 px-3.5 py-2.5 text-sm font-bold text-ink-900">
-                        <span>Total per month</span>
-                        <span>{money(quote.net)}</span>
-                      </div>
-                      {billing === 'annual' && (
-                        <div className="flex justify-between bg-mist-25 px-3.5 py-2 text-[11px] text-mist-500">
-                          <span>Billed annually</span>
-                          <span>{money(quote.net * 12)} per year</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Promo code link */}
-                <div className="mt-3">
-                  {!showPromo ? (
-                    <button
-                      type="button"
-                      onClick={() => setShowPromo(true)}
-                      className="text-xs font-semibold text-brand-700 hover:underline"
-                    >
-                      Have a promo code?
-                    </button>
-                  ) : (
-                    <div className="flex max-w-[280px] gap-2">
-                      <input
-                        type="text"
-                        placeholder="Enter promo code"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        className="h-8 flex-1 rounded-lg border border-mist-200 px-2.5 text-xs outline-none focus:border-brand-600"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => alert('Promo code applied successfully!')}
-                        className="h-8 rounded-lg bg-brand-600 px-3 text-xs font-semibold text-white transition hover:bg-brand-700"
-                      >
-                        Apply
+                <div>
+                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-mist-500">Billing cycle</h4>
+                  <div className="inline-flex rounded-lg border border-mist-300 p-0.5">
+                    {['MONTHLY', 'YEARLY'].map((v) => (
+                      <button key={v} type="button" onClick={() => { setPreview(null); setInterval(v) }}
+                        className={`rounded-md px-3 py-1.5 text-[13px] font-semibold ${interval === v ? 'bg-brand-600 text-white' : 'text-ink-700'}`}>
+                        {v === 'MONTHLY' ? 'Monthly' : 'Yearly'}
                       </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Estimate card */}
-            <div className="flex flex-col justify-between rounded-2xl bg-white p-6 text-ink-950 shadow-lg">
-              <div>
-                <h4 className="text-xs font-semibold text-iris-200">Your estimate</h4>
-                <div className="mt-2 text-4xl font-extrabold tracking-tight">
-                  {quote.isCustom ? 'Custom' : money(quote.net)}
-                </div>
-                <div className="mt-1 text-xs text-iris-200">
-                  {quote.isCustom
-                    ? 'quote from our enterprise team'
-                    : quote.net
-                    ? `per month · ${quote.bandLabel} users`
-                    : 'per month'}
-                </div>
-
-                {/* Discount pill */}
-                <div className="mt-4">
-                  <span className="inline-block rounded-lg bg-sun-300 px-3 py-1 text-xs font-bold text-ink-900">
-                    {quote.disc > 0
-                      ? `${Math.round(quote.disc * 100)}% bundle discount`
-                      : selectedSvcs.length > 0
-                      ? 'Add a service to save 10%'
-                      : 'Add a service'}
-                  </span>
-                </div>
-
-                {/* Divider */}
-                <div className="my-5 h-px bg-white/15" />
-
-                {/* Mosaic tiles */}
-                <div>
-                  <p className="mb-2 text-[11px] font-semibold text-ink-950">Included services:</p>
-                  <div className="flex gap-2">
-                    {SVCS.map((s) => {
-                      const active = selectedSvcs.includes(s.id)
-                      return (
-                        <div
-                          key={s.id}
-                          title={s.name}
-                          className="h-8 w-8 rounded-lg transition-all"
-                          style={{
-                            backgroundColor: s.color,
-                            opacity: active ? 1 : 0.15,
-                          }}
-                        />
-                      )
-                    })}
+                    ))}
                   </div>
+                  {quote.saving > 0 && <p className="m-0 mt-1.5 text-[12px] font-semibold text-brand-800">Yearly saves {formatMoney(quote.saving, currency)} a year.</p>}
                 </div>
-
-                <div className="my-5 h-px bg-white/15" />
-
-                <p className="text-[11px] leading-relaxed text-ink-950">
-                  Prices are per location. Time Clock is $3 per staff member, $30 minimum. Bundles save 10% (2 services), 15% (3) or 20% (4). Over 300 users, our team prepares a custom quote.
-                </p>
-              </div>
-
-              {/* Bottom action button */}
-              <div className="mt-6 space-y-2">
-                <button
-                  type="button"
-                  onClick={() => setStep('checkout')}
-                  disabled={!selectedSvcs.length || quote.isCustom}
-                  className="w-full rounded-lg bg-brand-600 py-2.5 text-center text-xs font-bold text-white shadow transition hover:bg-brand-700 disabled:opacity-50"
-                >
-                  Continue to payment
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="w-full text-center text-xs font-medium text-iris-200 hover:text-white"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Checkout step */}
-        {step === 'checkout' && (
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-ink-950">Review and confirm</h3>
-            <p className="mt-1 text-xs text-mist-500">
-              Confirm your subscription details. Your free trial remains active and you will not be charged until the trial ends.
-            </p>
-
-            <div className="mt-5 space-y-4 rounded-xl border border-mist-200 bg-mist-25 p-5 text-sm">
-              <div className="flex justify-between border-b border-mist-200 pb-3">
-                <span className="text-mist-500">Plan</span>
-                <span className="font-semibold text-ink-950">
-                  {selectedSvcs.map((s) => SVCS.find((x) => x.id === s)?.name).join(', ')} · {quote.b?.label}
-                </span>
-              </div>
-              <div className="flex justify-between border-b border-mist-200 pb-3">
-                <span className="text-mist-500">First payment</span>
-                <span className="font-semibold text-ink-950">
-                  {money(billing === 'annual' ? quote.net * 12 : quote.net)} (when your 14-day trial ends)
-                </span>
-              </div>
-              <div className="flex justify-between border-b border-mist-200 pb-3">
-                <span className="text-mist-500">Renewal schedule</span>
-                <span className="font-semibold text-ink-950">
-                  {money(billing === 'annual' ? quote.net * 12 : quote.net)} {billing === 'annual' ? 'every year' : 'every month'}
-                </span>
               </div>
             </div>
 
-            <label className="mt-5 flex cursor-pointer items-start gap-3 text-xs text-mist-600">
-              <input
-                type="checkbox"
-                checked={autoRenew}
-                onChange={(e) => setAutoRenew(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-mist-200 text-brand-700 focus:ring-brand-600"
-              />
-              <span>
-                I agree that my subscription renews automatically {billing === 'annual' ? 'every year' : 'every month'} at{' '}
-                <b>{money(billing === 'annual' ? quote.net * 12 : quote.net)}</b> until I cancel, and that I can cancel online at any time.
-              </span>
-            </label>
+            {/* ── summary ── */}
+            <div className="flex flex-col border-t border-mist-200 bg-navy p-6 text-white md:border-l md:border-t-0">
+              <h4 className="m-0 text-xs font-semibold uppercase tracking-wide text-iris-200">Your plan</h4>
+              <ul className="m-0 mt-3 list-none space-y-2 p-0">
+                {quote.lines.map((l) => (
+                  <li key={l.key} className="flex justify-between gap-3 text-[13.5px]">
+                    <span>{l.name}<span className="block text-[11.5px] text-white/60">{l.note}</span></span>
+                    <span className="font-semibold">{formatMoney(l.amount, currency)}</span>
+                  </li>
+                ))}
+                {quote.lines.length === 0 && <li className="text-[13px] text-white/70">Choose at least one module.</li>}
+              </ul>
+              <div className="mt-4 border-t border-white/15 pt-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[13px] text-white/80">Total</span>
+                  <span className="text-2xl font-bold">{formatMoney(quote.total, currency)}<span className="text-sm font-normal text-white/70">/{yearly ? 'yr' : 'mo'}</span></span>
+                </div>
+                {trialActive && !hasSubscription && <p className="m-0 mt-1 text-[12px] text-white/70">First charge on {formatDate(ent.trialEndsAt)}.</p>}
+              </div>
 
-            <div className="mt-6 flex items-center justify-between border-t border-mist-200 pt-4">
-              <button
-                type="button"
-                onClick={() => setStep('choose')}
-                className="text-xs font-semibold text-mist-500 hover:text-ink-950"
-              >
-                ← Back to plan
-              </button>
-              <button
-                type="button"
-                disabled={!autoRenew}
-                onClick={() => setStep('done')}
-                className="rounded-lg bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700 disabled:opacity-50"
-              >
-                Start subscription
-              </button>
-            </div>
-          </div>
-        )}
+              {preview && (
+                <div className="mt-4 rounded-xl bg-white/10 p-3 text-[12.5px]">
+                  <p className="m-0 font-semibold">
+                    {preview.timing === 'IMMEDIATE'
+                      ? `Due now: ${formatMoney(preview.amountDueNow.amount, preview.amountDueNow.currency)}`
+                      : `Takes effect ${formatDate(preview.effectiveAt)} — nothing charged now`}
+                  </p>
+                  {preview.lines?.length > 0 && (
+                    <ul className="m-0 mt-2 list-none space-y-1 p-0 text-white/80">
+                      {preview.lines.map((l, i) => (
+                        <li key={i} className="flex justify-between gap-2"><span className="min-w-0">{l.description}</span><span className="shrink-0">{formatMoney(l.amount.amount, l.amount.currency)}</span></li>
+                      ))}
+                    </ul>
+                  )}
+                  <p className="m-0 mt-2 text-white/70">Next invoice: {formatMoney(preview.nextInvoiceAmount.amount, preview.nextInvoiceAmount.currency)}{preview.nextInvoiceAt ? ` on ${formatDate(preview.nextInvoiceAt)}` : ''}</p>
+                </div>
+              )}
+              {done && (
+                <div className="mt-4 rounded-xl bg-white/10 p-3 text-[12.5px]">
+                  {done.text} {done.url && <a href={done.url} target="_blank" rel="noreferrer" className="font-semibold text-brand-200 underline">Complete payment</a>}
+                </div>
+              )}
+              {error && <p role="alert" className="m-0 mt-3 rounded-lg bg-danger-600/20 px-3 py-2 text-[12.5px] font-semibold text-white">{error}</p>}
 
-        {/* Done / Confirmation step */}
-        {step === 'done' && (
-          <div className="p-8 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success-50 text-2xl text-[#10a37f]">
-              ✓
-            </div>
-            <h3 className="mt-4 text-2xl font-bold text-ink-950">You&apos;re all set!</h3>
-            <p className="mx-auto mt-2 max-w-md text-sm text-mist-500">
-              Your subscription is confirmed. A receipt and confirmation with your plan details and billing schedule have been emailed to your practice account.
-            </p>
-            <div className="mt-6 flex justify-center gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-lg bg-brand-600 px-6 py-2.5 text-xs font-bold text-white transition hover:bg-brand-700"
-              >
-                Back to dashboard
-              </button>
+              <div className="mt-auto space-y-2 pt-5">
+                {!canManage ? (
+                  <p className="m-0 text-[12.5px] text-white/75">Only the practice owner or an admin can change the plan.</p>
+                ) : !hasSubscription ? (
+                  <button type="button" disabled={busy || modules.length === 0} onClick={startCheckout}
+                    className="w-full rounded-lg bg-brand-500 px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-brand-400 disabled:opacity-50">
+                    {busy ? 'Opening secure checkout…' : 'Continue to secure checkout'}
+                  </button>
+                ) : preview ? (
+                  <button type="button" disabled={busy} onClick={confirmChange}
+                    className="w-full rounded-lg bg-brand-500 px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-brand-400 disabled:opacity-50">
+                    {busy ? 'Applying…' : preview.timing === 'IMMEDIATE' && preview.amountDueNow.amount > 0 ? `Confirm and pay ${formatMoney(preview.amountDueNow.amount, preview.amountDueNow.currency)}` : 'Confirm change'}
+                  </button>
+                ) : (
+                  <button type="button" disabled={busy || !changed || modules.length === 0} onClick={runPreview}
+                    className="w-full rounded-lg bg-brand-500 px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-brand-400 disabled:opacity-50">
+                    {busy ? 'Calculating…' : changed ? 'Preview change' : 'This is your current plan'}
+                  </button>
+                )}
+                <button type="button" onClick={onClose} className="w-full rounded-lg px-4 py-2 text-[13px] font-semibold text-white/80 hover:bg-white/10">Close</button>
+                <p className="m-0 text-center text-[11px] text-white/55">Payments are processed securely by Stripe.</p>
+              </div>
             </div>
           </div>
         )}
