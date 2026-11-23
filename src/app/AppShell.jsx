@@ -318,7 +318,10 @@ export default function AppShell() {
   if (user?.superAdmin) return <Navigate to="/platform" replace />
   if (user && !user.onboardingDone) return <Navigate to="/welcome" replace />
 
-  const showTrial = entitlements ? entitlements.trialActive : false
+  // "Days left · Upgrade" only while on the free trial without a plan chosen yet. Once the practice
+  // has subscribed (even if Stripe still shows "trialing" until the first charge) there's nothing to upgrade.
+  const planChosen = ['trialing', 'active', 'past_due', 'unpaid', 'incomplete', 'paused'].includes(entitlements?.subscriptionStatus)
+  const showTrial = entitlements ? entitlements.trialActive && !planChosen : false
   const trialEnd = entitlements?.trialEndsAt ? new Date(entitlements.trialEndsAt) : user?.trialEndsAt ? new Date(user.trialEndsAt) : null
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000)) : 0
   const trialStart = user?.trialStartsAt ? new Date(user.trialStartsAt) : null
