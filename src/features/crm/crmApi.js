@@ -12,7 +12,7 @@ function qs(params = {}) {
 }
 
 const BASE = '/api/v1/crm'
-const API_ROOT = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/+$/, '')
+const API_ROOT = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
 
 /** Multipart upload (the JSON client can't send files). */
 async function upload(path, form) {
