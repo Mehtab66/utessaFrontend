@@ -1,9 +1,10 @@
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '')
 
-export async function api(path, { method = 'GET', body } = {}) {
+export async function api(path, { method = 'GET', body, headers: extra } = {}) {
   const headers = {
     'Content-Type': 'application/json',
     'X-Requested-With': 'Utessa',
+    ...(extra || {}),
   }
 
   const res = await fetch(`${API_BASE}${path}`, {
