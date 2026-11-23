@@ -3,7 +3,8 @@ import Icon from '../../shared/ui/Icon'
 import { useAuth } from '../../shared/auth/AuthContext'
 import { permissionsFor } from '../../shared/security/roles'
 import { EHR_PROVIDERS, PHONE_PROVIDERS, crm } from './crmApi'
-import { Alert, Button, Card, Field, Loading, PageHeader, Pill, fmtDateTime, useAsync, useToast } from './ui'
+import { Alert, Button, Card, Field, Loading, PageHeader, Pill, fmtDateTime, formatPhone, useAsync, useToast } from './ui'
+import { useRingCentralPhone } from './RingCentralPhone'
 
 const STATUS = {
   NOT_CONNECTED: ['gray', 'Not connected'],
@@ -33,6 +34,7 @@ export default function IntegrationsPage() {
         queues new patients and appointments so nothing is missed when the link goes live. Credentials are never stored on this page.
       </Alert>
       {!canEdit && <Alert tone="warn">Only owners, admins and office managers can change integration settings.</Alert>}
+      <RingCentralCard canEdit={canEdit} toast={toast} />
       {loading && <Loading />}
       {data && (
         <div className="grid gap-4 xl:grid-cols-2">
@@ -157,6 +159,159 @@ function IntegrationCard({ integration, canEdit, title, icon, description, provi
           </div>
         )}
       </div>
+    </Card>
+  )
+}
+
+/* ─── RingCentral (live connector) ─────────────────────────────────────── */
+function RingCentralCard({ canEdit, toast }) {
+  const rc = useRingCentralPhone()
+  const s = rc.status
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [autoText, setAutoText] = useState(true)
+  const [text, setText] = useState('')
+  const [savingText, setSavingText] = useState(false)
+
+  useEffect(() => {
+    if (!s) return
+    setAutoText(Boolean(s.autoTextEnabled))
+    setText(s.autoTextMessage || '')
+  }, [s])
+
+  async function connect() {
+    setBusy(true)
+    setMsg('')
+    const res = await rc.connect()
+    setBusy(false)
+    if (res?.ok === false) setMsg(res.message || 'RingCentral sign-in did not finish.')
+    else if (res?.ok) toast(res.message || 'RingCentral connected')
+  }
+  async function disconnect() {
+    setBusy(true)
+    try {
+      await rc.disconnect()
+      toast('RingCentral disconnected for your account')
+    } catch (err) {
+      setMsg(err.message)
+    }
+    setBusy(false)
+  }
+  async function syncNow() {
+    setBusy(true)
+    try {
+      const r = await crm.rcSync()
+      toast(r.error ? `Synced with warnings: ${r.error}` : `Synced: ${r.newCalls} new calls, ${r.missedCalls} missed, ${r.autoTexts} auto-texts, ${r.newTexts} new texts`)
+      rc.reload()
+    } catch (err) {
+      setMsg(err.message)
+    }
+    setBusy(false)
+  }
+  async function saveAutoText() {
+    setSavingText(true)
+    try {
+      await crm.savePhonePractice({ missedCallAutoText: autoText, missedCallTextMessage: text.trim() })
+      toast('Missed-call auto-text saved')
+      rc.reload()
+    } catch (err) {
+      setMsg(err.message)
+    }
+    setSavingText(false)
+  }
+
+  const phaseLabel = {
+    ready: ['green', 'Browser phone ready'],
+    starting: ['amber', 'Starting browser phone…'],
+    error: ['red', 'Browser phone error'],
+    off: ['gray', 'Browser phone off'],
+  }[rc.phase] || ['gray', '']
+
+  return (
+    <Card
+      className="mb-4"
+      title={(
+        <span className="flex flex-wrap items-center gap-2">
+          <Icon name="phone" /> RingCentral
+          {s && <Pill tone={s.connected ? 'green' : s.status === 'ERROR' ? 'red' : 'gray'} dot>{s.connected ? 'Connected' : s.status === 'ERROR' ? 'Reconnect needed' : 'Not connected'}</Pill>}
+          {s?.connected && <Pill tone={phaseLabel[0]}>{phaseLabel[1]}</Pill>}
+        </span>
+      )}
+      subtitle="Calls ring in Utessa with the caller’s record, click-to-call from any number, the call log syncs automatically, missed callers get a text back, and texts go out from your RingCentral number."
+    >
+      {!s ? <Loading /> : (
+        <div className="space-y-4">
+          <Alert>{msg || (rc.phase === 'error' ? rc.error : '') || (s.status === 'ERROR' ? s.lastError : '')}</Alert>
+          {!s.configured && (
+            <Alert tone="warn">
+              RingCentral isn’t set up on the server yet. Add RINGCENTRAL_ENABLED=true, RINGCENTRAL_CLIENT_ID and RINGCENTRAL_CLIENT_SECRET to the backend .env and restart it.
+            </Alert>
+          )}
+          <div className="flex flex-wrap items-center gap-3">
+            {s.connected ? (
+              <>
+                <div className="min-w-0 flex-1 text-[13.5px] text-navy">
+                  <p className="m-0 font-semibold">{s.extensionName || 'Your extension'}{s.extensionNumber ? ` · ext ${s.extensionNumber}` : ''}</p>
+                  <p className="m-0 text-mist-600">
+                    Caller ID {s.callerIdNumber ? formatPhone(s.callerIdNumber) : 'not set'} · Texts from {s.smsNumber ? formatPhone(s.smsNumber) : 'no SMS-enabled number'}
+                    {s.lastSyncAt ? ` · last synced ${fmtDateTime(s.lastSyncAt)}` : ''}
+                  </p>
+                </div>
+                <Button variant="secondary" onClick={syncNow} disabled={busy}><Icon name="refresh" /> Sync now</Button>
+                <Button variant="danger" onClick={disconnect} disabled={busy}>Disconnect</Button>
+              </>
+            ) : (
+              <>
+                <p className="m-0 min-w-0 flex-1 text-[13.5px] text-mist-700">
+                  Each person signs in with their own RingCentral login, so calls to their extension ring in their browser.
+                </p>
+                <Button onClick={connect} disabled={busy || !s.configured}><Icon name="link" /> {s.status === 'ERROR' ? 'Reconnect RingCentral' : 'Connect RingCentral'}</Button>
+              </>
+            )}
+          </div>
+
+          {s.connectedStaff?.length > 0 && (
+            <p className="m-0 text-[12.5px] text-mist-600">Connected staff: {s.connectedStaff.join(', ')}</p>
+          )}
+
+          <div className="rounded-[12px] border border-mist-200 p-4">
+            <p className="m-0 text-[14px] font-semibold text-navy">Missed-call auto-text</p>
+            <p className="m-0 mt-0.5 text-[12.5px] text-mist-600">
+              Sent from your RingCentral number when a call is missed. Skipped for numbers that replied STOP, do-not-contact records and patients without SMS consent; never sent twice to the same number within 2 hours.
+            </p>
+            <label className="mt-3 flex items-center gap-2 text-[13.5px] text-navy">
+              <input type="checkbox" checked={autoText} onChange={(e) => setAutoText(e.target.checked)} disabled={!canEdit} />
+              Text missed callers automatically
+            </label>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              disabled={!canEdit || !autoText}
+              rows={2}
+              maxLength={600}
+              aria-label="Auto-text message"
+              className="mt-2 w-full rounded-lg border border-mist-300 px-3 py-2 text-[13.5px] text-navy outline-none focus:border-brand-600 disabled:bg-mist-50"
+            />
+            {canEdit && (
+              <div className="mt-2 flex justify-end">
+                <Button size="sm" onClick={saveAutoText} disabled={savingText || (autoText && !text.trim())}>{savingText ? 'Saving…' : 'Save auto-text'}</Button>
+              </div>
+            )}
+          </div>
+
+          {canEdit && s.redirectUri && (
+            <details className="text-[12.5px] text-mist-700">
+              <summary className="cursor-pointer font-semibold text-navy">RingCentral app setup</summary>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                <li>OAuth redirect URI (must match the RingCentral app exactly): <code className="rounded bg-mist-100 px-1">{s.redirectUri}</code></li>
+                <li>App permissions: VoIP Calling, Read Call Log, Read Messages, SMS, Read Accounts, Call Control, Read Presence.</li>
+                <li>Turn on “Issue refresh tokens” so staff stay signed in.</li>
+                <li>Browser calling needs a digital line and an emergency address on each extension.</li>
+              </ul>
+            </details>
+          )}
+        </div>
+      )}
     </Card>
   )
 }

@@ -57,7 +57,11 @@ export default function AppointmentsPage() {
     }
     try {
       await crm.appointmentStatus(a.id, { status: next, reason: reason || null })
-      toast(next === 'NO_SHOW' ? 'Marked no-show — recovery call task created' : next === 'CANCELLED' ? 'Cancelled — reschedule task created' : `Marked ${labelOf(APPT_STATUSES, next).toLowerCase()}`)
+      toast(next === 'NO_SHOW'
+        ? 'Marked no-show — added to the No-shows & cancellations call list'
+        : next === 'CANCELLED'
+          ? 'Cancelled — added to the No-shows & cancellations call list'
+          : `Marked ${labelOf(APPT_STATUSES, next).toLowerCase()}`)
       reload()
     } catch (err) {
       toast(err.message, 'error')

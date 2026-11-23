@@ -8,6 +8,7 @@ import { workspace, WORKSPACE_CHANGED } from '../features/workspace/workspaceApi
 import UiIcon from '../shared/ui/Icon'
 import PricingModal from '../features/dashboard/PricingModal'
 import GlobalSearch from '../features/crm/GlobalSearch'
+import { RingCentralPhoneProvider } from '../features/crm/RingCentralPhone'
 import ModuleNav, { SaveShortcutButton, TrialCard } from './ModuleNav'
 import DashboardLoader from './DashboardLoader'
 
@@ -339,7 +340,9 @@ export default function AppShell() {
   ]
 
   return (
-    /* Page shell — gray canvas */
+    /* RingCentral browser phone: calls ring anywhere in the app for CRM users */
+    <RingCentralPhoneProvider enabled={canSearchCrm}>
+    {/* Page shell — gray canvas */}
     <div className="flex h-screen flex-col overflow-hidden bg-mist-50 text-ink-950">
       {welcomeLoader && <DashboardLoader onDone={finishWelcomeLoader} />}
 
@@ -698,6 +701,7 @@ export default function AppShell() {
         defaultSizeBand={user?.teamSizeBand ? Number(user.teamSizeBand) : undefined}
       />
     </div>
+    </RingCentralPhoneProvider>
   )
 }
 

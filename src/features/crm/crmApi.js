@@ -137,6 +137,14 @@ export const crm = {
     return URL.createObjectURL(await res.blob())
   },
 
+  /* RingCentral phone system */
+  rcStatus: () => api(`${BASE}/ringcentral/status`),
+  rcAuthorizeUrl: () => api(`${BASE}/ringcentral/oauth/url`),
+  rcDisconnect: () => api(`${BASE}/ringcentral/disconnect`, { method: 'POST' }),
+  rcWebPhone: () => api(`${BASE}/ringcentral/webphone`, { method: 'POST' }),
+  rcCalls: (params) => api(`${BASE}/ringcentral/calls${qs(params)}`),
+  rcSync: () => api(`${BASE}/ringcentral/sync`, { method: 'POST' }),
+
   integrations: () => api(`${BASE}/integrations`),
   saveIntegration: (kind, body) => api(`${BASE}/integrations/${kind}`, { method: 'PUT', body }),
 }

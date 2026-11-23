@@ -621,6 +621,7 @@ export function FormModal({ open, title, subtitle, sections, initial, onSubmit, 
   const [values, setValues] = useState(initial || {})
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const submitting = useRef(false)
   const { team, partners } = useCrmRefs()
 
   useEffect(() => {
@@ -655,6 +656,9 @@ export function FormModal({ open, title, subtitle, sections, initial, onSubmit, 
       setError(`Please complete: ${missing.map((f) => f.label.replace(' *', '')).join(', ')}`)
       return
     }
+    // Instant lock: a double-click or Enter + click must never save the same record twice.
+    if (submitting.current) return
+    submitting.current = true
     setSaving(true)
     setError('')
     try {
@@ -662,6 +666,7 @@ export function FormModal({ open, title, subtitle, sections, initial, onSubmit, 
     } catch (err) {
       setError(err.message || 'Could not save.')
     } finally {
+      submitting.current = false
       setSaving(false)
     }
   }

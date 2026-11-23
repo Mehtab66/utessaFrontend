@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Icon from '../../shared/ui/Icon'
 import {
@@ -12,6 +12,7 @@ import {
 } from './ui'
 import Select from '../../shared/ui/Select'
 import { LogoMark } from '../../shared/ui/LogoLoader'
+import { useRingCentralPhone } from './RingCentralPhone'
 
 const LINES = [
   { value: 'MAIN', label: 'Main line' },
@@ -45,6 +46,22 @@ export default function CallDeskPage() {
   const [now, setNow] = useState(() => Date.now())
   const recent = useAsync(() => crm.recentCalls(15), [])
   const editors = useCrmEditors({ toast, onSaved: () => refreshLookup() })
+  // RingCentral browser phone (no-op when RingCentral isn't connected)
+  const rc = useRingCentralPhone()
+  const navigate = useNavigate()
+  const rcCall = useRef(false) // the call on screen is a real RingCentral call
+  const seenIncoming = useRef(null)
+  const answering = useRef(false)
+  const [needRc, setNeedRc] = useState(null) // number the user tried to call while RingCentral wasn't ready
+  const [connecting, setConnecting] = useState(false)
+
+  async function connectRc() {
+    setConnecting(true)
+    const res = await rc.connect()
+    setConnecting(false)
+    if (res?.ok) toast(`${res.message || 'RingCentral connected'} Press Call again to dial.`)
+    else if (res?.ok === false) setError(res.message || 'RingCentral sign-in did not finish.')
+  }
 
   useEffect(() => {
     if (!startedAt || endedAt) return undefined
@@ -52,11 +69,51 @@ export default function CallDeskPage() {
     return () => clearInterval(t)
   }, [startedAt, endedAt])
 
+  const autoStarted = useRef(false)
   useEffect(() => {
+    // Run once per visit (React StrictMode runs effects twice in development, which used to dial twice).
+    if (autoStarted.current) return
+    autoStarted.current = true
     const p = params.get('phone')
-    if (p) start(p, params.get('direction') === 'OUTBOUND' ? 'OUTBOUND' : 'INBOUND')
+    if (!p) return
+    if (params.get('rc') === '1') {
+      // rc=1: a RingCentral call already answered / placed. After a page refresh that call is gone —
+      // don't redial, just clear the address bar.
+      if (rc.active) start(p, params.get('direction') === 'OUTBOUND' ? 'OUTBOUND' : 'INBOUND', { live: true })
+      else setParams({}, { replace: true })
+      return
+    }
+    start(p, params.get('direction') === 'OUTBOUND' ? 'OUTBOUND' : 'INBOUND')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // A RingCentral call rings while the desk is idle -> show the ringing card with the caller match
+  useEffect(() => {
+    const inc = rc.incoming
+    if (!inc || seenIncoming.current === inc.id || phase !== 'idle') return
+    seenIncoming.current = inc.id
+    rcCall.current = true
+    start(inc.number || '', 'INBOUND', { rcRinging: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rc.incoming, phase])
+
+  // The RingCentral caller hung up before anyone answered -> missed call (logged by the server)
+  useEffect(() => {
+    if (phase === 'ringing' && rcCall.current && !rc.incoming && !answering.current) {
+      toast('Missed call — logged automatically with a call-back task')
+      reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rc.incoming])
+
+  // The other side hung up during a RingCentral call -> stop the timer, keep the documentation open
+  useEffect(() => {
+    if (phase === 'live' && rcCall.current && !rc.active) {
+      setEndedAt(Date.now())
+      setPhase('ended')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rc.active])
 
   const elapsed = startedAt ? Math.max(0, Math.round(((endedAt || now) - startedAt) / 1000)) : 0
   const timer = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`
@@ -80,12 +137,28 @@ export default function CallDeskPage() {
     if (lookup?.phone) await runLookup(lookup.phone)
   }
 
-  async function start(phone, dir) {
+  async function start(phone, dir, opts = {}) {
     const value = String(phone || '').trim()
     if (value.replace(/\D/g, '').length < 7) {
+      if (opts.rcRinging) {
+        // Caller ID withheld: still ring; the caller is identified after answering
+        setDirection('INBOUND')
+        setNumber(value)
+        setLookup({ phone: value, normalized: '', newCaller: true, matches: [] })
+        setPhase('ringing')
+        return
+      }
       setError('Enter at least 7 digits.')
       return
     }
+    // RingCentral is set up but this browser phone isn't ready: don't pretend to dial — ask to connect.
+    if (dir === 'OUTBOUND' && !opts.live && !rc.ready && rc.status?.configured) {
+      setError('')
+      setNeedRc(value)
+      return
+    }
+    setNeedRc(null)
+    rcCall.current = Boolean(opts.live || opts.rcRinging || (dir === 'OUTBOUND' && rc.ready))
     setDirection(dir)
     setNumber(value)
     setMode(null)
@@ -94,14 +167,44 @@ export default function CallDeskPage() {
     setCallNotes('')
     setCreated(null)
     setEndedAt(null)
-    setParams({ phone: value, direction: dir }, { replace: true })
-    if (dir === 'INBOUND') {
+    setParams(rcCall.current ? { phone: value, direction: dir, rc: '1' } : { phone: value, direction: dir }, { replace: true })
+    if (dir === 'INBOUND' && opts.live) {
+      const data = await runLookup(value)
+      answer(data)
+    } else if (dir === 'INBOUND') {
       setPhase('ringing')
       await runLookup(value)
     } else {
+      // Outbound: dial through RingCentral when the browser phone is ready
+      if (rc.ready && !opts.live) {
+        const placed = await rc.call(value)
+        if (!placed) {
+          // e.g. another call is still ringing, or the number can't be dialled — stay on the keypad
+          rcCall.current = false
+          setPhase('idle')
+          setParams({}, { replace: true })
+          return
+        }
+      }
       const data = await runLookup(value)
       if (data) answer(data)
     }
+  }
+
+  async function answerRinging() {
+    if (rcCall.current && rc.incoming) {
+      answering.current = true
+      const ok = await rc.answer()
+      if (!ok) {
+        answering.current = false
+        return
+      }
+    }
+    answer()
+    answering.current = false
+    // Existing patient/lead (one match) → open their profile; the floating call bar keeps the call controls.
+    const only = lookup?.matches?.length === 1 ? lookup.matches[0].patient : null
+    if (rcCall.current && only) navigate(`/app/crm/patients/${only.id}`)
   }
 
   function answer(data = lookup) {
@@ -117,6 +220,13 @@ export default function CallDeskPage() {
   }
 
   async function sendToVoicemail() {
+    if (rcCall.current && rc.incoming) {
+      // RingCentral takes the voicemail; the call-log sync logs it as missed and sends the auto-text
+      await rc.toVoicemail()
+      toast('Sent to voicemail — logged as a missed call automatically')
+      reset()
+      return
+    }
     try {
       const match = lookup?.matches?.length === 1 ? lookup.matches[0].patient : null
       await crm.documentCall({
@@ -137,11 +247,13 @@ export default function CallDeskPage() {
   }
 
   function endCall() {
+    if (rcCall.current && rc.active) rc.hangup()
     setEndedAt(Date.now())
     setPhase('ended')
   }
 
   function reset() {
+    rcCall.current = false
     setPhase('idle')
     setLookup(null)
     setMode(null)
@@ -166,7 +278,9 @@ export default function CallDeskPage() {
 
   return (
     <div className="space-y-4">
-      {(phase === 'live' || phase === 'ended') && (
+      {phase === 'ended' && rcCall.current && rc.error && <Alert>{rc.error}</Alert>}
+      {/* Call bar only while the call is live — it disappears the moment the call ends */}
+      {phase === 'live' && (
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[12px] bg-brand-900 px-4 py-2.5 text-white">
           <span className={`h-2.5 w-2.5 rounded-full ${phase === 'live' ? 'bg-success-500' : 'bg-mist-400'}`} aria-hidden="true" />
           <span className="text-[14px] font-semibold">
@@ -175,12 +289,24 @@ export default function CallDeskPage() {
           <span className="font-mono text-[13px] text-brand-100">{formatPhone(number)}</span>
           <span className="font-mono text-[17px]" aria-label="Call length">{timer}</span>
           <span className="ml-auto flex items-center gap-2">
+            {phase === 'live' && rcCall.current && rc.active && (
+              <>
+                <button type="button" onClick={rc.toggleMute} className={`inline-flex min-h-9 items-center rounded-lg px-3 text-[13px] font-semibold ${rc.active.muted ? 'bg-white text-brand-900' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                  {rc.active.muted ? 'Unmute' : 'Mute'}
+                </button>
+                <button type="button" onClick={rc.toggleHold} className={`inline-flex min-h-9 items-center rounded-lg px-3 text-[13px] font-semibold ${rc.active.held ? 'bg-white text-brand-900' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                  {rc.active.held ? 'Resume' : 'Hold'}
+                </button>
+              </>
+            )}
             {phase === 'live' ? (
               <button type="button" onClick={endCall} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-danger-600 px-3.5 text-[13px] font-semibold text-white hover:bg-danger-700">
                 <Icon name="phone" className="h-4 w-4 rotate-[135deg]" /> End call
               </button>
             ) : (
-              <span className="text-[13px] text-brand-100">Finish the documentation below.</span>
+              <span className="text-[13px] text-brand-100">
+                {rcCall.current && rc.error ? `${rc.error} ` : ''}Finish the documentation below.
+              </span>
             )}
           </span>
         </div>
@@ -193,10 +319,30 @@ export default function CallDeskPage() {
             subtitle="Every call is matched against your patients and leads before you answer — existing patients open their profile, new numbers start intake."
           />
           <Alert>{error}</Alert>
+          {needRc && (
+            <div role="alert" className="mb-4 flex flex-wrap items-center gap-3 rounded-[12px] border border-sun-200 bg-sun-50 px-4 py-3">
+              <Icon name="phoneOut" className="h-5 w-5 text-sun-700" />
+              <div className="min-w-0 flex-1 text-[13.5px] text-navy">
+                {rc.status?.connected && rc.phase === 'starting' ? (
+                  <><b>The browser phone is still starting.</b> Try calling {formatPhone(needRc)} again in a moment.</>
+                ) : rc.status?.connected ? (
+                  <><b>The browser phone couldn’t start</b>{rc.error ? ` — ${rc.error}` : ''}. Retry, then call {formatPhone(needRc)} again.</>
+                ) : (
+                  <><b>RingCentral isn’t connected.</b> Calls go out through your RingCentral line — connect your account to call {formatPhone(needRc)}.</>
+                )}
+              </div>
+              {rc.status?.connected ? (
+                <Button size="sm" onClick={() => rc.reload()} disabled={rc.phase === 'starting'}><Icon name="refresh" /> Retry</Button>
+              ) : (
+                <Button size="sm" onClick={connectRc} disabled={connecting}><Icon name="link" /> {connecting ? 'Connecting…' : 'Connect RingCentral'}</Button>
+              )}
+              <Button size="sm" variant="ghost" onClick={() => setNeedRc(null)}>Dismiss</Button>
+            </div>
+          )}
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
             <div className="min-w-0 space-y-4">
               {phase === 'ringing' ? (
-                <RingCard number={number} line={line} lookup={lookup} looking={looking} onAnswer={() => answer()} onVoicemail={sendToVoicemail} />
+                <RingCard number={number} line={line} lookup={lookup} looking={looking} onAnswer={answerRinging} onVoicemail={sendToVoicemail} onDecline={rcCall.current && rc.incoming ? () => { rc.decline(); reset() } : null} viaRc={rcCall.current} />
               ) : (
                 <Card bodyClassName="flex flex-wrap items-center gap-4 p-6">
                   <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-700">
@@ -205,12 +351,16 @@ export default function CallDeskPage() {
                   <div className="min-w-0 flex-1">
                     <p className="m-0 text-[16px] font-semibold text-navy">Waiting for the next call</p>
                     <p className="m-0 mt-0.5 text-[13px] text-mist-600">
-                      Type the caller’s number on the keypad and choose <b>Incoming</b>. When the phone system is connected, calls ring here automatically.
+                      {rc.ready
+                        ? <>RingCentral is connected{rc.status?.extensionNumber ? ` (ext ${rc.status.extensionNumber})` : ''} — calls ring here automatically and <b>Call</b> dials out from this browser.</>
+                        : <>Type the caller’s number on the keypad and choose <b>Incoming</b>. When the phone system is connected, calls ring here automatically.</>}
                     </p>
+                    {rc.error && <p className="m-0 mt-1 text-[12.5px] font-semibold text-danger-700">RingCentral: {rc.error}</p>}
                   </div>
                 </Card>
               )}
               <RecentCalls state={recent} onCall={(c) => start(c.phone, 'OUTBOUND')} />
+              {rc.status?.connected && <RingCentralCallLog onCall={(n) => start(n, 'OUTBOUND')} />}
             </div>
             <Keypad
               number={number}
@@ -286,7 +436,7 @@ export default function CallDeskPage() {
 }
 
 /* ─── Ringing ──────────────────────────────────────────────────────────── */
-function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
+function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail, onDecline, viaRc }) {
   const match = lookup?.matches?.[0]
   const p = match?.patient
   const next = match?.upcomingAppointments?.[0]
@@ -297,11 +447,21 @@ function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
           <span className="absolute inset-0 animate-ping rounded-full bg-brand-600/40" aria-hidden="true" />
           <Icon name="phoneIn" className="relative h-5 w-5" />
         </span>
-        <div>
+        <div className="min-w-0 flex-1">
           <h2 id="ring-h" className="m-0 text-[12px] font-semibold text-brand-700">Incoming call</h2>
           <p className="m-0 font-mono text-[22px] font-medium text-navy">{formatPhone(number)}</p>
-          <p className="m-0 text-[13px] text-mist-600">{LINES.find((l) => l.value === line)?.label}</p>
+          <p className="m-0 text-[13px] text-mist-600">{viaRc ? 'RingCentral' : LINES.find((l) => l.value === line)?.label}</p>
         </div>
+        {!looking && p && (
+          <Link
+            to={`/app/crm/patients/${p.id}`}
+            aria-label={`Open ${p.fullName}'s profile`}
+            title="Open profile (the call keeps ringing)"
+            className="flex h-10 w-10 shrink-0 items-center justify-center self-start rounded-full border border-mist-200 text-brand-700 transition hover:border-brand-600 hover:bg-brand-50"
+          >
+            <Icon name="arrowRight" className="h-4 w-4" />
+          </Link>
+        )}
       </div>
       <div className="mt-4 rounded-[10px] bg-mist-50 p-4">
         {looking && (
@@ -333,10 +493,11 @@ function RingCard({ number, line, lookup, looking, onAnswer, onVoicemail }) {
         )}
       </div>
       <div className="mt-4 flex gap-2">
-        <Button size="lg" className="flex-1" onClick={onAnswer} disabled={looking}>
+        <Button size="lg" className="flex-1" onClick={onAnswer} disabled={looking && !viaRc}>
           <Icon name="phone" /> Answer
         </Button>
-        <Button size="lg" variant="secondary" onClick={onVoicemail} disabled={looking}>Send to voicemail</Button>
+        <Button size="lg" variant="secondary" onClick={onVoicemail} disabled={looking && !viaRc}>Send to voicemail</Button>
+        {onDecline && <Button size="lg" variant="danger" onClick={onDecline}>Decline</Button>}
       </div>
     </section>
   )
@@ -896,5 +1057,83 @@ function CreatedPatient({ result, timer, onDone }) {
       </div>
       <Button variant="secondary" onClick={onDone}>Done, back to calls</Button>
     </div>
+  )
+}
+
+/* ─── RingCentral call log (synced from RingCentral) ───────────────────── */
+export function RingCentralCallLog({ onCall }) {
+  const [missedOnly, setMissedOnly] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const log = useAsync(() => crm.rcCalls({ limit: 40, missed: missedOnly || undefined }), [missedOnly])
+  async function syncNow() {
+    setSyncing(true)
+    try {
+      await crm.rcSync()
+    } catch {
+      /* shown on the Integrations page */
+    }
+    setSyncing(false)
+    log.reload()
+  }
+  const textTone = (s) => (s === 'SENT' ? 'green' : s === 'FAILED' ? 'red' : 'gray')
+  const dur = (s) => (s == null ? '—' : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`)
+  return (
+    <Card
+      title="RingCentral call log"
+      subtitle="Every call on your RingCentral lines. Missed calls get a call-back task and the auto-text."
+      actions={(
+        <span className="flex items-center gap-1">
+          <Button size="sm" variant={missedOnly ? 'primary' : 'ghost'} onClick={() => setMissedOnly((v) => !v)}>
+            <Icon name="phoneMissed" /> Missed
+          </Button>
+          <Button size="sm" variant="ghost" onClick={syncNow} disabled={syncing}><Icon name="refresh" /> {syncing ? 'Syncing…' : 'Sync now'}</Button>
+        </span>
+      )}
+      bodyClassName="p-0"
+    >
+      {log.loading ? <div className="px-4"><Loading /></div> : !log.data?.length ? (
+        <p className="m-0 px-4 py-6 text-sm text-mist-600">{missedOnly ? 'No missed calls.' : 'No RingCentral calls yet. New calls appear within a minute.'}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[680px] border-collapse text-left text-[13.5px]">
+            <thead>
+              <tr className="text-[12px] text-mist-600">
+                {['Caller', 'Number', 'When', 'Result', 'Length', 'Auto-text', ''].map((h) => <th key={h} className="border-b border-mist-200 px-4 py-2.5 font-semibold">{h}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {log.data.map((c) => (
+                <tr key={c.id} className="hover:bg-mist-25">
+                  <td className="border-b border-mist-200 px-4 py-2.5">
+                    <span className="flex items-center gap-2">
+                      <span className={`flex h-7 w-7 items-center justify-center rounded-full ${c.missed ? 'bg-danger-100 text-danger-700' : c.direction === 'INBOUND' ? 'bg-brand-50 text-brand-900' : 'bg-mist-100 text-ink-700'}`}>
+                        <Icon name={c.missed ? 'phoneMissed' : c.direction === 'INBOUND' ? 'phoneIn' : 'phoneOut'} className="h-3.5 w-3.5" />
+                      </span>
+                      {c.patientId
+                        ? <Link to={`/app/crm/patients/${c.patientId}`} className="font-semibold text-navy hover:text-brand-700">{c.patientName}</Link>
+                        : <span className="font-semibold">{(c.direction === 'INBOUND' ? c.fromName : c.toName) || 'Unknown'}</span>}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap border-b border-mist-200 px-4 py-2.5 font-mono">{formatPhone(c.phone) || '—'}</td>
+                  <td className="whitespace-nowrap border-b border-mist-200 px-4 py-2.5 text-mist-600" title={fmtDateTime(c.startedAt)}>{fmtRelative(c.startedAt)}</td>
+                  <td className="border-b border-mist-200 px-4 py-2.5"><Pill tone={c.missed ? 'red' : 'blue'}>{c.result || (c.direction === 'INBOUND' ? 'Inbound' : 'Outbound')}</Pill></td>
+                  <td className="whitespace-nowrap border-b border-mist-200 px-4 py-2.5 font-mono">{dur(c.durationSeconds)}</td>
+                  <td className="border-b border-mist-200 px-4 py-2.5">
+                    {c.autoTextStatus ? <span title={c.autoTextNote || ''}><Pill tone={textTone(c.autoTextStatus)}>{c.autoTextStatus === 'SENT' ? 'Sent' : c.autoTextStatus === 'FAILED' ? 'Failed' : 'Skipped'}</Pill></span> : <span className="text-mist-400">—</span>}
+                  </td>
+                  <td className="border-b border-mist-200 px-4 py-2.5 text-right">
+                    {c.phone && (
+                      <button type="button" aria-label={`Call ${formatPhone(c.phone)}`} onClick={() => onCall(c.phone)} className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-brand-700 hover:bg-brand-50">
+                        <Icon name="phone" />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
   )
 }

@@ -4,7 +4,8 @@ import Icon from '../../shared/ui/Icon'
 import { useAuth } from '../../shared/auth/AuthContext'
 import { roleLabel } from '../../shared/security/roles'
 import { FAX_DOC_TYPES, PHI_PATTERN, PRESENCE, QUICK_REPLIES, crm, labelOf, toneOf } from './crmApi'
-import { formatPhone } from './CallDeskPage'
+import { RingCentralCallLog, formatPhone } from './CallDeskPage'
+import { useRingCentralPhone } from './RingCentralPhone'
 import { useCrmEditors } from './CrmEditors'
 import {
   Alert, Avatar, Button, Card, DataTable, Field, Loading, Modal, PatientPicker, Pill, SearchInput, Segmented,
@@ -35,7 +36,10 @@ export default function PhonePage() {
   const overview = useAsync(() => crm.phone(), [])
   const [ctx, setCtx] = useState(null)
   const o = overview.data
-  const connected = o?.phoneStatus === 'CONNECTED'
+  const rc = useRingCentralPhone()
+  const navigate = useNavigate()
+  const rcConnected = Boolean(rc.status?.connected)
+  const connected = o?.phoneStatus === 'CONNECTED' || rcConnected
 
   async function savePrefs(patch) {
     try {
@@ -95,9 +99,15 @@ export default function PhonePage() {
               })}
             </div>
             <span className="ml-auto">
-              <Pill tone={connected ? 'green' : o.phoneStatus === 'PENDING' ? 'amber' : 'gray'} dot>
-                {connected ? `Connected · ${o.phoneProvider}` : o.phoneStatus === 'PENDING' ? 'Connection requested' : 'Phone system not connected'}
-              </Pill>
+              {rcConnected ? (
+                <Pill tone={rc.ready ? 'green' : rc.phase === 'error' ? 'red' : 'amber'} dot>
+                  {`RingCentral${rc.status.extensionNumber ? ` · ext ${rc.status.extensionNumber}` : ''} · ${rc.ready ? 'browser phone ready' : rc.phase === 'error' ? 'browser phone error' : 'starting…'}`}
+                </Pill>
+              ) : (
+                <Pill tone={connected ? 'green' : o.phoneStatus === 'PENDING' ? 'amber' : 'gray'} dot>
+                  {connected ? `Connected · ${o.phoneProvider}` : o.phoneStatus === 'PENDING' ? 'Connection requested' : 'Phone system not connected'}
+                </Pill>
+              )}
             </span>
           </>
         )}
@@ -131,6 +141,11 @@ export default function PhonePage() {
           <div className="min-w-0">
             {!o && overview.loading && <Loading />}
             {o && section === 'calls' && <CallsSection onDetails={setCtx} onText={(phone, name) => go('texts', { to: phone, name: name || '' })} />}
+            {o && section === 'calls' && rcConnected && (
+              <div className="mt-4">
+                <RingCentralCallLog onCall={(n) => navigate(`/app/crm/call-desk?phone=${encodeURIComponent(n)}&direction=OUTBOUND`)} />
+              </div>
+            )}
             {o && section === 'texts' && <TextsSection overview={o} params={params} toast={toast} onChanged={overview.reload} onDetails={setCtx} />}
             {o && section === 'voicemail' && <VoicemailSection toast={toast} onChanged={overview.reload} onText={(phone, name) => go('texts', { to: phone, name: name || '' })} />}
             {o && section === 'fax' && <FaxSection overview={o} toast={toast} onChanged={overview.reload} />}
