@@ -140,7 +140,7 @@ export default function PhonePage() {
         <div className={`grid min-w-0 gap-4 ${ctx ? 'xl:grid-cols-[minmax(0,1fr)_300px]' : ''}`}>
           <div className="min-w-0">
             {!o && overview.loading && <Loading />}
-            {o && section === 'calls' && <CallsSection onDetails={setCtx} onText={(phone, name) => go('texts', { to: phone, name: name || '' })} />}
+            {o && section === 'calls' && <CallsSection rcConnected={rcConnected} onDetails={setCtx} onText={(phone, name) => go('texts', { to: phone, name: name || '' })} />}
             {o && section === 'calls' && rcConnected && (
               <div className="mt-4">
                 <RingCentralCallLog onCall={(n) => navigate(`/app/crm/call-desk?phone=${encodeURIComponent(n)}&direction=OUTBOUND`)} />
@@ -210,12 +210,47 @@ function DetailsPanel({ item, onClose, onText }) {
 /* ─── Calls ────────────────────────────────────────────────────────────── */
 const KEYS = [['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['*', ''], ['0', '+'], ['#', '']]
 
-function CallsSection({ onDetails, onText }) {
+function CallsSection({ rcConnected, onDetails, onText }) {
   const navigate = useNavigate()
   const [dial, setDial] = useState('')
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState('ALL')
+  const [syncing, setSyncing] = useState(false)
   const calls = useAsync(() => crm.recentCalls(100), [])
+  const { setData: setCalls } = calls
+
+  // Calls made or taken on RingCentral reach the history through the background sync, so keep
+  // the list fresh: refresh quietly every 30 seconds and whenever the tab comes back into view.
+  useEffect(() => {
+    let alive = true
+    const refresh = async () => {
+      try {
+        const next = await crm.recentCalls(100)
+        if (alive) setCalls(next)
+      } catch {
+        /* keep the current list */
+      }
+    }
+    const timer = setInterval(refresh, 30000)
+    const onVisible = () => document.visibilityState === 'visible' && refresh()
+    document.addEventListener('visibilitychange', onVisible)
+    return () => { alive = false; clearInterval(timer); document.removeEventListener('visibilitychange', onVisible) }
+  }, [setCalls])
+
+  async function syncNow() {
+    setSyncing(true)
+    try {
+      await crm.rcSync()
+    } catch {
+      /* sync problems are shown on the Integrations page */
+    }
+    try {
+      setCalls(await crm.recentCalls(100))
+    } catch {
+      /* keep the current list */
+    }
+    setSyncing(false)
+  }
   const needle = useDebounced(q).toLowerCase()
   const digits = needle.replace(/\D/g, '')
   const rows = (calls.data || [])
@@ -253,7 +288,16 @@ function CallsSection({ onDetails, onText }) {
       </Card>
       <Card
         title="Call history"
-        actions={<SearchInput value={q} onChange={setQ} placeholder="Name or number" className="sm:max-w-[220px]" />}
+        actions={(
+          <span className="flex items-center gap-1.5">
+            <SearchInput value={q} onChange={setQ} placeholder="Name or number" className="sm:max-w-[220px]" />
+            {rcConnected && (
+              <Button size="sm" variant="ghost" onClick={syncNow} disabled={syncing} title="Pull the latest calls from RingCentral">
+                <Icon name="refresh" /> {syncing ? 'Syncing…' : 'Sync'}
+              </Button>
+            )}
+          </span>
+        )}
         bodyClassName="p-0"
       >
         <div className="flex gap-1.5 border-b border-mist-100 px-4 py-2.5">
@@ -272,7 +316,7 @@ function CallsSection({ onDetails, onText }) {
                   <div className="min-w-0 flex-1">
                     <p className={`m-0 text-[14px] ${missed ? 'font-semibold text-danger-700' : 'font-semibold text-navy'}`}>{name}</p>
                     <p className="m-0 text-[12.5px] text-mist-600">
-                      {missed ? 'Missed' : c.type === 'CALL_INBOUND' ? 'Incoming' : 'Outgoing'} · {fmtRelative(c.occurredAt)} · {mmss(c.durationSeconds)}{c.callReason ? ` · ${c.callReason}` : ''}
+                      {missed ? 'Missed' : c.type === 'CALL_INBOUND' ? 'Incoming' : 'Outgoing'}{!missed && c.callOutcome ? ` · ${c.callOutcome}` : ''} · {fmtRelative(c.occurredAt)} · {mmss(c.durationSeconds)}{c.callReason ? ` · ${c.callReason}` : ''}
                     </p>
                     {c.body && <p className="m-0 mt-0.5 truncate text-[12.5px] text-mist-700">{c.body}</p>}
                   </div>
