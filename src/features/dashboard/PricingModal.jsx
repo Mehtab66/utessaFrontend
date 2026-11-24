@@ -61,10 +61,11 @@ export default function PricingModal({ isOpen, onClose, canManage = true }) {
         setSub(s)
         const live = s && LIVE_STATUSES.includes(s.status) && s.items?.length
         if (live) {
-          const current = s.items.filter((i) => i.key !== 'seat' && i.status !== 'SCHEDULED_ADD').map((i) => i.key)
-          setModules(current.length ? current : ['crm'])
-          setSeats(s.seats?.purchased ?? 0)
-          setInterval(s.interval || 'MONTHLY')
+          // Start from the plan booked for the next renewal, if any: new changes go on top of it.
+          const plan = plannedFrom(s)
+          setModules(plan.modules.length ? plan.modules : ['crm'])
+          setSeats(plan.seats)
+          setInterval(plan.interval)
         } else {
           setModules(['crm'])
           setSeats(Math.max(e?.members ?? 0, 0))
@@ -145,8 +146,10 @@ export default function PricingModal({ isOpen, onClose, canManage = true }) {
       if (preview.changeType === 'INTERVAL') res = await billing.changeCycle({ interval, timing: preview.timing, previewToken: preview.previewToken }, key)
       else if (preview.changeType === 'DOWNGRADE') res = await billing.downgrade({ ...body, timing: preview.timing }, key)
       else res = await billing.upgrade(body, key)
-      if (res.result === 'PAYMENT_REQUIRED' && res.paymentUrl) {
-        setDone({ text: 'Your card needs attention. The change is applied as soon as the payment goes through.', url: res.paymentUrl })
+      if (res.result === 'PAYMENT_REQUIRED') {
+        setDone(res.paymentUrl
+          ? { text: "The payment didn't go through, so nothing has changed yet. Complete the payment and the change is applied straight away.", url: res.paymentUrl }
+          : { text: "The payment didn't go through, so nothing has changed. Update your payment method in Billing and try again." })
       } else if (res.result === 'SCHEDULED') {
         setDone({ text: `Done — your plan changes on ${formatDate(res.effectiveAt)}. You keep everything until then.` })
       } else {
@@ -163,10 +166,11 @@ export default function PricingModal({ isOpen, onClose, canManage = true }) {
   }
 
   const trialActive = ent?.trialActive
-  const changed = hasSubscription && sub && (
-    interval !== sub.interval
-    || seats !== (sub.seats?.purchased ?? 0)
-    || [...modules].sort().join() !== sub.items.filter((i) => i.key !== 'seat' && i.status !== 'SCHEDULED_ADD').map((i) => i.key).sort().join()
+  const planned = hasSubscription && sub ? plannedFrom(sub) : null
+  const changed = !!planned && (
+    interval !== planned.interval
+    || seats !== planned.seats
+    || [...modules].sort().join() !== [...planned.modules].sort().join()
   )
 
   return (
@@ -186,8 +190,8 @@ export default function PricingModal({ isOpen, onClose, canManage = true }) {
             <div className="space-y-5 p-6">
               {trialActive && !hasSubscription && (
                 <div className="rounded-xl border border-brand-200 bg-brand-50 px-4 py-3 text-[13px] text-brand-900">
-                  You're on the free trial until <b>{formatDate(ent.trialEndsAt)}</b> with every module. Pick your plan now —
-                  you won't be charged until the trial ends.
+                  You're on the free trial until <b>{formatDate(ent.trialEndsAt)}</b> with every module. Subscribing ends
+                  the trial: you're charged today and switch straight to the plan you choose.
                 </div>
               )}
               {hasSubscription && (
@@ -270,7 +274,7 @@ export default function PricingModal({ isOpen, onClose, canManage = true }) {
                   <span className="text-[13px] text-white/80">Total</span>
                   <span className="text-2xl font-bold">{formatMoney(quote.total, currency)}<span className="text-sm font-normal text-white/70">/{yearly ? 'yr' : 'mo'}</span></span>
                 </div>
-                {trialActive && !hasSubscription && <p className="m-0 mt-1 text-[12px] text-white/70">First charge on {formatDate(ent.trialEndsAt)}.</p>}
+                {!hasSubscription && <p className="m-0 mt-1 text-[12px] text-white/70">Charged today, then every {yearly ? 'year' : 'month'}.</p>}
               </div>
 
               {preview && (
@@ -325,4 +329,20 @@ export default function PricingModal({ isOpen, onClose, canManage = true }) {
       </div>
     </div>
   )
+}
+
+/**
+ * The plan the subscription will have after the next renewal: today's plan with any booked change
+ * applied (modules leaving are SCHEDULED_REMOVAL, new or changed lines are SCHEDULED_ADD).
+ */
+function plannedFrom(sub) {
+  const items = sub.items || []
+  const added = items.filter((i) => i.status === 'SCHEDULED_ADD')
+  const modules = [...new Set(items
+    .filter((i) => i.key !== 'seat' && (i.status === 'ACTIVE' || i.status === 'SCHEDULED_ADD'))
+    .map((i) => i.key))]
+  const bookedSeat = added.find((i) => i.key === 'seat')
+  const activeSeat = items.find((i) => i.key === 'seat' && i.status === 'ACTIVE')
+  const seats = bookedSeat ? bookedSeat.quantity : activeSeat ? activeSeat.quantity : 0
+  return { modules, seats, interval: sub.scheduledInterval || sub.interval || 'MONTHLY' }
 }
