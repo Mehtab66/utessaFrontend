@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { api } from '../../shared/api/client'
 import { ResourceWorkspace, StatusPill, useResourceList } from '../../shared/ui/ResourceWorkspace'
 import { staffDefaults, staffFromRow, staffSections, toStaffPayload } from './staffFormConfig'
@@ -18,7 +19,7 @@ export default function ProvidersPage() {
       subtitle="Full credentialed clinician registration — personal, contact, specialty, licenses, DEA, CAQH, pay and access."
       addLabel="Register provider"
       columns={[
-        { key: 'name', label: 'Provider', render: (r) => <b>{r.firstName} {r.lastName}</b> },
+        { key: 'name', label: 'Provider', render: (r) => <Link to={`/app/providers/${r.id}`} className="font-bold text-ink-950 hover:text-brand-700">{r.firstName} {r.lastName}</Link> },
         { key: 'specialty', label: 'Specialty', render: (r) => r.specialty || r.jobTitle },
         { key: 'npi', label: 'NPI' },
         { key: 'deaNumber', label: 'DEA' },

@@ -23,7 +23,26 @@ import PhonePage from '../features/crm/PhonePage'
 import ProvidersPage from '../features/operations/ProvidersPage'
 import StaffPage from '../features/operations/StaffPage'
 import VendorsPage from '../features/operations/VendorsPage'
+import ProviderCompliancePage from '../features/operations/ProviderCompliancePage'
+import InsuranceCredentialingPage from '../features/operations/InsuranceCredentialingPage'
+import HospitalPrivilegesPage from '../features/operations/HospitalPrivilegesPage'
+import TrackersPage from '../features/operations/TrackersPage'
+import PersonProfilePage from '../features/operations/PersonProfilePage'
+import StaffImportPage from '../features/operations/StaffImportPage'
+import VendorInvoicesPage from '../features/operations/VendorInvoicesPage'
+import SpecialtyTemplatesPage from '../features/operations/SpecialtyTemplatesPage'
+import VendorDetailPage from '../features/operations/VendorDetailPage'
+import DocumentVaultPage from '../features/operations/DocumentVaultPage'
+import LibraryPage from '../features/operations/LibraryPage'
+import InventoryPage from '../features/operations/InventoryPage'
 import ComingSoonPage from '../features/modules/ComingSoonPage'
+import TimeClockPage from '../features/timeclock/TimeClockPage'
+import TimesheetPage from '../features/timeclock/TimesheetPage'
+import TimeOffPage from '../features/timeclock/TimeOffPage'
+import TeamNowPage from '../features/timeclock/TeamNowPage'
+import ApprovalsPage from '../features/timeclock/ApprovalsPage'
+import PayrollPage from '../features/timeclock/PayrollPage'
+import TimeClockSettingsPage from '../features/timeclock/TimeClockSettingsPage'
 import PlatformShell from '../features/platform/PlatformShell'
 import PlatformHome from '../features/platform/PlatformHome'
 import TasksPage from '../features/platform/TasksPage'
@@ -92,6 +111,18 @@ export default function AppRouter() {
             <Route path="providers" element={<FeatureRoute permission="creds" element={<ProvidersPage />} />} />
             <Route path="staff" element={<FeatureRoute permission="staff" element={<StaffPage />} />} />
             <Route path="vendors" element={<FeatureRoute permission="vendors" element={<VendorsPage />} />} />
+            {/* Practice Operations (Time Clock is its own module) */}
+            <Route path="providers/compliance" element={<FeatureRoute permission="creds" element={<ProviderCompliancePage />} />} />
+            <Route path="providers/payers" element={<FeatureRoute permission="creds" element={<InsuranceCredentialingPage />} />} />
+            <Route path="providers/privileges" element={<FeatureRoute permission="creds" element={<HospitalPrivilegesPage />} />} />
+            <Route path="providers/trackers" element={<FeatureRoute permission="creds" element={<TrackersPage key="provider" scope="PROVIDER" />} />} />
+            <Route path="providers/:id" element={<FeatureRoute permission="creds" element={<PersonProfilePage key="provider" mode="provider" />} />} />
+            <Route path="staff/onboarding" element={<FeatureRoute permission="staff" element={<TrackersPage key="staff" scope="STAFF" />} />} />
+            <Route path="staff/import" element={<FeatureRoute permission="staff" element={<StaffImportPage />} />} />
+            <Route path="staff/:id" element={<FeatureRoute permission="staff" element={<PersonProfilePage key="staff" mode="staff" />} />} />
+            <Route path="vendors/invoices" element={<FeatureRoute permission="vendors" element={<VendorInvoicesPage />} />} />
+            <Route path="vendors/specialties" element={<FeatureRoute permission="vendors" element={<SpecialtyTemplatesPage />} />} />
+            <Route path="vendors/:id" element={<FeatureRoute permission="vendors" element={<VendorDetailPage />} />} />
             <Route path="crm" element={<FeatureRoute permission="patients" element={<CrmDashboardPage />} />} />
             <Route path="crm/call-desk" element={<FeatureRoute permission="patients" element={<CallDeskPage />} />} />
             <Route path="crm/leads" element={<FeatureRoute permission="patients" element={<PatientListPage key="leads" mode="LEAD" />} />} />
@@ -111,10 +142,10 @@ export default function AppRouter() {
             <Route path="crm/accounts" element={<Navigate to="/app/crm/referrals?tab=partners" replace />} />
             <Route path="crm/outreach" element={<Navigate to="/app/crm/leads" replace />} />
             <Route path="crm/contacts" element={<Navigate to="/app/crm/patients" replace />} />
-            <Route path="document-vault" element={<FeatureRoute permission="docvault" element={<ComingSoonPage />} />} />
-            <Route path="resources" element={<FeatureRoute permission="resources" element={<ComingSoonPage />} />} />
-            <Route path="training" element={<FeatureRoute permission="training" element={<ComingSoonPage />} />} />
-            <Route path="inventory" element={<FeatureRoute permission="inventory" element={<ComingSoonPage />} />} />
+            <Route path="document-vault" element={<FeatureRoute permission="docvault" element={<DocumentVaultPage />} />} />
+            <Route path="resources" element={<FeatureRoute permission="resources" element={<LibraryPage key="resources" space="RESOURCES" />} />} />
+            <Route path="training" element={<FeatureRoute permission="training" element={<LibraryPage key="training" space="TRAINING" />} />} />
+            <Route path="inventory" element={<FeatureRoute permission="inventory" element={<InventoryPage />} />} />
             <Route path="no-shows" element={<FeatureRoute permission="noshows" element={<ComingSoonPage />} />} />
             <Route path="phone" element={<Navigate to="/app/crm/phone" replace />} />
             <Route path="voip" element={<FeatureRoute permission="voip" element={<ComingSoonPage />} />} />
@@ -130,7 +161,13 @@ export default function AppRouter() {
             <Route path="agents" element={<FeatureRoute permission="agents" element={<ComingSoonPage />} />} />
             <Route path="setup" element={<FeatureRoute permission="setup" element={<PracticeSetupPage />} />} />
             <Route path="operations" element={<FeatureRoute permission="ops" element={<ComingSoonPage />} />} />
-            <Route path="timeclock" element={<FeatureRoute permission="timeclock" element={<ComingSoonPage />} />} />
+            <Route path="timeclock" element={<FeatureRoute permission="timeclock" element={<TimeClockPage />} />} />
+            <Route path="timeclock/timesheet" element={<FeatureRoute permission="timeclock" element={<TimesheetPage />} />} />
+            <Route path="timeclock/time-off" element={<FeatureRoute permission="timeclock" element={<TimeOffPage />} />} />
+            <Route path="timeclock/team" element={<FeatureRoute permission="tcadmin" element={<TeamNowPage />} />} />
+            <Route path="timeclock/approvals" element={<FeatureRoute permission="tcadmin" element={<ApprovalsPage />} />} />
+            <Route path="timeclock/payroll" element={<FeatureRoute permission="tcadmin" element={<PayrollPage />} />} />
+            <Route path="timeclock/settings" element={<FeatureRoute permission="tcadmin" element={<TimeClockSettingsPage />} />} />
           </Route>
           <Route path="*" element={<Navigate to="/signup" replace />} />
         </Routes>

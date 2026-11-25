@@ -3,8 +3,7 @@
 /** Square app icon, drawn as vector so it stays sharp at any size. */
 export function Logo({ className = 'h-8 w-8', ...props }) {
   return (
-    <svg viewBox="0 0 273 273" className={className} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
-      <rect width="273" height="273" rx="65" fill="#1B1F4B" />
+    <svg viewBox="40 40 193 193" className={className} xmlns="http://www.w3.org/2000/svg" aria-hidden="true" {...props}>
       <rect x="108" y="44" width="56" height="56" rx="10" fill="#5CE1E6" />
       <rect x="44" y="108" width="56" height="56" rx="10" fill="#C9CDF2" />
       <rect x="108" y="108" width="56" height="56" rx="10" fill="#FFD23F" />
@@ -22,7 +21,7 @@ export function Logo({ className = 'h-8 w-8', ...props }) {
  * `light` is for dark backgrounds — the navy lettering would disappear there,
  * so it pairs the icon with white text instead.
  */
-export function Wordmark({ light = false, className = 'h-9' }) {
+export function Wordmark({ light = false, large = false, className = 'h-9' }) {
   if (light) {
     return (
       <span className="inline-flex items-center gap-2.5 no-underline">
@@ -35,8 +34,11 @@ export function Wordmark({ light = false, className = 'h-9' }) {
   }
   return (
     <img
-      src="/brand/utessa-logo-36.png"
-      srcSet="/brand/utessa-logo-36.png 1x, /brand/utessa-logo-72.png 2x, /brand/utessa-logo-108.png 3x"
+      src={large ? '/brand/utessa-logo-72.png' : '/brand/utessa-logo-36.png'}
+      srcSet={large
+        // `large` (~48px tall) starts from a bigger file so it never gets stretched and blurry
+        ? '/brand/utessa-logo-72.png 1x, /brand/utessa-logo-108.png 2x, /brand/utessa-logo.png 3x'
+        : '/brand/utessa-logo-36.png 1x, /brand/utessa-logo-72.png 2x, /brand/utessa-logo-108.png 3x'}
       alt="Utessa"
       draggable="false"
       className={`w-auto object-contain ${className}`}

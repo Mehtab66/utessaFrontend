@@ -56,8 +56,8 @@ export function formatDate(iso) {
 export const LIVE_STATUSES = ['trialing', 'active', 'past_due', 'unpaid', 'incomplete', 'paused']
 
 export const MODULE_INFO = {
-  crm: { name: 'CRM', color: '#22A8AF', desc: 'Patient leads, call tracking, referrals, pipelines and contact history.' },
-  ops: { name: 'Operations', color: '#6D74C9', desc: 'Staff, vendors with BAA flags, providers, documents and dashboard.' },
-  mkt: { name: 'Marketing & Outreach', color: '#D69508', desc: 'Review requests, email campaigns, social posting and text campaigns.' },
-  tc: { name: 'Time Clock', color: '#1FA971', desc: 'Clock in and out, timesheets, mobile app and payroll export.' },
+  crm: { name: 'CRM', color: '#2BBFBF', desc: 'Patient leads, call tracking, referrals, pipelines and contact history.' },
+  ops: { name: 'Operations', color: '#2F5D78', desc: 'Staff, vendors with BAA flags, providers, documents and dashboard.' },
+  mkt: { name: 'Marketing & Outreach', color: '#7F88DD', desc: 'Review requests, email campaigns, social posting and text campaigns.' },
+  tc: { name: 'Time Clock', color: '#E5AE1B', desc: 'Clock in and out, timesheets, mobile app and payroll export.' },
 }

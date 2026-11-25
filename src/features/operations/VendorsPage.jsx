@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../../shared/api/client'
 import { ResourceWorkspace, StatusPill, useResourceList } from '../../shared/ui/ResourceWorkspace'
 
@@ -10,6 +12,11 @@ const BAA_TONE = {
 
 export default function VendorsPage() {
   const { rows, loading, error, refresh } = useResourceList(() => api('/api/v1/vendors'))
+  const [specialties, setSpecialties] = useState([])
+  useEffect(() => {
+    api('/api/v1/operations/specialty-templates').then((t) => setSpecialties(t.map((x) => x.name))).catch(() => setSpecialties([]))
+  }, [])
+  const form = useMemo(() => withSpecialty(vendorForm, specialties), [specialties])
 
   return (
     <ResourceWorkspace
@@ -17,7 +24,8 @@ export default function VendorsPage() {
       subtitle="Wireframe vendor record — PHI flag, contract terms, cost, BAA and account details."
       addLabel="+ Add vendor"
       columns={[
-        { key: 'name', label: 'Vendor', render: (r) => <b>{r.name}</b> },
+        { key: 'name', label: 'Vendor', render: (r) => <Link to={`/app/vendors/${r.id}`} className="font-bold text-ink-950 hover:text-brand-700">{r.name}</Link> },
+        { key: 'specialty', label: 'Specialty' },
         { key: 'folder', label: 'Folder', render: (r) => r.folder || r.category },
         { key: 'contactName', label: 'Contact' },
         {
@@ -49,7 +57,7 @@ export default function VendorsPage() {
       onCreate={(body) => api('/api/v1/vendors', { method: 'POST', body: toPayload(body) })}
       onEdit={(id, body) => api(`/api/v1/vendors/${id}`, { method: 'PUT', body: toPayload(body) })}
       onDelete={(id) => api(`/api/v1/vendors/${id}`, { method: 'DELETE' })}
-      form={vendorForm}
+      form={form}
     />
   )
 }
@@ -57,6 +65,7 @@ export default function VendorsPage() {
 const vendorForm = {
   defaults: () => ({
     name: '',
+    specialty: '',
     category: 'IT / EHR',
     folder: 'IT / EHR',
     contactName: '',
@@ -80,6 +89,7 @@ const vendorForm = {
   }),
   fromRow: (r) => ({
     name: r.name || '',
+    specialty: r.specialty || '',
     category: r.category || '',
     folder: r.folder || r.category || '',
     contactName: r.contactName || '',
@@ -184,4 +194,12 @@ function toPayload(values) {
     monthlyCost: values.monthlyCost === '' ? null : Number(values.monthlyCost),
     documents: values.documents || [],
   }
+}
+
+/** Adds the practice-specialty picker (from Specialty templates) to the vendor profile section. */
+function withSpecialty(form, specialties) {
+  if (!specialties.length) return form
+  const [first, ...rest] = form.sections
+  const field = { name: 'specialty', label: 'Specialty', type: 'select', options: [{ value: '', label: '—' }, ...specialties.map((v) => ({ value: v, label: v }))] }
+  return { ...form, sections: [{ ...first, fields: [first.fields[0], field, ...first.fields.slice(1)] }, ...rest] }
 }

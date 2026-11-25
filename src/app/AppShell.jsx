@@ -10,8 +10,10 @@ import PricingModal from '../features/dashboard/PricingModal'
 import { billing } from '../features/billing/billingApi'
 import GlobalSearch from '../features/crm/GlobalSearch'
 import { RingCentralPhoneProvider } from '../features/crm/RingCentralPhone'
-import ModuleNav, { SaveShortcutButton, TrialCard } from './ModuleNav'
+import { ModuleSidebarCard, ModuleTopRow, SaveShortcutButton, TrialCard, useModuleModel, useSidebarCollapse } from './ModuleNav'
+import { LogoCRM, LogoMarketing, LogoOps, LogoTimeClock } from '../shared/ui/ModuleLogos'
 import DashboardLoader from './DashboardLoader'
+import { AssistantButton, AssistantPanel } from '../features/assistant/AssistantPanel'
 
 /* The first-dashboard loader plays once per user, right after signup. */
 const welcomeSeenKey = (userId) => `utessa.welcomeLoaderSeen.${userId || 'me'}`
@@ -57,36 +59,6 @@ function IconHome({ className = 'w-5 h-5' }) {
     </svg>
   )
 }
-function IconCRM({ className = 'w-5 h-5' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" />
-    </svg>
-  )
-}
-function IconOps({ className = 'w-5 h-5' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2" />
-    </svg>
-  )
-}
-function IconMarketing({ className = 'w-5 h-5' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-    </svg>
-  )
-}
-function IconClock({ className = 'w-5 h-5' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" />
-    </svg>
-  )
-}
 
 function IconApps({ className = 'w-5 h-5' }) {
   return (
@@ -106,10 +78,10 @@ function IconPlus({ className = 'w-4 h-4' }) {
 /* ─── Section definitions ───────────────────────────────────────────────── */
 const MAIN_SECTIONS = [
   { id: 'dashboard', label: 'Home', icon: IconHome, to: '/app', color: '#1E8E94' },
-  { id: 'ops', label: 'Operations', icon: IconOps, to: '/app/providers', color: '#6D74C9', module: 'ops' },
-  { id: 'crm', label: 'CRM', icon: IconCRM, to: '/app/crm', color: '#22A8AF', module: 'crm' },
-  { id: 'mkt', label: 'Marketing', icon: IconMarketing, to: '/app/provider-leads', color: '#D69508', module: 'mkt' },
-  { id: 'tc', label: 'Time Clock', icon: IconClock, to: '/app/timeclock', color: '#1FA971', module: 'tc' },
+  { id: 'ops', label: 'Operations', icon: LogoOps, to: '/app/providers', color: '#2F5D78', module: 'ops' },
+  { id: 'crm', label: 'CRM', icon: LogoCRM, to: '/app/crm', color: '#2BBFBF', module: 'crm' },
+  { id: 'mkt', label: 'Marketing', icon: LogoMarketing, to: '/app/provider-leads', color: '#7F88DD', module: 'mkt' },
+  { id: 'tc', label: 'Time Clock', icon: LogoTimeClock, to: '/app/timeclock', color: '#E5AE1B', module: 'tc' },
 ]
 
 /*
@@ -178,6 +150,8 @@ export default function AppShell() {
   const [saved, setSaved] = useState([])
   const [recent, setRecent] = useState([])
 
+  const [assistantOpen, setAssistantOpen] = useState(false)
+  const closeAssistant = useCallback(() => setAssistantOpen(false), [])
   const profileRef = useRef(null)
   const notifRef = useRef(null)
   const createRef = useRef(null)
@@ -285,6 +259,22 @@ export default function AppShell() {
 
   const sections = useMemo(() => navForRole(user?.role, user?.enabledServices), [user?.role, user?.enabledServices])
   const enabledIds = enabledModuleIds(user?.enabledServices)
+
+  /* A module added later (Apps & modules, Practice setup): replay the builder for just the
+     new modules, over whatever page the user is on, then return them to it. */
+  const [addLoader, setAddLoader] = useState(null)
+  const knownModules = useRef(null)
+  const enabledKey = enabledIds.join(',')
+  useEffect(() => {
+    if (!user?.userId || !user?.onboardingDone || user?.superAdmin) return
+    const ids = enabledKey ? enabledKey.split(',') : []
+    const prev = knownModules.current
+    knownModules.current = { userId: user.userId, ids }
+    if (!prev || prev.userId !== user.userId) return
+    const added = ids.filter((id) => !prev.ids.includes(id))
+    if (added.length) setAddLoader({ modules: added, existing: prev.ids.filter((id) => ids.includes(id)) })
+  }, [enabledKey, user?.userId, user?.onboardingDone, user?.superAdmin])
+  const finishAddLoader = useCallback(() => setAddLoader(null), [])
   /* Rail shows Home + only the modules this practice picked (and the role can open) */
   const railSections = MAIN_SECTIONS.filter(sec => {
     if (!sec.module) return true
@@ -312,6 +302,10 @@ export default function AppShell() {
   })) ?? []
   const subItems = activeSection === 'crm' ? crmItems : activeSubItems
   const activeMeta = MAIN_SECTIONS.find(s => s.id === activeSection)
+  const moduleMode = Boolean(activeMeta?.module && subItems.length > 0)
+  const moduleModel = useModuleModel(moduleMode ? activeMeta : null, moduleMode ? subItems : [])
+  const [pagesCollapsed, togglePagesCollapsed] = useSidebarCollapse()
+  const showModuleSidebar = moduleMode && moduleModel.showSidebar
 
   if (loading) return <BootScreen label="Checking your secure session…" />
   if (!isAuthenticated) return <Navigate to="/login" replace />
@@ -358,23 +352,36 @@ export default function AppShell() {
     <RingCentralPhoneProvider enabled={canSearchCrm}>
     {/* Page shell — gray canvas */}
     <div className="flex h-screen flex-col overflow-hidden bg-mist-50 text-ink-950">
-      {welcomeLoader && <DashboardLoader onDone={finishWelcomeLoader} />}
+      {welcomeLoader && <DashboardLoader modules={enabledIds} onDone={finishWelcomeLoader} />}
+      {!welcomeLoader && addLoader && (
+        <DashboardLoader key={addLoader.modules.join(',')} mode="add" modules={addLoader.modules} existing={addLoader.existing} onDone={finishAddLoader} />
+      )}
 
+      {/* ══ TOP ROW: one full-width bar · logo inside it ═════════════════ */}
+      <div className="flex h-[80px] shrink-0 items-start pl-3 pr-3 pt-3">
       {/* ══════════════════════════════════════════════════════════════════
-          TOP NAVBAR  (matches Monday CRM header)
+          TOP BAR  (floating card)
       ══════════════════════════════════════════════════════════════════ */}
-      <header className="relative z-20 flex h-[60px] flex-none items-center gap-4 border-b border-mist-200 bg-white px-4">
+      {/* Three columns: brand · search (centred in the bar) · actions. The side columns share the
+          leftover width equally, so the search sits in the true middle whenever there is room. */}
+      <header className="relative z-30 grid h-[68px] min-w-0 flex-1 grid-cols-[1fr_minmax(0,480px)_1fr] items-center gap-4 rounded-2xl border border-mist-200 bg-white pl-4 pr-2 shadow-[var(--shadow-card)]">
 
-        {/* Left: Logo + wordmark */}
-        <Link to="/app" className="flex w-[180px] shrink-0 items-center pl-1" aria-label="Utessa home">
-          <Wordmark className="h-9" />
-        </Link>
+        <div className="flex min-w-0 items-center gap-3 justify-self-start">
+          <Link to="/app" className="flex shrink-0 items-center no-underline" aria-label="Utessa home">
+            <Wordmark large className="h-11" />
+          </Link>
+          <span aria-hidden="true" className="h-7 w-px shrink-0 bg-mist-200" />
+          <AssistantButton open={assistantOpen} onClick={() => setAssistantOpen(o => !o)} />
+          <UpNext events={summary?.upcomingEvents} onOpen={() => navigate('/app/calendar')} />
+        </div>
 
-        {/* Center: Global search (patients, leads, opportunities, partners) */}
-        <GlobalSearch enabled={canSearchCrm} />
+        {/* Global search (patients, leads, opportunities, partners) */}
+        <div className="min-w-0">
+          <GlobalSearch enabled={canSearchCrm} />
+        </div>
 
         {/* Right: icon actions + avatar */}
-        <div className="ml-auto flex shrink-0 items-center gap-2.5">
+        <div className="flex items-center gap-2.5 whitespace-nowrap justify-self-end">
           {/* Quick create */}
           <div className="relative" ref={createRef}>
             <button
@@ -504,17 +511,13 @@ export default function AppShell() {
             <button
               type="button"
               onClick={() => { setProfileOpen(o => !o); setNotifOpen(false); setCreateOpen(false) }}
-              className={`flex items-center gap-2.5 rounded-xl py-1 pl-1 pr-1 transition hover:bg-mist-50 xl:pr-2.5 ${profileOpen ? 'bg-mist-50' : ''}`}
+              className={`flex items-center rounded-full p-1 transition hover:bg-mist-50 ${profileOpen ? 'bg-mist-50' : ''}`}
               aria-label="Profile"
+              title={user.fullName}
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink-900 text-[12.5px] font-bold text-white ring-2 ring-white outline outline-1 outline-brand-200">
                 {initials}
               </span>
-              <span className="hidden min-w-0 text-left leading-tight xl:block">
-                <span className="block max-w-[140px] truncate text-[13px] font-semibold text-ink-950">{user.fullName}</span>
-                <span className="block max-w-[140px] truncate text-[11.5px] text-mist-600">{roleLabel(user.role)}</span>
-              </span>
-              <UiIcon name="chevronDown" className={`hidden h-3.5 w-3.5 text-mist-500 transition-transform xl:block ${profileOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {profileOpen && (
@@ -547,16 +550,18 @@ export default function AppShell() {
           </div>
         </div>
       </header>
+      </div>
 
-      {/* ══════════════════════════════════════════════════════════════════
-          BODY ROW  (sidebar + main card)
-      ══════════════════════════════════════════════════════════════════ */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1">
+      {/* ══ LEFT COLUMN: icon rail · module card ═════════════════════════ */}
+      <div className="flex shrink-0 flex-col">
+        <div className="flex min-h-0 flex-1 pb-3 pt-3">
+
 
         {/* ── Narrow icon sidebar (matches Monday's left icon rail) ─────── */}
         <nav
           aria-label="Main sections"
-          className="hide-scrollbar flex w-[84px] flex-none flex-col items-center gap-1 overflow-y-auto bg-mist-50 py-3"
+          className="hide-scrollbar relative z-20 flex w-[80px] flex-none flex-col items-center gap-1 overflow-y-auto py-1"
         >
           {/* Home + only the modules this practice picked */}
           <div className="flex w-full flex-col items-center gap-1.5">
@@ -566,10 +571,11 @@ export default function AppShell() {
                 <RailItem
                   key={sec.id}
                   label={sec.label}
-                  accent={sec.color}
+                  accent="#1E8E94"
                   active={activeSection === sec.id}
                   onClick={() => { setActiveSection(sec.id); navigate(sec.to) }}
                 >
+                  {/* Every rail icon (Home and modules) uses one size, colour and stroke */}
                   <Icon className="h-[19px] w-[19px]" />
                 </RailItem>
               )
@@ -663,42 +669,48 @@ export default function AppShell() {
           </div>
         </nav>
 
-        {/* ── Main content card ─────────────────────────────────────────── */}
-        <div className="flex flex-1 overflow-hidden pt-3">
-          <div className="flex flex-1 flex-col overflow-hidden rounded-tl-2xl border-l border-t border-mist-200 bg-white shadow-[-1px_-1px_0_rgba(17,20,58,0.02)]">
-
-            {/* Section bar: module name · tabs (overflow under More) · trial · save shortcut */}
-            {activeMeta?.module && subItems.length > 0 ? (
-              <ModuleNav
-                module={activeMeta}
-                items={subItems}
-                modules={railSections.filter(sec => sec.module)}
-                daysLeft={showTrial ? daysLeft : null}
-                trialTotal={trialTotal}
-                onUpgrade={() => setPricingOpen(true)}
-                saved={isSaved}
-                onToggleSave={toggleShortcut}
-              />
-            ) : (
-              <SectionBar
-                title={activeMeta?.label || activeTool?.label || 'Workspace'}
-                items={[]}
-                daysLeft={showTrial ? daysLeft : null}
-                trialTotal={trialTotal}
-                onUpgrade={() => setPricingOpen(true)}
-                saved={isSaved}
-                onToggleSave={toggleShortcut}
-                sectionLabel={activeMeta?.label || 'Workspace'}
-              />
-            )}
-
-            {/* Page content — scrollable */}
-            <main className="flex-1 overflow-y-auto px-5 py-5">
-              <Outlet />
-            </main>
-          </div>
+        {showModuleSidebar && (
+          <ModuleSidebarCard module={activeMeta} model={moduleModel} collapsed={pagesCollapsed} onToggleCollapsed={togglePagesCollapsed} />
+        )}
         </div>
       </div>
+
+      {/* ══ RIGHT COLUMN: breadcrumb row · page card ═════════════════════ */}
+      <div className="flex min-w-0 flex-1 flex-col pb-3 pl-4 pr-3">
+
+        {moduleMode ? (
+          <ModuleTopRow
+            module={activeMeta}
+            model={moduleModel}
+            daysLeft={showTrial ? daysLeft : null}
+            trialTotal={trialTotal}
+            onUpgrade={() => setPricingOpen(true)}
+            saved={isSaved}
+            onToggleSave={toggleShortcut}
+          />
+        ) : (
+          <SectionBar
+            title={activeMeta?.label || activeTool?.label || 'Workspace'}
+            items={[]}
+            daysLeft={showTrial ? daysLeft : null}
+            trialTotal={trialTotal}
+            onUpgrade={() => setPricingOpen(true)}
+            saved={isSaved}
+            onToggleSave={toggleShortcut}
+            sectionLabel={activeMeta?.label || 'Workspace'}
+          />
+        )}
+
+        {/* Page card — scrollable */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-mist-200 bg-white shadow-[var(--shadow-card)]">
+          <main className="min-w-0 flex-1 overflow-y-auto px-5 py-5">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+      </div>
+
+      <AssistantPanel open={assistantOpen} onClose={closeAssistant} userName={user.fullName} />
 
       {personalizeOpen && (
         <PersonalizeSidebar
@@ -785,7 +797,7 @@ function SectionBar({ title, items, daysLeft, trialTotal, onUpgrade, saved, onTo
     }`
 
   return (
-    <div className="flex h-[52px] shrink-0 items-center gap-3 border-b border-mist-200 px-5">
+    <div className="flex min-h-[56px] shrink-0 items-center gap-3 px-1">
       <h2 className="m-0 shrink-0 text-[15px] font-semibold text-ink-950">{title}</h2>
 
       {items.length > 0 && <span className="h-5 w-px shrink-0 bg-mist-200" aria-hidden="true" />}
@@ -1061,4 +1073,41 @@ function buildNotifications(summary) {
 /* ─── Boot screen ───────────────────────────────────────────────────────── */
 function BootScreen({ label }) {
   return <LogoLoader fullScreen label={label} />
+}
+
+/* ─── Top-bar: next event today, counting down ("in 25 min"); after the last one it says the day is clear ─── */
+function UpNext({ events, onOpen }) {
+  const [now, setNow] = useState(Date.now())
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 30000)
+    return () => clearInterval(t)
+  }, [])
+  if (!events) return null
+  const endOfDay = new Date(now); endOfDay.setHours(23, 59, 59, 999)
+  const next = events
+    .map(e => ({ ...e, at: new Date(e.startsAt).getTime() }))
+    .filter(e => e.at > now - 5 * 60000 && e.at <= endOfDay.getTime())
+    .sort((a, b) => a.at - b.at)[0]
+
+  let when = ''
+  if (next) {
+    const mins = Math.round((next.at - now) / 60000)
+    when = mins <= 0 ? 'now' : mins < 60 ? `in ${mins} min` : new Date(next.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  }
+  const soon = next && next.at - now <= 15 * 60000
+
+  return (
+    <button type="button" onClick={onOpen} title={next ? `${next.title} · ${when}` : 'No more events today · open calendar'}
+      className={`flex h-9 min-w-0 items-center gap-1.5 overflow-hidden rounded-lg border px-3 text-[13.5px] font-semibold transition ${soon ? 'border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100' : 'border-mist-200 bg-white text-ink-900 hover:bg-mist-50'}`}>
+      <UiIcon name="calendar" className="h-4 w-4 shrink-0" />
+      {next ? (
+        <span className="hidden min-w-0 items-center gap-1.5 xl:flex">
+          <span className="truncate">{next.title}</span>
+          <span className={`shrink-0 font-medium ${soon ? 'text-brand-600' : 'text-mist-500'}`}>· {when}</span>
+        </span>
+      ) : (
+        <span className="hidden min-w-0 truncate font-medium text-mist-600 xl:block">No more events today</span>
+      )}
+    </button>
+  )
 }
