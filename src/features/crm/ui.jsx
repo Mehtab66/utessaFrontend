@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useAuth } from '../../shared/auth/AuthContext'
+import { practiceScope, registerPracticeReset } from '../../shared/auth/practiceSession'
 import Icon from '../../shared/ui/Icon'
 import { crm, labelOf, toneOf } from './crmApi'
 import Select from '../../shared/ui/Select'
@@ -112,32 +114,65 @@ export function useAsync(loader, deps = []) {
 
 let refsCache = null
 let refsPromise = null
-/** Team members + referral partners for selects (cached per page load). */
+let refsPromiseScope = ''
+
+function sessionScope(user) {
+  return practiceScope(user)
+}
+
+registerPracticeReset(() => {
+  refsCache = null
+  refsPromise = null
+  refsPromiseScope = ''
+})
+
+/** Team members + referral partners for selects, cached for the signed-in practice only. */
 export function useCrmRefs() {
-  const [refs, setRefs] = useState(refsCache || { team: [], partners: [] })
+  const { user } = useAuth()
+  const scope = sessionScope(user)
+  const [refs, setRefs] = useState(() => (refsCache?.scope === scope ? refsCache : { team: [], partners: [] }))
+  const [seenScope, setSeenScope] = useState(scope)
+  if (seenScope !== scope) {
+    setSeenScope(scope)
+    setRefs(refsCache?.scope === scope ? refsCache : { team: [], partners: [] })
+  }
+
+  const scopeRef = useRef(scope)
+  scopeRef.current = scope
+
   const load = useCallback(async (force = false) => {
-    if (refsCache && !force) {
-      setRefs(refsCache)
+    if (!scope) return { team: [], partners: [] }
+    if (refsCache?.scope === scope && !force) {
+      if (scopeRef.current === scope) setRefs(refsCache)
       return refsCache
     }
-    if (!refsPromise || force) {
-      refsPromise = Promise.all([crm.team().catch(() => []), crm.partners().catch(() => [])])
-        .then(([team, partners]) => {
-          refsCache = { team, partners }
-          return refsCache
-        })
+    let promise = refsPromise
+    if (!promise || refsPromiseScope !== scope || force) {
+      const requested = scope
+      refsPromiseScope = requested
+      promise = Promise.all([crm.team().catch(() => []), crm.partners().catch(() => [])])
+        .then(([team, partners]) => ({
+          scope: requested,
+          team: Array.isArray(team) ? team : [],
+          partners: Array.isArray(partners) ? partners : [],
+        }))
         .finally(() => {
-          refsPromise = null
+          if (refsPromise === promise) refsPromise = null
         })
+      refsPromise = promise
     }
-    const result = await refsPromise
+    const result = await promise
+    if (!result || result.scope !== scope || scopeRef.current !== scope) return { team: [], partners: [] }
+    if (refsPromiseScope === scope) refsCache = result
     setRefs(result)
     return result
-  }, [])
+  }, [scope])
+
   useEffect(() => {
     load()
   }, [load])
-  return { ...refs, refreshRefs: () => load(true) }
+
+  return { team: refs.team || [], partners: refs.partners || [], refreshRefs: () => load(true) }
 }
 
 export function useToast() {

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
+import { commitPracticeScope } from './practiceSession'
 
 const AuthContext = createContext(null)
 
@@ -10,9 +11,11 @@ export function AuthProvider({ children }) {
   const refresh = useCallback(async () => {
     try {
       const me = await api('/api/v1/auth/me')
+      commitPracticeScope(me)
       setUser(me)
       return me
     } catch {
+      commitPracticeScope(null)
       setUser(null)
       return null
     } finally {
@@ -31,6 +34,7 @@ export function AuthProvider({ children }) {
   }, [refresh])
 
   const setSessionUser = useCallback((me) => {
+    commitPracticeScope(me)
     setUser(me)
   }, [])
 
@@ -40,6 +44,7 @@ export function AuthProvider({ children }) {
     } catch {
       /* still clear local session */
     }
+    commitPracticeScope(null)
     setUser(null)
   }, [])
 

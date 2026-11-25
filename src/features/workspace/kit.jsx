@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../shared/auth/AuthContext'
+import { practiceScope, registerPracticeReset } from '../../shared/auth/practiceSession'
 import Icon from '../../shared/ui/Icon'
 import { workspace } from './workspaceApi'
 import Select from '../../shared/ui/Select'
@@ -111,14 +113,34 @@ export function Chip({ active, onClick, children, count }) {
   )
 }
 
-/** Team members for assignee pickers (workspace endpoint — works without CRM). */
+/** Team members for assignee pickers (workspace endpoint — works without CRM). Cached per signed-in practice. */
 let teamCache = null
+registerPracticeReset(() => {
+  teamCache = null
+})
 export function useTeam() {
-  const [team, setTeam] = useState(teamCache || [])
+  const { user } = useAuth()
+  const scope = practiceScope(user)
+  const [team, setTeam] = useState(() => (teamCache?.scope === scope ? teamCache.team : []))
+  const [seenScope, setSeenScope] = useState(scope)
+  if (seenScope !== scope) {
+    setSeenScope(scope)
+    setTeam(teamCache?.scope === scope ? teamCache.team : [])
+  }
   useEffect(() => {
-    if (teamCache) return
-    workspace.team().then((t) => { teamCache = t; setTeam(t) }).catch(() => {})
-  }, [])
+    if (!scope) return undefined
+    if (teamCache?.scope === scope) {
+      setTeam(teamCache.team)
+      return undefined
+    }
+    let active = true
+    workspace.team().then((t) => {
+      const next = Array.isArray(t) ? t : []
+      teamCache = { scope, team: next }
+      if (active) setTeam(next)
+    }).catch(() => {})
+    return () => { active = false }
+  }, [scope])
   return team
 }
 

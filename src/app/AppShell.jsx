@@ -241,21 +241,25 @@ export default function AppShell() {
     }
   }, [])
   useEffect(() => {
+    setSummary(null)
     if (!isAuthenticated || user?.superAdmin || !user?.onboardingDone) return undefined
     loadSummary()
     const onChange = () => loadSummary()
     window.addEventListener(WORKSPACE_CHANGED, onChange)
     return () => window.removeEventListener(WORKSPACE_CHANGED, onChange)
-  }, [isAuthenticated, user?.superAdmin, user?.onboardingDone, loadSummary])
+  }, [isAuthenticated, user?.userId, user?.organizationId, user?.superAdmin, user?.onboardingDone, loadSummary])
 
   // Billing state from the backend: the trial banner shows only during a real trial.
   const [entitlements, setEntitlements] = useState(null)
+  useEffect(() => {
+    setEntitlements(null)
+  }, [user?.userId, user?.organizationId])
   useEffect(() => {
     if (!isAuthenticated || user?.superAdmin || !user?.onboardingDone) return undefined
     let alive = true
     billing.entitlements().then((e) => { if (alive) setEntitlements(e) }).catch(() => {})
     return () => { alive = false }
-  }, [isAuthenticated, user?.superAdmin, user?.onboardingDone, pricingOpen, location.pathname])
+  }, [isAuthenticated, user?.userId, user?.organizationId, user?.superAdmin, user?.onboardingDone, pricingOpen, location.pathname])
 
   const sections = useMemo(() => navForRole(user?.role, user?.enabledServices), [user?.role, user?.enabledServices])
   const enabledIds = enabledModuleIds(user?.enabledServices)

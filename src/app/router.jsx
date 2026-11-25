@@ -57,6 +57,7 @@ import AuditPage from '../features/platform/AuditPage'
 import LoginsPage from '../features/platform/LoginsPage'
 import { serviceAllowed } from '../shared/security/roles'
 import { useAuth } from '../shared/auth/AuthContext'
+import { practiceScope } from '../shared/auth/practiceSession'
 import PracticeSetupPage from '../features/modules/PracticeSetupPage'
 import MyWorkPage from '../features/workspace/MyWorkPage'
 import CalendarPage from '../features/workspace/CalendarPage'
@@ -74,10 +75,22 @@ function FeatureRoute({ permission, element }) {
   return element
 }
 
+/** Remounts every page when the signed-in person or practice changes, so no screen keeps the previous account's data. */
+function PracticeSession({ children }) {
+  const { user } = useAuth()
+  const scope = practiceScope(user) || 'signed-out'
+  return (
+    <div key={scope} className="contents">
+      {children}
+    </div>
+  )
+}
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <PracticeSession>
         <Routes>
           <Route path="/" element={<Navigate to="/signup" replace />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -171,6 +184,7 @@ export default function AppRouter() {
           </Route>
           <Route path="*" element={<Navigate to="/signup" replace />} />
         </Routes>
+        </PracticeSession>
       </AuthProvider>
     </BrowserRouter>
   )
